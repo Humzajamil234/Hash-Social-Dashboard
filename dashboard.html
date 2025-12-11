@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
+            /* Logo ke colors ke hisaab se theme */
             --primary: #3A57E8;
             --primary-light: #E6EBFF;
             --primary-dark: #2A47D8;
@@ -109,7 +110,7 @@
             100% { transform: translate(0, 0) rotate(360deg); }
         }
 
-        /* ==================== MOBILE FIRST SIDEBAR ==================== */
+        /* ==================== SIDEBAR ==================== */
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -122,6 +123,7 @@
             transition: var(--transition);
             z-index: 1000;
             transform: translateX(-100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar.active {
@@ -134,27 +136,50 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 10px;
+        /* LOGO STYLING - Login page ki tarah */
+        .logo-wrapper {
+            position: relative;
+            width: 45px;
+            height: 45px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0;
+            background: transparent;
+            filter: drop-shadow(0 3px 10px rgba(58, 87, 232, 0.4));
+            animation: logoFloat 6s ease-in-out infinite;
+            border-radius: 12px;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(1deg); }
+            75% { transform: translateY(3px) rotate(-1deg); }
         }
 
         .logo-text {
-            font-size: 20px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #fff, #e0e0e0);
+            font-size: 22px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
             letter-spacing: -0.5px;
+            animation: textShine 4s ease-in-out infinite;
+        }
+
+        @keyframes textShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .sidebar-menu {
@@ -181,12 +206,15 @@
             font-weight: 500;
             transition: var(--transition);
             border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
         .menu-item:hover {
             background: var(--sidebar-hover);
             color: white;
             border-left-color: var(--primary);
+            transform: translateX(5px);
         }
 
         .menu-item.active {
@@ -194,6 +222,12 @@
             color: white;
             border-left-color: var(--primary);
             font-weight: 600;
+            animation: menuItemActive 0.3s ease;
+        }
+
+        @keyframes menuItemActive {
+            from { background: var(--sidebar-hover); }
+            to { background: linear-gradient(90deg, rgba(58, 87, 232, 0.15), transparent); }
         }
 
         .menu-item i {
@@ -213,6 +247,12 @@
             font-weight: 600;
             min-width: 18px;
             text-align: center;
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .sidebar-footer {
@@ -242,6 +282,12 @@
             color: white;
             font-size: 14px;
             flex-shrink: 0;
+            animation: avatarGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes avatarGlow {
+            0%, 100% { box-shadow: 0 0 0 rgba(58, 87, 232, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(58, 87, 232, 0.6); }
         }
 
         .user-info h4 {
@@ -277,11 +323,19 @@
             transition: var(--transition);
             width: 100%;
             margin-top: 15px;
+            position: relative;
+            overflow: hidden;
         }
 
         .logout-btn:hover {
             background: rgba(255, 255, 255, 0.12);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
         }
 
         .version {
@@ -290,9 +344,15 @@
             font-size: 11px;
             margin-top: 10px;
             font-weight: 500;
+            animation: versionFloat 6s ease-in-out infinite;
         }
 
-        /* ==================== MAIN CONTENT - MOBILE FIRST ==================== */
+        @keyframes versionFloat {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
         .main-content {
             flex: 1;
             padding: 15px;
@@ -309,6 +369,12 @@
             margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .page-title h1 {
@@ -345,6 +411,17 @@
             border-radius: 50%;
             transition: var(--transition);
             flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: rotate(15deg);
         }
 
         .notification-count {
@@ -354,13 +431,14 @@
             background: var(--accent);
             color: white;
             font-size: 10px;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            animation: badgePulse 2s infinite;
         }
 
         .mobile-menu-btn {
@@ -372,10 +450,18 @@
             padding: 6px;
             transition: var(--transition);
             flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
         }
 
         .mobile-menu-btn:hover {
+            background: var(--primary-light);
             color: var(--primary);
+            transform: rotate(90deg);
         }
 
         /* Action Buttons */
@@ -384,6 +470,12 @@
             flex-direction: column;
             gap: 10px;
             margin-bottom: 25px;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .action-btn {
@@ -402,13 +494,19 @@
             gap: 8px;
             box-shadow: 0 4px 12px rgba(58, 87, 232, 0.1);
             width: 100%;
+            position: relative;
+            overflow: hidden;
         }
 
         .action-btn:hover {
             background: var(--primary);
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(58, 87, 232, 0.2);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
         }
 
         /* Stats Cards */
@@ -417,6 +515,7 @@
             grid-template-columns: 1fr;
             gap: 20px;
             margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease 0.3s both;
         }
 
         .stat-card {
@@ -428,6 +527,12 @@
             border: 1px solid rgba(0, 0, 0, 0.03);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(58, 87, 232, 0.15);
         }
 
         .stat-card::before {
@@ -438,6 +543,12 @@
             width: 100%;
             height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: gradientFlow 3s linear infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
         }
 
         .stat-header {
@@ -457,6 +568,13 @@
             font-size: 20px;
             color: white;
             flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .icon-users { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
@@ -469,6 +587,12 @@
             font-weight: 900;
             color: var(--dark);
             margin-bottom: 5px;
+            animation: countUp 1s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .stat-label {
@@ -495,6 +619,7 @@
             flex-direction: column;
             gap: 20px;
             margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease 0.4s both;
         }
 
         .chart-card {
@@ -503,6 +628,12 @@
             padding: 20px;
             box-shadow: var(--shadow);
             border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+        }
+
+        .chart-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
 
         .chart-header {
@@ -531,6 +662,13 @@
             width: 100%;
         }
 
+        .period-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 87, 232, 0.1);
+            transform: scale(1.02);
+        }
+
         .chart-container {
             height: 250px;
             position: relative;
@@ -544,6 +682,12 @@
             box-shadow: var(--shadow);
             margin-bottom: 25px;
             overflow: hidden;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease 0.5s both;
+        }
+
+        .data-table-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
 
         .table-header {
@@ -576,12 +720,25 @@
             transition: var(--transition);
         }
 
+        .table-search input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 87, 232, 0.1);
+            transform: scale(1.02);
+        }
+
         .table-search i {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--gray);
+            transition: var(--transition);
+        }
+
+        .table-search input:focus + i {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
         }
 
         .data-table {
@@ -601,6 +758,8 @@
             border-bottom: 2px solid var(--primary);
             font-size: 13px;
             white-space: nowrap;
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
@@ -609,6 +768,18 @@
             color: var(--gray);
             font-size: 13px;
             white-space: nowrap;
+            animation: tableRowFadeIn 0.3s ease;
+        }
+
+        @keyframes tableRowFadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .data-table tr:hover {
+            background: var(--primary-light);
+            transform: scale(1.01);
+            transition: var(--transition);
         }
 
         .table-actions {
@@ -628,6 +799,17 @@
             align-items: center;
             gap: 5px;
             white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .table-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-btn:active {
+            transform: translateY(0);
         }
 
         .table-btn.edit {
@@ -635,9 +817,29 @@
             color: var(--primary);
         }
 
+        .table-btn.edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
         .table-btn.delete {
             background: rgba(255, 71, 87, 0.1);
             color: var(--danger);
+        }
+
+        .table-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .table-btn.view {
+            background: rgba(46, 213, 115, 0.1);
+            color: var(--success);
+        }
+
+        .table-btn.view:hover {
+            background: var(--success);
+            color: white;
         }
 
         .status-badge {
@@ -647,6 +849,12 @@
             font-weight: 600;
             display: inline-block;
             white-space: nowrap;
+            animation: badgeFadeIn 0.3s ease;
+        }
+
+        @keyframes badgeFadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .status-active { background: rgba(46, 213, 115, 0.1); color: var(--success); }
@@ -666,6 +874,13 @@
             align-items: center;
             z-index: 2000;
             padding: 15px;
+            backdrop-filter: blur(5px);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; backdrop-filter: blur(0); }
+            to { opacity: 1; backdrop-filter: blur(5px); }
         }
 
         .modal-content {
@@ -677,6 +892,13 @@
             max-height: 90vh;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .modal-header {
@@ -686,11 +908,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            animation: gradientFlow 3s linear infinite;
         }
 
         .modal-header h3 {
             font-size: 18px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .modal-close {
@@ -700,6 +938,18 @@
             font-size: 20px;
             cursor: pointer;
             padding: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg) scale(1.1);
         }
 
         .modal-body {
@@ -710,6 +960,12 @@
 
         .form-group {
             margin-bottom: 20px;
+            animation: formGroupFadeIn 0.3s ease;
+        }
+
+        @keyframes formGroupFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .form-group label {
@@ -718,6 +974,9 @@
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .form-group input,
@@ -729,6 +988,15 @@
             border-radius: 8px;
             font-size: 14px;
             transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 87, 232, 0.1);
+            transform: translateY(-2px);
         }
 
         .modal-footer {
@@ -751,10 +1019,27 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+            animation: buttonPop 0.3s ease;
+        }
+
+        @keyframes buttonPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-btn:active {
+            transform: translateY(0);
         }
 
         .modal-btn.primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
 
@@ -783,6 +1068,13 @@
             gap: 12px;
             animation: toastSlideIn 0.3s;
             border-left: 4px solid var(--primary);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .toast:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         @keyframes toastSlideIn {
@@ -800,11 +1092,23 @@
             font-size: 16px;
             color: white;
             flex-shrink: 0;
+            animation: toastIconSpin 0.5s ease;
         }
+
+        @keyframes toastIconSpin {
+            from { transform: rotate(-180deg) scale(0); }
+            to { transform: rotate(0) scale(1); }
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--info); }
 
         .toast.success .toast-icon { background: var(--success); }
         .toast.error .toast-icon { background: var(--danger); }
         .toast.warning .toast-icon { background: var(--warning); }
+        .toast.info .toast-icon { background: var(--info); }
 
         .toast-content h4 {
             font-size: 14px;
@@ -826,6 +1130,7 @@
             text-align: center;
             color: var(--gray);
             font-size: 12px;
+            animation: fadeInUp 0.6s ease 0.6s both;
         }
 
         .dashboard-footer p {
@@ -835,6 +1140,12 @@
         /* Page Content */
         .page-content {
             display: none;
+            animation: pageFadeIn 0.5s ease;
+        }
+
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .page-content.active {
@@ -844,322 +1155,99 @@
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: var(--gray);
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            animation: emptyStateFadeIn 0.6s ease;
+        }
+
+        @keyframes emptyStateFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .empty-state i {
-            font-size: 40px;
-            margin-bottom: 15px;
+            font-size: 60px;
+            margin-bottom: 20px;
             color: var(--light-gray);
+            opacity: 0.5;
+            animation: emptyIconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes emptyIconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .empty-state h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
             color: var(--dark);
         }
 
-        /* ==================== TABLET STYLES (768px and up) ==================== */
+        .empty-state p {
+            font-size: 15px;
+            max-width: 500px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        /* ==================== RESPONSIVE STYLES ==================== */
         @media (min-width: 768px) {
-            body {
-                font-size: 15px;
-            }
-
-            .sidebar {
-                width: 250px;
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 250px;
-                padding: 25px;
-            }
-
-            .mobile-menu-btn {
-                display: none;
-            }
-
-            .top-bar {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .page-title h1 {
-                font-size: 26px;
-            }
-
-            .action-buttons {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .action-btn {
-                width: auto;
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 25px;
-            }
-
-            .stat-card {
-                padding: 25px;
-            }
-
-            .stat-value {
-                font-size: 32px;
-            }
-
-            .charts-grid {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .chart-card {
-                flex: 1;
-                min-width: 300px;
-                padding: 25px;
-            }
-
-            .chart-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .period-select {
-                width: auto;
-            }
-
-            .table-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .table-search {
-                width: 300px;
-            }
-
-            .data-table {
-                display: table;
-            }
-
-            .modal-content {
-                width: 90%;
-            }
+            body { font-size: 15px; }
+            .sidebar { transform: translateX(0); width: 250px; }
+            .main-content { margin-left: 250px; padding: 25px; }
+            .mobile-menu-btn { display: none; }
+            .top-bar { flex-direction: row; align-items: center; }
+            .page-title h1 { font-size: 26px; }
+            .action-buttons { flex-direction: row; }
+            .action-btn { width: auto; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 25px; }
+            .stat-card { padding: 25px; }
+            .stat-value { font-size: 32px; }
+            .charts-grid { flex-direction: row; }
+            .chart-card { flex: 1; min-width: 300px; padding: 25px; }
+            .chart-header { flex-direction: row; justify-content: space-between; }
+            .period-select { width: auto; }
+            .table-header { flex-direction: row; justify-content: space-between; }
+            .table-search { width: 300px; }
+            .data-table { display: table; }
         }
 
-        /* ==================== DESKTOP STYLES (1024px and up) ==================== */
         @media (min-width: 1024px) {
-            .sidebar {
-                width: 280px;
-            }
-
-            .main-content {
-                margin-left: 280px;
-                padding: 30px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .action-buttons {
-                flex-direction: row;
-            }
-
-            .chart-card {
-                min-width: 450px;
-            }
-
-            .chart-container {
-                height: 300px;
-            }
+            .sidebar { width: 280px; }
+            .main-content { margin-left: 280px; padding: 30px; }
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
+            .chart-card { min-width: 450px; }
+            .chart-container { height: 300px; }
         }
 
-        /* ==================== LARGE DESKTOP (1200px and up) ==================== */
         @media (min-width: 1200px) {
-            body {
-                font-size: 16px;
-            }
-
-            .page-title h1 {
-                font-size: 32px;
-            }
-
-            .stat-value {
-                font-size: 36px;
-            }
-
-            .charts-grid {
-                flex-wrap: nowrap;
-            }
+            body { font-size: 16px; }
+            .page-title h1 { font-size: 32px; }
+            .stat-value { font-size: 36px; }
+            .charts-grid { flex-wrap: nowrap; }
         }
 
-        /* ==================== SMALL MOBILE (360px and below) ==================== */
         @media (max-width: 360px) {
-            .sidebar {
-                width: 100%;
-            }
-
-            .sidebar-header {
-                padding: 15px;
-            }
-
-            .menu-item {
-                padding: 12px 15px;
-                font-size: 13px;
-            }
-
-            .stat-card {
-                padding: 15px;
-            }
-
-            .stat-value {
-                font-size: 24px;
-            }
-
-            .chart-container {
-                height: 200px;
-            }
-
-            .table-actions {
-                flex-direction: column;
-            }
-
-            .table-btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .sidebar { width: 100%; }
+            .sidebar-header { padding: 15px; }
+            .menu-item { padding: 12px 15px; font-size: 13px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 24px; }
+            .chart-container { height: 200px; }
+            .table-actions { flex-direction: column; }
+            .table-btn { width: 100%; justify-content: center; }
         }
 
-        /* ==================== LANDSCAPE ORIENTATION ==================== */
         @media (max-height: 600px) and (orientation: landscape) {
-            .sidebar {
-                overflow-y: auto;
-                height: 100vh;
-            }
-
-            .main-content {
-                padding: 15px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .chart-container {
-                height: 200px;
-            }
-
-            .action-buttons {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-
-            .action-btn {
-                padding: 10px 15px;
-                font-size: 13px;
-            }
-        }
-
-        /* ==================== TOUCH DEVICE OPTIMIZATIONS ==================== */
-        @media (hover: none) and (pointer: coarse) {
-            .menu-item,
-            .action-btn,
-            .table-btn,
-            .modal-btn {
-                min-height: 44px;
-            }
-
-            .notification-btn,
-            .mobile-menu-btn {
-                min-width: 44px;
-                min-height: 44px;
-            }
-
-            input,
-            select,
-            textarea,
-            button {
-                font-size: 16px !important; /* Prevents zoom on iOS */
-            }
-        }
-
-        /* ==================== DARK MODE SUPPORT ==================== */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --dark: #f1f5f9;
-                --gray: #94a3b8;
-                --light-gray: #334155;
-                --white: #1e293b;
-                --sidebar-bg: #0f172a;
-                --sidebar-hover: #1e293b;
-            }
-
-            body {
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            }
-
-            .stat-card,
-            .chart-card,
-            .data-table-container,
-            .modal-content {
-                background: #1e293b;
-                border: 1px solid var(--light-gray);
-            }
-
-            .data-table th {
-                background: #334155;
-                color: var(--dark);
-            }
-
-            .table-search input,
-            .period-select {
-                background: #334155;
-                border-color: var(--light-gray);
-                color: var(--dark);
-            }
-
-            .action-btn {
-                background: #334155;
-                color: var(--dark);
-            }
-
-            .floating-element {
-                opacity: 0.1;
-            }
-        }
-
-        /* ==================== PRINT STYLES ==================== */
-        @media print {
-            .sidebar,
-            .action-buttons,
-            .notification-btn,
-            .mobile-menu-btn,
-            .modal-overlay,
-            .toast-container {
-                display: none !important;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 0;
-            }
-
-            .stat-card,
-            .chart-card,
-            .data-table-container {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                break-inside: avoid;
-            }
+            .sidebar { overflow-y: auto; }
+            .main-content { padding: 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-container { height: 200px; }
         }
     </style>
 </head>
@@ -1175,8 +1263,9 @@
     <!-- ==================== SIDEBAR ==================== -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="logo-icon">
-                <i class="fas fa-dove"></i>
+            <div class="logo-wrapper">
+                <img src="./images/logo hash.jpg" alt="Hatch Social" class="logo-img" 
+                     onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/1006/1006363.png'">
             </div>
             <div class="logo-text">Hatch Social</div>
         </div>
@@ -1190,28 +1279,32 @@
             <a href="#" class="menu-item" data-page="users">
                 <i class="fas fa-users"></i>
                 <span>Users</span>
-                <span class="notification-badge">3</span>
+                <span class="notification-badge" id="usersNotification">0</span>
             </a>
             <a href="#" class="menu-item" data-page="interests">
                 <i class="fas fa-heart"></i>
                 <span>Interests</span>
+                <span class="notification-badge" id="interestsNotification">0</span>
             </a>
             <a href="#" class="menu-item" data-page="reports">
                 <i class="fas fa-flag"></i>
                 <span>Reports</span>
-                <span class="notification-badge">5</span>
+                <span class="notification-badge" id="reportsNotification">5</span>
             </a>
             <a href="#" class="menu-item" data-page="memberships">
                 <i class="fas fa-crown"></i>
                 <span>Memberships</span>
+                <span class="notification-badge" id="membershipsNotification">2</span>
             </a>
             <a href="#" class="menu-item" data-page="revenue">
                 <i class="fas fa-chart-line"></i>
                 <span>Revenue</span>
+                <span class="notification-badge" id="revenueNotification">3</span>
             </a>
             <a href="#" class="menu-item" data-page="moderation">
                 <i class="fas fa-shield-alt"></i>
                 <span>Moderation</span>
+                <span class="notification-badge" id="moderationNotification">7</span>
             </a>
         </div>
 
@@ -1240,7 +1333,7 @@
                 <p>Welcome back! Here's what's happening with your platform today.</p>
             </div>
             <div class="top-bar-actions">
-                <button class="notification-btn">
+                <button class="notification-btn" id="notificationBtn">
                     <i class="fas fa-bell"></i>
                     <span class="notification-count">5</span>
                 </button>
@@ -1254,7 +1347,7 @@
         <div class="page-content active" id="dashboard-page">
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <button class="action-btn" onclick="showToast('success', 'Quick action executed!')">
+                <button class="action-btn" onclick="quickAction()">
                     <i class="fas fa-bolt"></i> Quick Action
                 </button>
                 <button class="action-btn" onclick="exportData()">
@@ -1263,14 +1356,17 @@
                 <button class="action-btn" onclick="refreshDashboard()">
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
+                <button class="action-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i> Notifications
+                </button>
             </div>
 
             <!-- Stats Cards -->
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card" onclick="viewUsers()">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-value">2,847</div>
+                            <div class="stat-value" id="totalUsers">0</div>
                             <div class="stat-label">Total Users</div>
                         </div>
                         <div class="stat-icon icon-users">
@@ -1283,14 +1379,14 @@
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" onclick="viewInterests()">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-value">1,243</div>
-                            <div class="stat-label">Explorers</div>
+                            <div class="stat-value" id="totalInterests">0</div>
+                            <div class="stat-label">Total Interests</div>
                         </div>
                         <div class="stat-icon icon-explorers">
-                            <i class="fas fa-compass"></i>
+                            <i class="fas fa-heart"></i>
                         </div>
                     </div>
                     <div class="trend up">
@@ -1299,27 +1395,27 @@
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" onclick="viewReports()">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-value">856</div>
-                            <div class="stat-label">Creators</div>
+                            <div class="stat-value" id="totalReports">0</div>
+                            <div class="stat-label">Active Reports</div>
                         </div>
                         <div class="stat-icon icon-creators">
-                            <i class="fas fa-pen-fancy"></i>
+                            <i class="fas fa-flag"></i>
                         </div>
                     </div>
-                    <div class="trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>15.7% from last month</span>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>5.7% from last week</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card" onclick="viewRevenue()">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-value">+24.5%</div>
-                            <div class="stat-label">User Growth Rate</div>
+                            <div class="stat-value" id="totalRevenue">$0</div>
+                            <div class="stat-label">Total Revenue</div>
                         </div>
                         <div class="stat-icon icon-growth">
                             <i class="fas fa-chart-line"></i>
@@ -1327,7 +1423,7 @@
                     </div>
                     <div class="trend up">
                         <i class="fas fa-arrow-up"></i>
-                        <span>Highest this quarter</span>
+                        <span>24.5% from last month</span>
                     </div>
                 </div>
             </div>
@@ -1336,8 +1432,8 @@
             <div class="charts-grid">
                 <div class="chart-card">
                     <div class="chart-header">
-                        <h3>User Growth Rate</h3>
-                        <select class="period-select" id="growthPeriod">
+                        <h3>Platform Growth</h3>
+                        <select class="period-select" id="growthPeriod" onchange="updateGrowthChart()">
                             <option>Last 7 days</option>
                             <option>Last 30 days</option>
                             <option selected>Last 90 days</option>
@@ -1351,7 +1447,7 @@
                 <div class="chart-card">
                     <div class="chart-header">
                         <h3>Revenue Overview</h3>
-                        <select class="period-select" id="revenuePeriod">
+                        <select class="period-select" id="revenuePeriod" onchange="updateRevenueChart()">
                             <option>Monthly</option>
                             <option selected>Quarterly</option>
                             <option>Yearly</option>
@@ -1369,7 +1465,7 @@
                     <h3><i class="fas fa-history"></i> Recent Activity</h3>
                     <div class="table-search">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search activities..." id="activitySearch">
+                        <input type="text" placeholder="Search activities..." id="activitySearch" oninput="searchTable('activityTableBody')">
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
@@ -1384,35 +1480,8 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>John Doe</strong></td>
-                                <td>New user registered</td>
-                                <td><span class="status-badge status-active">Registration</span></td>
-                                <td>10 min ago</td>
-                                <td><span class="status-badge status-active">Completed</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="table-btn edit">
-                                            <i class="fas fa-eye"></i> View
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Sarah Williams</strong></td>
-                                <td>Upgraded to Pro plan</td>
-                                <td><span class="status-badge">Subscription</span></td>
-                                <td>45 min ago</td>
-                                <td><span class="status-badge status-active">Completed</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="table-btn edit">
-                                            <i class="fas fa-eye"></i> View
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="activityTableBody">
+                            <!-- Activities will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -1427,114 +1496,469 @@
             </div>
 
             <div class="action-buttons">
-                <button class="action-btn" onclick="openModal('addUser')">
+                <button class="action-btn" onclick="openAddModal('user')">
                     <i class="fas fa-user-plus"></i> Add New User
                 </button>
-                <button class="action-btn" onclick="exportUsers()">
+                <button class="action-btn" onclick="exportTableData('users')">
                     <i class="fas fa-file-export"></i> Export Users
+                </button>
+                <button class="action-btn" onclick="showBulkActions('users')">
+                    <i class="fas fa-cog"></i> Bulk Actions
                 </button>
             </div>
 
             <div class="data-table-container">
                 <div class="table-header">
-                    <h3><i class="fas fa-list"></i> All Users</h3>
+                    <h3><i class="fas fa-list"></i> All Users (<span id="usersCount">0</span>)</h3>
                     <div class="table-search">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search users..." id="userSearch">
+                        <input type="text" placeholder="Search users..." id="userSearch" oninput="searchTable('usersTableBody')">
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="data-table" id="usersTable">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="selectAllUsers" onchange="toggleSelectAll('users')"></th>
                                 <th>User</th>
                                 <th>Email</th>
                                 <th>Type</th>
                                 <th>Status</th>
+                                <th>Joined</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>John Doe</strong></td>
-                                <td>john@example.com</td>
-                                <td><span class="status-badge">Explorer</span></td>
-                                <td><span class="status-badge status-active">Active</span></td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="table-btn edit">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-                                        <button class="table-btn delete">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded here -->
                         </tbody>
                     </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedUsersCount">0 users selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedItems('users')" style="display: none;" id="deleteSelectedUsersBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Other pages simplified for mobile -->
+        <!-- ==================== INTERESTS PAGE ==================== -->
         <div class="page-content" id="interests-page">
             <div class="page-title">
                 <h1><i class="fas fa-heart"></i> Interests Management</h1>
                 <p>Manage user interests and track engagement analytics</p>
             </div>
-            <div class="empty-state">
-                <i class="fas fa-heart"></i>
-                <h3>Interests Management</h3>
-                <p>Manage user interests and engagement analytics</p>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddModal('interest')">
+                    <i class="fas fa-plus-circle"></i> Add New Interest
+                </button>
+                <button class="action-btn" onclick="exportTableData('interests')">
+                    <i class="fas fa-file-export"></i> Export Interests
+                </button>
+                <button class="action-btn" onclick="showAnalytics('interests')">
+                    <i class="fas fa-chart-pie"></i> View Analytics
+                </button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-heart"></i> All Interests (<span id="interestsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search interests..." id="interestSearch" oninput="searchTable('interestsTableBody')">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="interestsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllInterests" onchange="toggleSelectAll('interests')"></th>
+                                <th>Interest Name</th>
+                                <th>Category</th>
+                                <th>Total Users</th>
+                                <th>Engagement</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interestsTableBody">
+                            <!-- Interests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedInterestsCount">0 interests selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedItems('interests')" style="display: none;" id="deleteSelectedInterestsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
             </div>
         </div>
 
+        <!-- ==================== REPORTS PAGE ==================== -->
         <div class="page-content" id="reports-page">
             <div class="page-title">
                 <h1><i class="fas fa-flag"></i> Content Reports</h1>
                 <p>Review and take action on reported content</p>
             </div>
-            <div class="empty-state">
-                <i class="fas fa-flag"></i>
-                <h3>Content Reports</h3>
-                <p>Review and manage reported content</p>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddModal('report')">
+                    <i class="fas fa-flag"></i> Add New Report
+                </button>
+                <button class="action-btn" onclick="exportTableData('reports')">
+                    <i class="fas fa-file-export"></i> Export Reports
+                </button>
+                <button class="action-btn" onclick="resolveAllReports()">
+                    <i class="fas fa-check-circle"></i> Resolve All
+                </button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Active Reports (<span id="reportsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search reports..." id="reportSearch" oninput="searchTable('reportsTableBody')">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="reportsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllReports" onchange="toggleSelectAll('reports')"></th>
+                                <th>Report ID</th>
+                                <th>Content</th>
+                                <th>Reporter</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Reported On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <!-- Reports will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedReportsCount">0 reports selected</div>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="resolveSelectedReports()" style="display: none;" id="resolveSelectedReportsBtn">
+                            <i class="fas fa-check"></i> Resolve Selected
+                        </button>
+                        <button class="table-btn delete" onclick="deleteSelectedItems('reports')" style="display: none;" id="deleteSelectedReportsBtn">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- ==================== MEMBERSHIPS PAGE ==================== -->
         <div class="page-content" id="memberships-page">
             <div class="page-title">
                 <h1><i class="fas fa-crown"></i> Memberships</h1>
                 <p>Manage subscription plans and user memberships</p>
             </div>
-            <div class="empty-state">
-                <i class="fas fa-crown"></i>
-                <h3>Memberships</h3>
-                <p>Manage subscription plans and memberships</p>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddModal('membership')">
+                    <i class="fas fa-plus-circle"></i> Add New Plan
+                </button>
+                <button class="action-btn" onclick="exportTableData('memberships')">
+                    <i class="fas fa-file-export"></i> Export Memberships
+                </button>
+                <button class="action-btn" onclick="showRevenueChart()">
+                    <i class="fas fa-chart-bar"></i> View Revenue
+                </button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-crown"></i> Membership Plans (<span id="membershipsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search plans..." id="membershipSearch" oninput="searchTable('membershipsTableBody')">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="membershipsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllMemberships" onchange="toggleSelectAll('memberships')"></th>
+                                <th>Plan Name</th>
+                                <th>Price</th>
+                                <th>Duration</th>
+                                <th>Features</th>
+                                <th>Active Users</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membershipsTableBody">
+                            <!-- Memberships will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedMembershipsCount">0 plans selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedItems('memberships')" style="display: none;" id="deleteSelectedMembershipsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
             </div>
         </div>
 
+        <!-- ==================== REVENUE PAGE ==================== -->
         <div class="page-content" id="revenue-page">
             <div class="page-title">
                 <h1><i class="fas fa-chart-line"></i> Revenue Analytics</h1>
                 <p>Track income, expenses, and financial growth</p>
             </div>
-            <div class="empty-state">
-                <i class="fas fa-chart-bar"></i>
-                <h3>Revenue Analytics</h3>
-                <p>Track financial growth and analytics</p>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddModal('revenue')">
+                    <i class="fas fa-plus-circle"></i> Add Revenue Entry
+                </button>
+                <button class="action-btn" onclick="exportTableData('revenue')">
+                    <i class="fas fa-file-export"></i> Export Revenue
+                </button>
+                <button class="action-btn" onclick="generateFinancialReport()">
+                    <i class="fas fa-file-invoice-dollar"></i> Generate Report
+                </button>
+            </div>
+
+            <!-- Revenue Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalRevenueAmount">$0</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>24.5% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="monthlyRevenue">$0</div>
+                            <div class="stat-label">Monthly Revenue</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12.2% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="activeSubscriptions">0</div>
+                            <div class="stat-label">Active Subscriptions</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8.7% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgTransaction">$0</div>
+                            <div class="stat-label">Avg. Transaction</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5.3% from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-history"></i> Recent Transactions (<span id="revenueEntriesCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search transactions..." id="revenueSearch" oninput="searchTable('revenueTableBody')">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="revenueTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllRevenue" onchange="toggleSelectAll('revenue')"></th>
+                                <th>Transaction ID</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Plan</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="revenueTableBody">
+                            <!-- Revenue entries will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedRevenueCount">0 transactions selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedItems('revenue')" style="display: none;" id="deleteSelectedRevenueBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
             </div>
         </div>
 
+        <!-- ==================== MODERATION PAGE ==================== -->
         <div class="page-content" id="moderation-page">
             <div class="page-title">
                 <h1><i class="fas fa-shield-alt"></i> Content Moderation</h1>
                 <p>Monitor and moderate platform content</p>
             </div>
-            <div class="empty-state">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Content Moderation</h3>
-                <p>Monitor and moderate platform content</p>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddModal('moderation')">
+                    <i class="fas fa-plus-circle"></i> Add Moderation Rule
+                </button>
+                <button class="action-btn" onclick="exportTableData('moderation')">
+                    <i class="fas fa-file-export"></i> Export Logs
+                </button>
+                <button class="action-btn" onclick="runAutoModeration()">
+                    <i class="fas fa-robot"></i> Run Auto-Moderation
+                </button>
+            </div>
+
+            <!-- Moderation Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pendingModeration">0</div>
+                            <div class="stat-label">Pending Review</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>15.2% from last week</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="flaggedContent">0</div>
+                            <div class="stat-label">Flagged Content</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8.7% from last week</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="bannedUsers">0</div>
+                            <div class="stat-label">Banned Users</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3.2% from last week</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="moderationActions">0</div>
+                            <div class="stat-label">Actions Taken</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-hammer"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>22.5% from last week</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> Moderation Logs (<span id="moderationLogsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search logs..." id="moderationSearch" oninput="searchTable('moderationTableBody')">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="moderationTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllModeration" onchange="toggleSelectAll('moderation')"></th>
+                                <th>Log ID</th>
+                                <th>Content</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Moderator</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="moderationTableBody">
+                            <!-- Moderation logs will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedModerationCount">0 logs selected</div>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="approveSelectedModeration()" style="display: none;" id="approveSelectedModerationBtn">
+                            <i class="fas fa-check"></i> Approve Selected
+                        </button>
+                        <button class="table-btn delete" onclick="deleteSelectedItems('moderation')" style="display: none;" id="deleteSelectedModerationBtn">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1545,43 +1969,44 @@
         </div>
     </div>
 
-    <!-- ==================== MODALS ==================== -->
-    <!-- Add User Modal -->
-    <div class="modal-overlay" id="addUserModal">
+    <!-- ==================== UNIVERSAL MODAL ==================== -->
+    <div class="modal-overlay" id="universalModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-user-plus"></i> Add New User</h3>
-                <button class="modal-close" onclick="closeModal('addUser')">&times;</button>
+                <h3><i class="fas fa-edit"></i> <span id="modalTitle">Add Item</span></h3>
+                <button class="modal-close" onclick="closeUniversalModal()">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" placeholder="Enter full name">
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="Enter email address">
-                </div>
-                <div class="form-group">
-                    <label>User Type</label>
-                    <select>
-                        <option>Explorer</option>
-                        <option>Creator</option>
-                        <option>Admin</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select>
-                        <option>Active</option>
-                        <option>Inactive</option>
-                        <option>Pending</option>
-                    </select>
-                </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be loaded here -->
             </div>
             <div class="modal-footer">
-                <button class="modal-btn secondary" onclick="closeModal('addUser')">Cancel</button>
-                <button class="modal-btn primary" onclick="saveUser()">Add User</button>
+                <button class="modal-btn secondary" onclick="closeUniversalModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveItem()" id="saveItemBtn">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Action</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeConfirmModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="confirmAction()" id="confirmBtn">
+                    <i class="fas fa-check"></i> Confirm
+                </button>
             </div>
         </div>
     </div>
@@ -1590,7 +2015,78 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ==================== MOBILE RESPONSIVE JAVASCRIPT ====================
+        // ==================== DATA STORAGE ====================
+        // Sab data localStorage mein save karna
+        let appData = {
+            users: JSON.parse(localStorage.getItem('hatchUsers')) || [
+                { id: 1, name: "John Doe", email: "john@example.com", type: "explorer", status: "active", joinDate: "2024-01-15", notes: "Regular user" },
+                { id: 2, name: "Sarah Williams", email: "sarah@example.com", type: "creator", status: "active", joinDate: "2024-02-20", notes: "Premium creator" },
+                { id: 3, name: "Michael Chen", email: "michael@example.com", type: "explorer", status: "pending", joinDate: "2024-03-01", notes: "New signup" }
+            ],
+            
+            interests: JSON.parse(localStorage.getItem('hatchInterests')) || [
+                { id: 1, name: "Technology", category: "Tech", users: 245, engagement: "High", status: "active" },
+                { id: 2, name: "Photography", category: "Arts", users: 189, engagement: "Medium", status: "active" },
+                { id: 3, name: "Fitness", category: "Health", users: 312, engagement: "High", status: "active" },
+                { id: 4, name: "Cooking", category: "Food", users: 156, engagement: "Medium", status: "inactive" }
+            ],
+            
+            reports: JSON.parse(localStorage.getItem('hatchReports')) || [
+                { id: 1, content: "Inappropriate post", reporter: "user123", type: "Content", status: "pending", date: "2024-03-10" },
+                { id: 2, content: "Spam account", reporter: "mod456", type: "User", status: "investigating", date: "2024-03-09" },
+                { id: 3, content: "Copyright issue", reporter: "artist789", type: "Legal", status: "resolved", date: "2024-03-08" }
+            ],
+            
+            memberships: JSON.parse(localStorage.getItem('hatchMemberships')) || [
+                { id: 1, name: "Basic", price: "$9.99", duration: "Monthly", features: "Basic features", users: 125, status: "active" },
+                { id: 2, name: "Pro", price: "$19.99", duration: "Monthly", features: "All features", users: 68, status: "active" },
+                { id: 3, name: "Enterprise", price: "$49.99", duration: "Monthly", features: "Enterprise features", users: 12, status: "active" }
+            ],
+            
+            revenue: JSON.parse(localStorage.getItem('hatchRevenue')) || [
+                { id: 1, user: "John Doe", amount: "$19.99", type: "Subscription", plan: "Pro", date: "2024-03-10", status: "completed" },
+                { id: 2, user: "Sarah Williams", amount: "$9.99", type: "Subscription", plan: "Basic", date: "2024-03-09", status: "completed" },
+                { id: 3, user: "Michael Chen", amount: "$49.99", type: "One-time", plan: "Enterprise", date: "2024-03-08", status: "pending" }
+            ],
+            
+            moderation: JSON.parse(localStorage.getItem('hatchModeration')) || [
+                { id: 1, content: "Post #1234", user: "user123", action: "Flagged", moderator: "admin", date: "2024-03-10", status: "pending" },
+                { id: 2, content: "Comment #5678", user: "user456", action: "Removed", moderator: "auto-mod", date: "2024-03-09", status: "resolved" },
+                { id: 3, content: "Profile #9012", user: "user789", action: "Suspended", moderator: "admin", date: "2024-03-08", status: "active" }
+            ],
+            
+            activities: JSON.parse(localStorage.getItem('hatchActivities')) || [
+                { id: 1, userName: "John Doe", activity: "New user registered", type: "Registration", time: "10 min ago", status: "Completed" },
+                { id: 2, userName: "Sarah Williams", activity: "Upgraded to Pro plan", type: "Subscription", time: "45 min ago", status: "Completed" },
+                { id: 3, userName: "System", activity: "Daily backup completed", type: "System", time: "2 hours ago", status: "Completed" }
+            ]
+        };
+
+        // Save all data to localStorage
+        function saveAllData() {
+            localStorage.setItem('hatchUsers', JSON.stringify(appData.users));
+            localStorage.setItem('hatchInterests', JSON.stringify(appData.interests));
+            localStorage.setItem('hatchReports', JSON.stringify(appData.reports));
+            localStorage.setItem('hatchMemberships', JSON.stringify(appData.memberships));
+            localStorage.setItem('hatchRevenue', JSON.stringify(appData.revenue));
+            localStorage.setItem('hatchModeration', JSON.stringify(appData.moderation));
+            localStorage.setItem('hatchActivities', JSON.stringify(appData.activities));
+        }
+
+        // ==================== GLOBAL VARIABLES ====================
+        let currentItemId = null;
+        let currentItemType = null;
+        let selectedItems = {
+            users: new Set(),
+            interests: new Set(),
+            reports: new Set(),
+            memberships: new Set(),
+            revenue: new Set(),
+            moderation: new Set()
+        };
+        let confirmCallback = null;
+
+        // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             // Check authentication
             const currentAdmin = JSON.parse(sessionStorage.getItem('currentAdmin'));
@@ -1613,7 +2109,7 @@
                 document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : 'auto';
             });
 
-            // Close sidebar when clicking on menu item (mobile)
+            // Menu navigation
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1633,6 +2129,9 @@
                         page.classList.remove('active');
                     });
                     document.getElementById(pageId).classList.add('active');
+                    
+                    // Load page data
+                    loadPageData(this.getAttribute('data-page'));
                 });
             });
 
@@ -1650,23 +2149,17 @@
             // Initialize charts
             initializeCharts();
 
+            // Load all data
+            loadAllData();
+
             // Show welcome toast
             setTimeout(() => {
-                showToast('success', 'Welcome to Hatch Social Admin Dashboard!');
-            }, 1000);
+                showToast('success', `Welcome back, ${currentAdmin.name}! Dashboard loaded successfully.`);
+            }, 1500);
 
             // Handle window resize
             handleResize();
             window.addEventListener('resize', handleResize);
-
-            // Search functionality
-            document.getElementById('userSearch')?.addEventListener('input', function() {
-                searchTable('usersTable', this.value);
-            });
-
-            document.getElementById('activitySearch')?.addEventListener('input', function() {
-                searchTable('activityTable', this.value);
-            });
         });
 
         function handleResize() {
@@ -1688,6 +2181,1070 @@
             }
         }
 
+        // ==================== DATA LOADING FUNCTIONS ====================
+        function loadAllData() {
+            loadDashboardData();
+            loadUsersData();
+            loadInterestsData();
+            loadReportsData();
+            loadMembershipsData();
+            loadRevenueData();
+            loadModerationData();
+            loadActivitiesData();
+        }
+
+        function loadDashboardData() {
+            // Update stats
+            document.getElementById('totalUsers').textContent = appData.users.length.toLocaleString();
+            document.getElementById('totalInterests').textContent = appData.interests.length.toLocaleString();
+            document.getElementById('totalReports').textContent = appData.reports.filter(r => r.status !== 'resolved').length.toLocaleString();
+            
+            // Calculate total revenue
+            const totalRevenue = appData.revenue.reduce((sum, item) => {
+                const amount = parseFloat(item.amount.replace('$', '')) || 0;
+                return sum + amount;
+            }, 0);
+            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
+            
+            // Update notification badges
+            document.getElementById('usersNotification').textContent = appData.users.filter(u => u.status === 'pending').length;
+            document.getElementById('interestsNotification').textContent = appData.interests.filter(i => i.status === 'inactive').length;
+            document.getElementById('reportsNotification').textContent = appData.reports.filter(r => r.status === 'pending').length;
+            document.getElementById('membershipsNotification').textContent = appData.memberships.filter(m => m.status !== 'active').length;
+            document.getElementById('revenueNotification').textContent = appData.revenue.filter(r => r.status === 'pending').length;
+            document.getElementById('moderationNotification').textContent = appData.moderation.filter(m => m.status === 'pending').length;
+        }
+
+        function loadUsersData() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            appData.users.forEach(user => {
+                const row = document.createElement('tr');
+                row.dataset.id = user.id;
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-type="users" value="${user.id}" onchange="toggleItemSelection('users', ${user.id})"></td>
+                    <td><strong>${user.name}</strong></td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge">${user.type.charAt(0).toUpperCase() + user.type.slice(1)}</span></td>
+                    <td><span class="status-badge ${user.status === 'active' ? 'status-active' : user.status === 'pending' ? 'status-pending' : 'status-inactive'}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
+                    <td>${formatDate(user.joinDate)}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editItem('users', ${user.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteItem('users', ${user.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="table-btn view" onclick="viewItem('users', ${user.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('usersCount').textContent = appData.users.length;
+            updateSelectedCount('users');
+        }
+
+        function loadInterestsData() {
+            const tbody = document.getElementById('interestsTableBody');
+            tbody.innerHTML = '';
+            
+            appData.interests.forEach(interest => {
+                const row = document.createElement('tr');
+                row.dataset.id = interest.id;
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-type="interests" value="${interest.id}" onchange="toggleItemSelection('interests', ${interest.id})"></td>
+                    <td><strong>${interest.name}</strong></td>
+                    <td>${interest.category}</td>
+                    <td>${interest.users.toLocaleString()}</td>
+                    <td><span class="status-badge ${interest.engagement === 'High' ? 'status-active' : interest.engagement === 'Medium' ? 'status-pending' : 'status-inactive'}">${interest.engagement}</span></td>
+                    <td><span class="status-badge ${interest.status === 'active' ? 'status-active' : 'status-inactive'}">${interest.status.charAt(0).toUpperCase() + interest.status.slice(1)}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editItem('interests', ${interest.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteItem('interests', ${interest.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="table-btn view" onclick="viewItem('interests', ${interest.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('interestsCount').textContent = appData.interests.length;
+            updateSelectedCount('interests');
+        }
+
+        function loadReportsData() {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = '';
+            
+            appData.reports.forEach(report => {
+                const row = document.createElement('tr');
+                row.dataset.id = report.id;
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-type="reports" value="${report.id}" onchange="toggleItemSelection('reports', ${report.id})"></td>
+                    <td><strong>#${report.id.toString().padStart(4, '0')}</strong></td>
+                    <td>${report.content}</td>
+                    <td>${report.reporter}</td>
+                    <td><span class="status-badge">${report.type}</span></td>
+                    <td><span class="status-badge ${report.status === 'resolved' ? 'status-active' : report.status === 'investigating' ? 'status-pending' : 'status-inactive'}">${report.status.charAt(0).toUpperCase() + report.status.slice(1)}</span></td>
+                    <td>${formatDate(report.date)}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editItem('reports', ${report.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteItem('reports', ${report.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="table-btn view" onclick="viewItem('reports', ${report.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('reportsCount').textContent = appData.reports.length;
+            updateSelectedCount('reports');
+        }
+
+        function loadMembershipsData() {
+            const tbody = document.getElementById('membershipsTableBody');
+            tbody.innerHTML = '';
+            
+            appData.memberships.forEach(membership => {
+                const row = document.createElement('tr');
+                row.dataset.id = membership.id;
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-type="memberships" value="${membership.id}" onchange="toggleItemSelection('memberships', ${membership.id})"></td>
+                    <td><strong>${membership.name}</strong></td>
+                    <td>${membership.price}</td>
+                    <td>${membership.duration}</td>
+                    <td>${membership.features}</td>
+                    <td>${membership.users.toLocaleString()}</td>
+                    <td><span class="status-badge ${membership.status === 'active' ? 'status-active' : 'status-inactive'}">${membership.status.charAt(0).toUpperCase() + membership.status.slice(1)}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editItem('memberships', ${membership.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteItem('memberships', ${membership.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="table-btn view" onclick="viewItem('memberships', ${membership.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('membershipsCount').textContent = appData.memberships.length;
+            updateSelectedCount('memberships');
+        }
+
+        function loadRevenueData() {
+            const tbody = document.getElementById('revenueTableBody');
+            tbody.innerHTML = '';
+            
+            appData.revenue.forEach(item => {
+                const row = document.createElement('tr');
+                row.dataset.id = item.id;
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-type="revenue" value="${item.id}" onchange="toggleItemSelection('revenue', ${item.id})"></td>
+                    <td><strong>#${item.id.toString().padStart(4, '0')}</strong></td>
+                    <td>${item.user}</td>
+                    <td><strong>${item.amount}</strong></td>
+                    <td><span class="status-badge">${item.type}</span></td>
+                    <td>${item.plan}</td>
+                    <td>${formatDate(item.date)}</td>
+                    <td><span class="status-badge ${item.status === 'completed' ? 'status-active' : 'status-pending'}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editItem('revenue', ${item.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteItem('revenue', ${item.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="table-btn view" onclick="viewItem('revenue', ${item.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Update revenue stats
+            const totalRevenue = appData.revenue.reduce((sum, item) => {
+                const amount = parseFloat(item.amount.replace('$', '')) || 0;
+                return sum + amount;
+            }, 0);
+            
+            const monthlyRevenue = appData.revenue
+                .filter(item => new Date(item.date).getMonth() === new Date().getMonth())
+                .reduce((sum, item) => {
+                    const amount = parseFloat(item.amount.replace('$', '')) || 0;
+                    return sum + amount;
+                }, 0);
+            
+            const activeSubscriptions = appData.revenue.filter(item => item.type === 'Subscription' && item.status === 'completed').length;
+            const avgTransaction = appData.revenue.length > 0 ? totalRevenue / appData.revenue.length : 0;
+            
+            document.getElementById('totalRevenueAmount').textContent = `$${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('monthlyRevenue').textContent = `$${monthlyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('activeSubscriptions').textContent = activeSubscriptions.toLocaleString();
+            document.getElementById('avgTransaction').textContent = `$${avgTransaction.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('revenueEntriesCount').textContent = appData.revenue.length;
+            updateSelectedCount('revenue');
+        }
+
+        function loadModerationData() {
+            const tbody = document.getElementById('moderationTableBody');
+            tbody.innerHTML = '';
+            
+            appData.moderation.forEach(item => {
+                const row = document.createElement('tr');
+                row.dataset.id = item.id;
+                row.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-type="moderation" value="${item.id}" onchange="toggleItemSelection('moderation', ${item.id})"></td>
+                    <td><strong>#${item.id.toString().padStart(4, '0')}</strong></td>
+                    <td>${item.content}</td>
+                    <td>${item.user}</td>
+                    <td><span class="status-badge">${item.action}</span></td>
+                    <td>${item.moderator}</td>
+                    <td>${formatDate(item.date)}</td>
+                    <td><span class="status-badge ${item.status === 'resolved' ? 'status-active' : item.status === 'pending' ? 'status-pending' : 'status-inactive'}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editItem('moderation', ${item.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteItem('moderation', ${item.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            <button class="table-btn view" onclick="viewItem('moderation', ${item.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Update moderation stats
+            document.getElementById('pendingModeration').textContent = appData.moderation.filter(m => m.status === 'pending').length;
+            document.getElementById('flaggedContent').textContent = appData.moderation.filter(m => m.action === 'Flagged').length;
+            document.getElementById('bannedUsers').textContent = appData.moderation.filter(m => m.action === 'Suspended').length;
+            document.getElementById('moderationActions').textContent = appData.moderation.length;
+            document.getElementById('moderationLogsCount').textContent = appData.moderation.length;
+            updateSelectedCount('moderation');
+        }
+
+        function loadActivitiesData() {
+            const tbody = document.getElementById('activityTableBody');
+            tbody.innerHTML = '';
+            
+            appData.activities.forEach(activity => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${activity.userName}</strong></td>
+                    <td>${activity.activity}</td>
+                    <td><span class="status-badge">${activity.type}</span></td>
+                    <td>${activity.time}</td>
+                    <td><span class="status-badge ${activity.status === 'Completed' ? 'status-active' : activity.status === 'Pending' ? 'status-pending' : 'status-inactive'}">${activity.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn view" onclick="showToast('info', 'Activity: ${activity.activity}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadPageData(page) {
+            switch(page) {
+                case 'dashboard':
+                    loadDashboardData();
+                    loadActivitiesData();
+                    break;
+                case 'users':
+                    loadUsersData();
+                    break;
+                case 'interests':
+                    loadInterestsData();
+                    break;
+                case 'reports':
+                    loadReportsData();
+                    break;
+                case 'memberships':
+                    loadMembershipsData();
+                    break;
+                case 'revenue':
+                    loadRevenueData();
+                    break;
+                case 'moderation':
+                    loadModerationData();
+                    break;
+            }
+        }
+
+        // ==================== TABLE FUNCTIONS ====================
+        function searchTable(tableBodyId) {
+            const searchInput = event.target;
+            const searchTerm = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll(`#${tableBodyId} tr`);
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function toggleItemSelection(type, id) {
+            if (selectedItems[type].has(id)) {
+                selectedItems[type].delete(id);
+            } else {
+                selectedItems[type].add(id);
+            }
+            updateSelectedCount(type);
+        }
+
+        function toggleSelectAll(type) {
+            const checkboxes = document.querySelectorAll(`.item-checkbox[data-type="${type}"]`);
+            const selectAll = document.getElementById(`selectAll${type.charAt(0).toUpperCase() + type.slice(1)}`).checked;
+            
+            selectedItems[type].clear();
+            if (selectAll) {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedItems[type].add(parseInt(cb.value));
+                });
+            } else {
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateSelectedCount(type);
+        }
+
+        function updateSelectedCount(type) {
+            const count = selectedItems[type].size;
+            document.getElementById(`selected${type.charAt(0).toUpperCase() + type.slice(1)}Count`).textContent = 
+                `${count} ${type.slice(0, -1)}${count !== 1 ? 's' : ''} selected`;
+            
+            // Show/hide delete button
+            const deleteBtn = document.getElementById(`deleteSelected${type.charAt(0).toUpperCase() + type.slice(1)}Btn`);
+            if (deleteBtn) {
+                deleteBtn.style.display = count > 0 ? 'block' : 'none';
+            }
+            
+            // Show/hide resolve button for reports
+            if (type === 'reports') {
+                const resolveBtn = document.getElementById('resolveSelectedReportsBtn');
+                if (resolveBtn) {
+                    resolveBtn.style.display = count > 0 ? 'flex' : 'none';
+                }
+            }
+            
+            // Show/hide approve button for moderation
+            if (type === 'moderation') {
+                const approveBtn = document.getElementById('approveSelectedModerationBtn');
+                if (approveBtn) {
+                    approveBtn.style.display = count > 0 ? 'flex' : 'none';
+                }
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function openAddModal(type) {
+            currentItemType = type;
+            currentItemId = null;
+            
+            const titles = {
+                user: 'Add New User',
+                interest: 'Add New Interest',
+                report: 'Add New Report',
+                membership: 'Add Membership Plan',
+                revenue: 'Add Revenue Entry',
+                moderation: 'Add Moderation Rule'
+            };
+            
+            const forms = {
+                user: `
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="itemName" placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="itemEmail" placeholder="Enter email address">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user-tag"></i> User Type</label>
+                        <select id="itemType">
+                            <option value="explorer">Explorer</option>
+                            <option value="creator">Creator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="itemStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Join Date</label>
+                        <input type="date" id="itemDate" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                `,
+                
+                interest: `
+                    <div class="form-group">
+                        <label><i class="fas fa-heart"></i> Interest Name</label>
+                        <input type="text" id="itemName" placeholder="Enter interest name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Category</label>
+                        <select id="itemCategory">
+                            <option value="Tech">Technology</option>
+                            <option value="Arts">Arts</option>
+                            <option value="Health">Health</option>
+                            <option value="Food">Food</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Music">Music</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Total Users</label>
+                        <input type="number" id="itemUsers" placeholder="Enter number of users" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-chart-line"></i> Engagement Level</label>
+                        <select id="itemEngagement">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="itemStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                `,
+                
+                report: `
+                    <div class="form-group">
+                        <label><i class="fas fa-exclamation-triangle"></i> Content</label>
+                        <input type="text" id="itemContent" placeholder="Enter reported content">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Reporter</label>
+                        <input type="text" id="itemReporter" placeholder="Enter reporter name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Report Type</label>
+                        <select id="itemType">
+                            <option value="Content">Content</option>
+                            <option value="User">User</option>
+                            <option value="Legal">Legal</option>
+                            <option value="Spam">Spam</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="itemStatus">
+                            <option value="pending">Pending</option>
+                            <option value="investigating">Investigating</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="itemDate" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                `,
+                
+                membership: `
+                    <div class="form-group">
+                        <label><i class="fas fa-crown"></i> Plan Name</label>
+                        <input type="text" id="itemName" placeholder="Enter plan name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Price</label>
+                        <input type="text" id="itemPrice" placeholder="Enter price (e.g., $9.99)">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Duration</label>
+                        <select id="itemDuration">
+                            <option value="Monthly">Monthly</option>
+                            <option value="Yearly">Yearly</option>
+                            <option value="Lifetime">Lifetime</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-list"></i> Features</label>
+                        <textarea id="itemFeatures" placeholder="Enter features (comma separated)" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-users"></i> Active Users</label>
+                        <input type="number" id="itemUsers" placeholder="Enter number of users" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="itemStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                `,
+                
+                revenue: `
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> User</label>
+                        <input type="text" id="itemUser" placeholder="Enter user name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Amount</label>
+                        <input type="text" id="itemAmount" placeholder="Enter amount (e.g., $19.99)">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Type</label>
+                        <select id="itemType">
+                            <option value="Subscription">Subscription</option>
+                            <option value="One-time">One-time</option>
+                            <option value="Refund">Refund</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-crown"></i> Plan</label>
+                        <select id="itemPlan">
+                            <option value="Basic">Basic</option>
+                            <option value="Pro">Pro</option>
+                            <option value="Enterprise">Enterprise</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="itemDate" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="itemStatus">
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                `,
+                
+                moderation: `
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> Content</label>
+                        <input type="text" id="itemContent" placeholder="Enter content description">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> User</label>
+                        <input type="text" id="itemUser" placeholder="Enter user name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-hammer"></i> Action</label>
+                        <select id="itemAction">
+                            <option value="Flagged">Flagged</option>
+                            <option value="Removed">Removed</option>
+                            <option value="Suspended">Suspended</option>
+                            <option value="Warned">Warned</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user-shield"></i> Moderator</label>
+                        <input type="text" id="itemModerator" placeholder="Enter moderator name" value="admin">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="itemDate" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="itemStatus">
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                `
+            };
+            
+            document.getElementById('modalTitle').textContent = titles[type];
+            document.getElementById('modalBody').innerHTML = forms[type];
+            document.getElementById('saveItemBtn').innerHTML = '<i class="fas fa-save"></i> Add Item';
+            document.getElementById('universalModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function editItem(type, id) {
+            currentItemType = type;
+            currentItemId = id;
+            
+            const item = appData[type].find(item => item.id === id);
+            if (!item) return;
+            
+            // Open modal with existing data
+            openAddModal(type);
+            
+            // Populate form with existing data
+            setTimeout(() => {
+                if (type === 'user') {
+                    document.getElementById('itemName').value = item.name;
+                    document.getElementById('itemEmail').value = item.email;
+                    document.getElementById('itemType').value = item.type;
+                    document.getElementById('itemStatus').value = item.status;
+                    document.getElementById('itemDate').value = item.joinDate;
+                } else if (type === 'interest') {
+                    document.getElementById('itemName').value = item.name;
+                    document.getElementById('itemCategory').value = item.category;
+                    document.getElementById('itemUsers').value = item.users;
+                    document.getElementById('itemEngagement').value = item.engagement;
+                    document.getElementById('itemStatus').value = item.status;
+                } else if (type === 'report') {
+                    document.getElementById('itemContent').value = item.content;
+                    document.getElementById('itemReporter').value = item.reporter;
+                    document.getElementById('itemType').value = item.type;
+                    document.getElementById('itemStatus').value = item.status;
+                    document.getElementById('itemDate').value = item.date;
+                } else if (type === 'membership') {
+                    document.getElementById('itemName').value = item.name;
+                    document.getElementById('itemPrice').value = item.price;
+                    document.getElementById('itemDuration').value = item.duration;
+                    document.getElementById('itemFeatures').value = item.features;
+                    document.getElementById('itemUsers').value = item.users;
+                    document.getElementById('itemStatus').value = item.status;
+                } else if (type === 'revenue') {
+                    document.getElementById('itemUser').value = item.user;
+                    document.getElementById('itemAmount').value = item.amount;
+                    document.getElementById('itemType').value = item.type;
+                    document.getElementById('itemPlan').value = item.plan;
+                    document.getElementById('itemDate').value = item.date;
+                    document.getElementById('itemStatus').value = item.status;
+                } else if (type === 'moderation') {
+                    document.getElementById('itemContent').value = item.content;
+                    document.getElementById('itemUser').value = item.user;
+                    document.getElementById('itemAction').value = item.action;
+                    document.getElementById('itemModerator').value = item.moderator;
+                    document.getElementById('itemDate').value = item.date;
+                    document.getElementById('itemStatus').value = item.status;
+                }
+                
+                document.getElementById('modalTitle').textContent = `Edit ${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)}`;
+                document.getElementById('saveItemBtn').innerHTML = '<i class="fas fa-save"></i> Update Item';
+            }, 100);
+        }
+
+        function viewItem(type, id) {
+            const item = appData[type].find(item => item.id === id);
+            if (!item) return;
+            
+            let details = '';
+            if (type === 'user') {
+                details = `
+                    <strong>Name:</strong> ${item.name}<br>
+                    <strong>Email:</strong> ${item.email}<br>
+                    <strong>Type:</strong> ${item.type}<br>
+                    <strong>Status:</strong> ${item.status}<br>
+                    <strong>Joined:</strong> ${formatDate(item.joinDate)}<br>
+                    <strong>Notes:</strong> ${item.notes || 'None'}
+                `;
+            } else if (type === 'interest') {
+                details = `
+                    <strong>Name:</strong> ${item.name}<br>
+                    <strong>Category:</strong> ${item.category}<br>
+                    <strong>Total Users:</strong> ${item.users}<br>
+                    <strong>Engagement:</strong> ${item.engagement}<br>
+                    <strong>Status:</strong> ${item.status}
+                `;
+            }
+            // Add other types similarly...
+            
+            document.getElementById('confirmMessage').innerHTML = details;
+            document.getElementById('modalTitle').textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Details`;
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function saveItem() {
+            // Get form values based on type
+            let newItem;
+            
+            if (currentItemType === 'user') {
+                const name = document.getElementById('itemName').value.trim();
+                const email = document.getElementById('itemEmail').value.trim();
+                const type = document.getElementById('itemType').value;
+                const status = document.getElementById('itemStatus').value;
+                const date = document.getElementById('itemDate').value;
+                
+                if (!name || !email) {
+                    showToast('error', 'Please fill in all required fields');
+                    return;
+                }
+                
+                newItem = {
+                    id: currentItemId || getNextId(currentItemType),
+                    name,
+                    email,
+                    type,
+                    status,
+                    joinDate: date,
+                    notes: ''
+                };
+            } else if (currentItemType === 'interest') {
+                const name = document.getElementById('itemName').value.trim();
+                const category = document.getElementById('itemCategory').value;
+                const users = parseInt(document.getElementById('itemUsers').value) || 0;
+                const engagement = document.getElementById('itemEngagement').value;
+                const status = document.getElementById('itemStatus').value;
+                
+                if (!name) {
+                    showToast('error', 'Please fill in all required fields');
+                    return;
+                }
+                
+                newItem = {
+                    id: currentItemId || getNextId(currentItemType),
+                    name,
+                    category,
+                    users,
+                    engagement,
+                    status
+                };
+            } else if (currentItemType === 'report') {
+                const content = document.getElementById('itemContent').value.trim();
+                const reporter = document.getElementById('itemReporter').value.trim();
+                const type = document.getElementById('itemType').value;
+                const status = document.getElementById('itemStatus').value;
+                const date = document.getElementById('itemDate').value;
+                
+                if (!content || !reporter) {
+                    showToast('error', 'Please fill in all required fields');
+                    return;
+                }
+                
+                newItem = {
+                    id: currentItemId || getNextId(currentItemType),
+                    content,
+                    reporter,
+                    type,
+                    status,
+                    date
+                };
+            } else if (currentItemType === 'membership') {
+                const name = document.getElementById('itemName').value.trim();
+                const price = document.getElementById('itemPrice').value.trim();
+                const duration = document.getElementById('itemDuration').value;
+                const features = document.getElementById('itemFeatures').value.trim();
+                const users = parseInt(document.getElementById('itemUsers').value) || 0;
+                const status = document.getElementById('itemStatus').value;
+                
+                if (!name || !price) {
+                    showToast('error', 'Please fill in all required fields');
+                    return;
+                }
+                
+                newItem = {
+                    id: currentItemId || getNextId(currentItemType),
+                    name,
+                    price,
+                    duration,
+                    features,
+                    users,
+                    status
+                };
+            } else if (currentItemType === 'revenue') {
+                const user = document.getElementById('itemUser').value.trim();
+                const amount = document.getElementById('itemAmount').value.trim();
+                const type = document.getElementById('itemType').value;
+                const plan = document.getElementById('itemPlan').value;
+                const date = document.getElementById('itemDate').value;
+                const status = document.getElementById('itemStatus').value;
+                
+                if (!user || !amount) {
+                    showToast('error', 'Please fill in all required fields');
+                    return;
+                }
+                
+                newItem = {
+                    id: currentItemId || getNextId(currentItemType),
+                    user,
+                    amount,
+                    type,
+                    plan,
+                    date,
+                    status
+                };
+            } else if (currentItemType === 'moderation') {
+                const content = document.getElementById('itemContent').value.trim();
+                const user = document.getElementById('itemUser').value.trim();
+                const action = document.getElementById('itemAction').value;
+                const moderator = document.getElementById('itemModerator').value.trim();
+                const date = document.getElementById('itemDate').value;
+                const status = document.getElementById('itemStatus').value;
+                
+                if (!content || !user) {
+                    showToast('error', 'Please fill in all required fields');
+                    return;
+                }
+                
+                newItem = {
+                    id: currentItemId || getNextId(currentItemType),
+                    content,
+                    user,
+                    action,
+                    moderator,
+                    date,
+                    status
+                };
+            }
+            
+            // Add or update item
+            if (currentItemId) {
+                // Update existing item
+                const index = appData[currentItemType].findIndex(item => item.id === currentItemId);
+                if (index !== -1) {
+                    appData[currentItemType][index] = { ...appData[currentItemType][index], ...newItem };
+                    showToast('success', `${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)} updated successfully!`);
+                }
+            } else {
+                // Add new item
+                appData[currentItemType].push(newItem);
+                showToast('success', `${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)} added successfully!`);
+            }
+            
+            // Add activity
+            appData.activities.unshift({
+                id: appData.activities.length + 1,
+                userName: 'Admin',
+                activity: `${currentItemId ? 'Updated' : 'Added'} ${currentItemType}: ${newItem.name || newItem.content || newItem.user}`,
+                type: currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1),
+                time: 'Just now',
+                status: 'Completed'
+            });
+            
+            // Save data
+            saveAllData();
+            
+            // Reload data
+            loadPageData(currentItemType);
+            loadDashboardData();
+            
+            // Close modal
+            closeUniversalModal();
+        }
+
+        function deleteItem(type, id) {
+            const item = appData[type].find(item => item.id === id);
+            if (!item) return;
+
+            document.getElementById('confirmMessage').textContent = 
+                `Are you sure you want to delete this ${type.slice(0, -1)}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete';
+            
+            confirmCallback = function() {
+                // Delete item
+                appData[type] = appData[type].filter(item => item.id !== id);
+                
+                // Add activity
+                appData.activities.unshift({
+                    id: appData.activities.length + 1,
+                    userName: 'System',
+                    activity: `Deleted ${type.slice(0, -1)}: ${item.name || item.content || item.user}`,
+                    type: type.charAt(0).toUpperCase() + type.slice(1),
+                    time: 'Just now',
+                    status: 'Completed'
+                });
+                
+                // Save data
+                saveAllData();
+                
+                // Reload data
+                loadPageData(type);
+                loadDashboardData();
+                
+                showToast('success', `${type.slice(0, -1).charAt(0).toUpperCase() + type.slice(0, -1).slice(1)} deleted successfully!`);
+                closeConfirmModal();
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function deleteSelectedItems(type) {
+            const count = selectedItems[type].size;
+            if (count === 0) return;
+
+            document.getElementById('confirmMessage').textContent = 
+                `Are you sure you want to delete ${count} ${type.slice(0, -1)}${count !== 1 ? 's' : ''}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
+            
+            confirmCallback = function() {
+                // Delete selected items
+                const names = [];
+                appData[type] = appData[type].filter(item => {
+                    if (selectedItems[type].has(item.id)) {
+                        names.push(item.name || item.content || item.user);
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // Clear selection
+                selectedItems[type].clear();
+                document.getElementById(`selectAll${type.charAt(0).toUpperCase() + type.slice(1)}`).checked = false;
+                
+                // Add activity
+                appData.activities.unshift({
+                    id: appData.activities.length + 1,
+                    userName: 'System',
+                    activity: `Deleted ${count} ${type.slice(0, -1)}${count !== 1 ? 's' : ''}`,
+                    type: type.charAt(0).toUpperCase() + type.slice(1),
+                    time: 'Just now',
+                    status: 'Completed'
+                });
+                
+                // Save data
+                saveAllData();
+                
+                // Reload data
+                loadPageData(type);
+                loadDashboardData();
+                
+                showToast('success', `${count} ${type.slice(0, -1)}${count !== 1 ? 's' : ''} deleted successfully!`);
+                closeConfirmModal();
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function resolveSelectedReports() {
+            const count = selectedItems.reports.size;
+            if (count === 0) return;
+            
+            selectedItems.reports.forEach(id => {
+                const report = appData.reports.find(r => r.id === id);
+                if (report) {
+                    report.status = 'resolved';
+                }
+            });
+            
+            // Add activity
+            appData.activities.unshift({
+                id: appData.activities.length + 1,
+                userName: 'Admin',
+                activity: `Resolved ${count} report${count !== 1 ? 's' : ''}`,
+                type: 'Report',
+                time: 'Just now',
+                status: 'Completed'
+            });
+            
+            // Clear selection
+            selectedItems.reports.clear();
+            document.getElementById('selectAllReports').checked = false;
+            
+            // Save data
+            saveAllData();
+            
+            // Reload data
+            loadPageData('reports');
+            loadDashboardData();
+            
+            showToast('success', `${count} report${count !== 1 ? 's' : ''} resolved successfully!`);
+        }
+
+        function approveSelectedModeration() {
+            const count = selectedItems.moderation.size;
+            if (count === 0) return;
+            
+            selectedItems.moderation.forEach(id => {
+                const item = appData.moderation.find(m => m.id === id);
+                if (item) {
+                    item.status = 'resolved';
+                }
+            });
+            
+            // Add activity
+            appData.activities.unshift({
+                id: appData.activities.length + 1,
+                userName: 'Admin',
+                activity: `Approved ${count} moderation action${count !== 1 ? 's' : ''}`,
+                type: 'Moderation',
+                time: 'Just now',
+                status: 'Completed'
+            });
+            
+            // Clear selection
+            selectedItems.moderation.clear();
+            document.getElementById('selectAllModeration').checked = false;
+            
+            // Save data
+            saveAllData();
+            
+            // Reload data
+            loadPageData('moderation');
+            loadDashboardData();
+            
+            showToast('success', `${count} moderation action${count !== 1 ? 's' : ''} approved successfully!`);
+        }
+
+        function getNextId(type) {
+            const items = appData[type];
+            return items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+        }
+
+        function closeUniversalModal() {
+            document.getElementById('universalModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentItemId = null;
+            currentItemType = null;
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            confirmCallback = null;
+            document.getElementById('confirmBtn').style.display = 'block';
+        }
+
+        function confirmAction() {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+        }
+
+        // ==================== CHART FUNCTIONS ====================
         function initializeCharts() {
             // Growth Chart
             const growthCtx = document.getElementById('growthChart')?.getContext('2d');
@@ -1698,28 +3255,55 @@
                         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                         datasets: [{
                             label: 'User Growth',
-                            data: [1200, 1500, 1800, 2100, 2400, 2847],
+                            data: [1200, 1500, 1800, 2100, 2400, appData.users.length * 100],
                             borderColor: 'var(--primary)',
                             backgroundColor: 'rgba(58, 87, 232, 0.1)',
                             borderWidth: 2,
                             fill: true,
-                            tension: 0.4
+                            tension: 0.4,
+                            pointBackgroundColor: 'var(--primary)',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false }
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'var(--primary)',
+                                borderWidth: 1
+                            }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                }
                             },
                             x: {
-                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                }
                             }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
                         }
                     }
                 });
@@ -1734,25 +3318,57 @@
                         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                         datasets: [{
                             label: 'Revenue ($)',
-                            data: [4200, 5200, 6100, 7300, 8200, 9450],
-                            backgroundColor: 'rgba(58, 87, 232, 0.7)',
+                            data: [4200, 5200, 6100, 7300, 8200, appData.revenue.length * 50],
+                            backgroundColor: [
+                                'rgba(58, 87, 232, 0.7)',
+                                'rgba(58, 87, 232, 0.8)',
+                                'rgba(58, 87, 232, 0.9)',
+                                'rgba(124, 77, 255, 0.7)',
+                                'rgba(124, 77, 255, 0.8)',
+                                'rgba(124, 77, 255, 0.9)'
+                            ],
                             borderColor: 'var(--primary)',
-                            borderWidth: 1
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false }
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'var(--primary)',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Revenue: $${context.raw.toLocaleString()}`;
+                                    }
+                                }
+                            }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString();
+                                    }
+                                }
                             },
                             x: {
-                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                }
                             }
                         }
                     }
@@ -1760,29 +3376,17 @@
             }
         }
 
-        function searchTable(tableId, searchTerm) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-            
-            const rows = table.querySelectorAll('tbody tr');
-            const term = searchTerm.toLowerCase();
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(term) ? '' : 'none';
-            });
+        function updateGrowthChart() {
+            const period = document.getElementById('growthPeriod').value;
+            showToast('info', `Growth chart updated for: ${period}`);
         }
 
-        function openModal(modalId) {
-            document.getElementById(modalId + 'Modal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+        function updateRevenueChart() {
+            const period = document.getElementById('revenuePeriod').value;
+            showToast('info', `Revenue chart updated for: ${period}`);
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId + 'Modal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
+        // ==================== UTILITY FUNCTIONS ====================
         function showToast(type, message) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1803,44 +3407,136 @@
                     <h4>${type.charAt(0).toUpperCase() + type.slice(1)}</h4>
                     <p>${message}</p>
                 </div>
+                <button class="toast-close" style="margin-left: auto; background: none; border: none; color: var(--gray); cursor: pointer;" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
             `;
 
             container.appendChild(toast);
 
             // Remove toast after 5 seconds
             setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 300);
+                if (toast.parentElement) {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }
             }, 5000);
         }
 
-        function saveUser() {
-            showToast('success', 'User added successfully!');
-            closeModal('addUser');
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // ==================== ACTION FUNCTIONS ====================
+        function quickAction() {
+            showToast('success', 'Quick action executed successfully!');
         }
 
         function exportData() {
-            showToast('info', 'Exporting data...');
+            showToast('info', 'Exporting dashboard data...');
+            setTimeout(() => {
+                showToast('success', 'Data exported successfully!');
+            }, 2000);
         }
 
-        function exportUsers() {
-            showToast('info', 'Exporting users...');
+        function exportTableData(type) {
+            showToast('info', `Exporting ${type} data...`);
+            setTimeout(() => {
+                showToast('success', `${type.charAt(0).toUpperCase() + type.slice(1)} exported successfully!`);
+            }, 2000);
         }
 
         function refreshDashboard() {
-            showToast('success', 'Dashboard refreshed!');
+            showToast('info', 'Refreshing dashboard...');
+            setTimeout(() => {
+                loadAllData();
+                showToast('success', 'Dashboard refreshed!');
+            }, 1000);
         }
 
-        // Logout function
+        function showBulkActions(type) {
+            showToast('info', `Opening bulk actions for ${type}...`);
+        }
+
+        function showAnalytics(type) {
+            showToast('info', `Showing analytics for ${type}...`);
+        }
+
+        function resolveAllReports() {
+            const count = appData.reports.filter(r => r.status !== 'resolved').length;
+            appData.reports.forEach(report => {
+                report.status = 'resolved';
+            });
+            
+            saveAllData();
+            loadPageData('reports');
+            loadDashboardData();
+            
+            showToast('success', `All ${count} reports resolved successfully!`);
+        }
+
+        function generateFinancialReport() {
+            showToast('info', 'Generating financial report...');
+            setTimeout(() => {
+                showToast('success', 'Financial report generated successfully!');
+            }, 2000);
+        }
+
+        function runAutoModeration() {
+            showToast('info', 'Running auto-moderation...');
+            setTimeout(() => {
+                showToast('success', 'Auto-moderation completed!');
+            }, 2000);
+        }
+
+        function showNotifications() {
+            showToast('info', 'You have 5 new notifications');
+        }
+
+        function viewUsers() {
+            document.querySelector('[data-page="users"]').click();
+        }
+
+        function viewInterests() {
+            document.querySelector('[data-page="interests"]').click();
+        }
+
+        function viewReports() {
+            document.querySelector('[data-page="reports"]').click();
+        }
+
+        function viewRevenue() {
+            document.querySelector('[data-page="revenue"]').click();
+        }
+
+        // ==================== LOGOUT ====================
         document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to logout?')) {
+            showToast('warning', 'Logging out...');
+            setTimeout(() => {
                 sessionStorage.removeItem('currentAdmin');
                 window.location.href = 'index.html';
+            }, 1500);
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeUniversalModal();
+                closeConfirmModal();
+                if (window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
             }
         });
 
-        // Close modal when clicking outside
+        // Close modals when clicking outside
         document.querySelectorAll('.modal-overlay').forEach(modal => {
             modal.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -1850,19 +3546,8 @@
             });
         });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Escape to close modals and sidebar
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.style.display = 'none';
-                });
-                if (window.innerWidth < 768) {
-                    document.getElementById('sidebar').classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                }
-            }
-        });
+        // Initial data save
+        saveAllData();
     </script>
 </body>
 </html>
