@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatch Social | Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-light: #e8f0fe;
+            --primary-dark: #0d62d9;
+            --secondary: #ff4757;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #dadce0;
+            --bg: #f8fafd;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1a2236;
+            --sidebar-hover: #252f48;
+            --success: #2ed573;
+            --warning: #ffa502;
+            --danger: #ff4757;
+            --info: #2d8cf0;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ==================== SIDEBAR VIP DESIGN ==================== */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.3);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-menu {
+            padding: 25px 0;
+        }
+
+        .menu-title {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0 25px 15px;
+            margin-top: 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.6s;
+        }
+
+        .menu-item:hover::before {
+            left: 100%;
+        }
+
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(26, 115, 232, 0.15), transparent);
+            color: white;
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-item i {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            right: 25px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
+        }
+
+        .user-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-info p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .version {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        /* ==================== MAIN CONTENT VIP ==================== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 35px;
+            transition: var(--transition);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .page-title h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 16px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .notification-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 26px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 8px;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            padding: 14px 25px;
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1);
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.2);
+        }
+
+        .action-btn.success {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .action-btn.success:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.danger {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .action-btn.danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Stats Cards VIP */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 45px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon-users { background: linear-gradient(135deg, #1a73e8, #4285f4); }
+        .icon-explorers { background: linear-gradient(135deg, #34a853, #0f9d58); }
+        .icon-creators { background: linear-gradient(135deg, #fbbc05, #f29900); }
+        .icon-growth { background: linear-gradient(135deg, #ea4335, #d93025); }
+        .icon-revenue { background: linear-gradient(135deg, #9b51e0, #7b3fe4); }
+        .icon-members { background: linear-gradient(135deg, #2d8cf0, #1a73e8); }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .trend.up { color: var(--success); }
+        .trend.down { color: var(--danger); }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Charts Section VIP */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 45px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .period-select {
+            padding: 10px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            background: white;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .period-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .chart-container {
+            height: 320px;
+            position: relative;
+        }
+
+        /* Data Tables VIP */
+        .data-table-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .table-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-search {
+            position: relative;
+            width: 300px;
+        }
+
+        .table-search input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .table-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .table-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--bg);
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--light-gray);
+            font-size: 15px;
+        }
+
+        .data-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            color: var(--gray);
+            font-size: 15px;
+        }
+
+        .data-table tr:hover {
+            background: var(--bg);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .table-btn.edit {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .table-btn.edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .table-btn.delete {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
+        }
+
+        .table-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active { background: rgba(46, 213, 115, 0.1); color: var(--success); }
+        .status-inactive { background: rgba(255, 71, 87, 0.1); color: var(--danger); }
+        .status-pending { background: rgba(255, 165, 2, 0.1); color: var(--warning); }
+
+        /* Modal VIP */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            animation: modalSlideUp 0.4s;
+        }
+
+        @keyframes modalSlideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--dark);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            background: var(--bg);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .modal-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .modal-btn.secondary:hover {
+            background: #d1d9e6;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: toastSlideIn 0.3s;
+            border-left: 5px solid var(--primary);
+            max-width: 350px;
+        }
+
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .toast.success .toast-icon { background: var(--success); }
+        .toast.error .toast-icon { background: var(--danger); }
+        .toast.warning .toast-icon { background: var(--warning); }
+
+        .toast-content h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .toast-content p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 300px;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 25px;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            .top-bar-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .table-search {
+                width: 100%;
+            }
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .stat-value {
+                font-size: 30px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .table-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== SIDEBAR ==================== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <i class="fas fa-dove"></i>
+            </div>
+            <div class="logo-text">Hatch Social</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-title">MAIN NAVIGATION</div>
+            <a href="#" class="menu-item active" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item" data-page="users">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </a>
+            <a href="#" class="menu-item" data-page="interests">
+                <i class="fas fa-heart"></i>
+                <span>Interests</span>
+            </a>
+            <a href="#" class="menu-item" data-page="events">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="#" class="menu-item" data-page="hashtags">
+                <i class="fas fa-hashtag"></i>
+                <span>Hashtags</span>
+            </a>
+            <a href="#" class="menu-item" data-page="reports">
+                <i class="fas fa-flag"></i>
+                <span>Reports</span>
+                <span class="notification-badge" id="reportBadge">3</span>
+            </a>
+            <a href="#" class="menu-item" data-page="memberships">
+                <i class="fas fa-crown"></i>
+                <span>Memberships</span>
+            </a>
+            <a href="#" class="menu-item" data-page="revenue">
+                <i class="fas fa-chart-line"></i>
+                <span>Revenue</span>
+            </a>
+            <a href="#" class="menu-item" data-page="shops">
+                <i class="fas fa-store"></i>
+                <span>Shops</span>
+            </a>
+            <a href="#" class="menu-item" data-page="moderation">
+                <i class="fas fa-shield-alt"></i>
+                <span>Moderation</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">M</div>
+                <div class="user-info">
+                    <h4 id="userName">Mo Roberts</h4>
+                    <p id="userEmail">mo.roberts@onestopdesigning.com</p>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+            <div class="version">v1.2.0</div>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-title">
+                <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                <p>Welcome back! Here's what's happening with your platform today.</p>
+            </div>
+            <div class="top-bar-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount">5</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== DASHBOARD PAGE ==================== -->
+        <div class="page-content active" id="dashboard-page">
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="showToast('success', 'Quick action executed!')">
+                    <i class="fas fa-bolt"></i> Quick Action
+                </button>
+                <button class="action-btn success" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <button class="action-btn" onclick="refreshDashboard()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value">2,847</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12.5% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value">1,243</div>
+                            <div class="stat-label">Explorers</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8.2% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value">856</div>
+                            <div class="stat-label">Creators</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>15.7% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value">+24.5%</div>
+                            <div class="stat-label">User Growth Rate</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Highest this quarter</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>User Growth Rate</h3>
+                        <select class="period-select" id="growthPeriod">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option selected>Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Revenue Overview</h3>
+                        <select class="period-select" id="revenuePeriod">
+                            <option>Monthly</option>
+                            <option selected>Quarterly</option>
+                            <option>Yearly</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search activities..." id="activitySearch">
+                    </div>
+                </div>
+                <table class="data-table" id="activityTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Activity</th>
+                            <th>Type</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Activities loaded by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== USERS PAGE ==================== -->
+        <div class="page-content" id="users-page">
+            <div class="page-title">
+                <h1><i class="fas fa-users"></i> Users Management</h1>
+                <p>Manage all users, explorers, and creators on your platform</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openModal('addUser')">
+                    <i class="fas fa-user-plus"></i> Add New User
+                </button>
+                <button class="action-btn success" onclick="exportUsers()">
+                    <i class="fas fa-file-export"></i> Export Users
+                </button>
+                <button class="action-btn" onclick="bulkAction('users')">
+                    <i class="fas fa-tasks"></i> Bulk Actions
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="activeUsers">0</div>
+                            <div class="stat-label">Active Today</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="newUsers">0</div>
+                            <div class="stat-label">New This Week</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="premiumUsers">0</div>
+                            <div class="stat-label">Premium Users</div>
+                        </div>
+                        <div class="stat-icon icon-members">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Users</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search users..." id="userSearch" onkeyup="searchUsers()">
+                    </div>
+                </div>
+                <table class="data-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllUsers"></th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users loaded by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== INTERESTS PAGE ==================== -->
+        <div class="page-content" id="interests-page">
+            <div class="page-title">
+                <h1><i class="fas fa-heart"></i> Interests Management</h1>
+                <p>Manage user interests and track engagement analytics</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openModal('addInterest')">
+                    <i class="fas fa-plus-circle"></i> Add New Interest
+                </button>
+                <button class="action-btn" onclick="refreshInterests()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-chart-pie"></i> Top Interests</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search interests..." id="interestSearch">
+                    </div>
+                </div>
+                <table class="data-table" id="interestsTable">
+                    <thead>
+                        <tr>
+                            <th>Interest</th>
+                            <th>Users</th>
+                            <th>Engagement</th>
+                            <th>Trend</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="interestsTableBody">
+                        <!-- Interests loaded by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== REPORTS PAGE ==================== -->
+        <div class="page-content" id="reports-page">
+            <div class="page-title">
+                <h1><i class="fas fa-flag"></i> Content Reports</h1>
+                <p>Review and take action on reported content</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pendingReports">3</div>
+                            <div class="stat-label">Pending Reports</div>
+                        </div>
+                        <div class="stat-icon icon-growth" style="background: linear-gradient(135deg, #ffa502, #f29900);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="resolvedReports">24</div>
+                            <div class="stat-label">Resolved Today</div>
+                        </div>
+                        <div class="stat-icon icon-users" style="background: linear-gradient(135deg, #2ed573, #1db954);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Pending Reports</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search reports..." id="reportSearch">
+                    </div>
+                </div>
+                <table class="data-table" id="reportsTable">
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Content</th>
+                            <th>Reported By</th>
+                            <th>Reason</th>
+                            <th>Priority</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        <!-- Reports loaded by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== MEMBERSHIPS PAGE ==================== -->
+        <div class="page-content" id="memberships-page">
+            <div class="page-title">
+                <h1><i class="fas fa-crown"></i> Memberships & Subscriptions</h1>
+                <p>Manage subscription plans and user memberships</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openModal('addPlan')">
+                    <i class="fas fa-plus"></i> Add New Plan
+                </button>
+                <button class="action-btn success" onclick="openModal('statsModal')">
+                    <i class="fas fa-chart-bar"></i> View Analytics
+                </button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-money-check-alt"></i> Subscription Plans</h3>
+                </div>
+                <table class="data-table" id="plansTable">
+                    <thead>
+                        <tr>
+                            <th>Plan Name</th>
+                            <th>Price</th>
+                            <th>Subscribers</th>
+                            <th>Revenue</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="plansTableBody">
+                        <!-- Plans loaded by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== OTHER PAGES (Simplified) ==================== -->
+        <div class="page-content" id="revenue-page">
+            <div class="page-title">
+                <h1><i class="fas fa-chart-line"></i> Revenue Analytics</h1>
+                <p>Track income, expenses, and financial growth</p>
+            </div>
+            <div class="empty-state">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Revenue Analytics</h3>
+                <p>Detailed revenue reports and analytics will be displayed here.</p>
+            </div>
+        </div>
+
+        <div class="page-content" id="shops-page">
+            <div class="page-title">
+                <h1><i class="fas fa-store"></i> Shops Management</h1>
+                <p>Manage stores and product listings</p>
+            </div>
+            <div class="empty-state">
+                <i class="fas fa-store"></i>
+                <h3>Shops Management</h3>
+                <p>Shop management interface will be displayed here.</p>
+            </div>
+        </div>
+
+        <div class="page-content" id="events-page">
+            <div class="page-title">
+                <h1><i class="fas fa-calendar-alt"></i> Events Management</h1>
+                <p>Create and manage platform events</p>
+            </div>
+            <div class="empty-state">
+                <i class="fas fa-calendar"></i>
+                <h3>Events Management</h3>
+                <p>Event creation and management interface will be displayed here.</p>
+            </div>
+        </div>
+
+        <div class="page-content" id="hashtags-page">
+            <div class="page-title">
+                <h1><i class="fas fa-hashtag"></i> Hashtags Analytics</h1>
+                <p>Track trending hashtags and usage</p>
+            </div>
+            <div class="empty-state">
+                <i class="fas fa-hashtag"></i>
+                <h3>Hashtags Analytics</h3>
+                <p>Hashtag tracking and analytics will be displayed here.</p>
+            </div>
+        </div>
+
+        <div class="page-content" id="moderation-page">
+            <div class="page-title">
+                <h1><i class="fas fa-shield-alt"></i> Content Moderation</h1>
+                <p>Monitor and moderate platform content</p>
+            </div>
+            <div class="empty-state">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Content Moderation</h3>
+                <p>Content moderation tools will be displayed here.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="dashboard-footer">
+            <p>© 2025 Hatch Social. All rights reserved. | Admin Dashboard v1.2.0</p>
+            <p>Data last updated: <span id="lastUpdated"></span></p>
+        </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+    <!-- Add User Modal -->
+    <div class="modal-overlay" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add New User</h3>
+                <button class="modal-close" onclick="closeModal('addUser')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="userNameInput" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="userEmailInput" placeholder="Enter email address">
+                </div>
+                <div class="form-group">
+                    <label>User Type</label>
+                    <select id="userTypeInput">
+                        <option value="explorer">Explorer</option>
+                        <option value="creator">Creator</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="userPasswordInput" placeholder="Enter password">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="userStatusInput">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('addUser')">Cancel</button>
+                <button class="modal-btn primary" onclick="saveUser()">Add User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Interest Modal -->
+    <div class="modal-overlay" id="addInterestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-heart"></i> Add New Interest</h3>
+                <button class="modal-close" onclick="closeModal('addInterest')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Interest Name</label>
+                    <input type="text" id="interestNameInput" placeholder="e.g., Technology, Fashion, Travel">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="interestDescInput" placeholder="Describe this interest"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="interestCategoryInput">
+                        <option value="technology">Technology</option>
+                        <option value="lifestyle">Lifestyle</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="business">Business</option>
+                        <option value="education">Education</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Icon</label>
+                    <select id="interestIconInput">
+                        <option value="fa-laptop-code">Technology</option>
+                        <option value="fa-tshirt">Fashion</option>
+                        <option value="fa-plane">Travel</option>
+                        <option value="fa-utensils">Food</option>
+                        <option value="fa-dumbbell">Fitness</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('addInterest')">Cancel</button>
+                <button class="modal-btn primary" onclick="saveInterest()">Add Interest</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Plan Modal -->
+    <div class="modal-overlay" id="addPlanModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-crown"></i> Add New Subscription Plan</h3>
+                <button class="modal-close" onclick="closeModal('addPlan')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Plan Name</label>
+                    <input type="text" id="planNameInput" placeholder="e.g., Pro, Premium, Enterprise">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="planDescInput" placeholder="Describe plan features"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Price ($)</label>
+                    <input type="number" id="planPriceInput" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Features (comma separated)</label>
+                    <input type="text" id="planFeaturesInput" placeholder="Feature 1, Feature 2, Feature 3">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="planStatusInput">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('addPlan')">Cancel</button>
+                <button class="modal-btn primary" onclick="savePlan()">Add Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="modal-overlay" id="statsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Detailed Analytics</h3>
+                <button class="modal-close" onclick="closeModal('statsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="statsChart"></canvas>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn primary" onclick="closeModal('statsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const currentAdmin = JSON.parse(sessionStorage.getItem('currentAdmin'));
+            if (!currentAdmin) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Set user info
+            document.getElementById('userName').textContent = currentAdmin.name;
+            document.getElementById('userEmail').textContent = currentAdmin.email;
+            document.getElementById('userAvatar').textContent = currentAdmin.name.charAt(0).toUpperCase();
+
+            // Initialize data
+            initializeData();
+            initializeCharts();
+            setupEventListeners();
+            updateLastUpdated();
+        });
+
+        // ==================== DATA MANAGEMENT ====================
+        let usersData = [];
+        let interestsData = [];
+        let reportsData = [];
+        let plansData = [];
+        let activitiesData = [];
+
+        function initializeData() {
+            // Load sample users
+            usersData = [
+                { id: 1, name: 'John Doe', email: 'john@example.com', type: 'Explorer', joined: '2024-01-15', status: 'active' },
+                { id: 2, name: 'Jane Smith', email: 'jane@example.com', type: 'Creator', joined: '2024-01-10', status: 'active' },
+                { id: 3, name: 'Mike Johnson', email: 'mike@example.com', type: 'Explorer', joined: '2024-01-05', status: 'inactive' },
+                { id: 4, name: 'Sarah Williams', email: 'sarah@example.com', type: 'Creator', joined: '2024-01-01', status: 'active' },
+                { id: 5, name: 'Robert Brown', email: 'robert@example.com', type: 'Admin', joined: '2023-12-20', status: 'active' }
+            ];
+
+            // Load sample interests
+            interestsData = [
+                { id: 1, name: 'Technology', users: 1247, engagement: '85%', trend: 'up' },
+                { id: 2, name: 'Fashion', users: 982, engagement: '78%', trend: 'up' },
+                { id: 3, name: 'Travel', users: 856, engagement: '92%', trend: 'up' },
+                { id: 4, name: 'Food & Cooking', users: 743, engagement: '81%', trend: 'stable' },
+                { id: 5, name: 'Fitness', users: 621, engagement: '88%', trend: 'up' }
+            ];
+
+            // Load sample reports
+            reportsData = [
+                { id: 'RPT-001', content: 'Inappropriate post', reportedBy: 'User123', reason: 'Harassment', priority: 'High' },
+                { id: 'RPT-002', content: 'Spam comment', reportedBy: 'User456', reason: 'Spam', priority: 'Medium' },
+                { id: 'RPT-003', content: 'Copyright issue', reportedBy: 'User789', reason: 'Copyright', priority: 'High' }
+            ];
+
+            // Load sample plans
+            plansData = [
+                { id: 1, name: 'Basic', price: '$9.99', subscribers: 150, revenue: '$1,498.50', status: 'active' },
+                { id: 2, name: 'Pro', price: '$19.99', subscribers: 85, revenue: '$1,699.15', status: 'active' },
+                { id: 3, name: 'Enterprise', price: '$49.99', subscribers: 32, revenue: '$1,599.68', status: 'active' }
+            ];
+
+            // Load sample activities
+            activitiesData = [
+                { user: 'John Doe', activity: 'New user registered', type: 'Registration', time: '10 min ago', status: 'completed' },
+                { user: 'Sarah Williams', activity: 'Upgraded to Pro plan', type: 'Subscription', time: '45 min ago', status: 'completed' },
+                { user: 'Mike Johnson', activity: 'Reported content', type: 'Report', time: '2 hours ago', status: 'pending' },
+                { user: 'Alex Chen', activity: 'Created new shop', type: 'Shop', time: '5 hours ago', status: 'completed' },
+                { user: 'Emma Wilson', activity: 'Posted new content', type: 'Content', time: '8 hours ago', status: 'completed' }
+            ];
+
+            // Update UI with data
+            updateUsersTable();
+            updateInterestsTable();
+            updateReportsTable();
+            updatePlansTable();
+            updateActivityTable();
+            updateStats();
+        }
+
+        // ==================== TABLE UPDATES ====================
+        function updateUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = usersData.map(user => `
+                <tr>
+                    <td><input type="checkbox" class="user-checkbox" value="${user.id}"></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #1a73e8, #4285f4); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                ${user.name.charAt(0)}
+                            </div>
+                            <span>${user.name}</span>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge ${user.type.toLowerCase()}">${user.type}</span></td>
+                    <td>${user.joined}</td>
+                    <td><span class="status-badge status-${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editUser(${user.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="table-btn delete" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updateStats();
+        }
+
+        function updateInterestsTable() {
+            const tbody = document.getElementById('interestsTableBody');
+            tbody.innerHTML = interestsData.map(interest => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ff4757, #ff6b81); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${interest.name}</div>
+                                <div style="font-size: 13px; color: var(--gray);">Popular category</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-weight: 700; font-size: 18px;">${interest.users.toLocaleString()}</td>
+                    <td><span class="status-badge status-active">${interest.engagement}</span></td>
+                    <td>
+                        <div class="trend ${interest.trend}">
+                            <i class="fas fa-arrow-${interest.trend}"></i>
+                            <span>Trending</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editInterest(${interest.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="table-btn delete" onclick="deleteInterest(${interest.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateReportsTable() {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = reportsData.map(report => `
+                <tr>
+                    <td><strong>${report.id}</strong></td>
+                    <td>${report.content}</td>
+                    <td>${report.reportedBy}</td>
+                    <td>${report.reason}</td>
+                    <td>
+                        <span class="status-badge ${report.priority === 'High' ? 'status-active' : 'status-pending'}">
+                            ${report.priority}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="viewReport('${report.id}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="table-btn delete" onclick="resolveReport('${report.id}')">
+                                <i class="fas fa-check"></i> Resolve
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `);
+
+            // Update badge
+            document.getElementById('pendingReports').textContent = reportsData.length;
+            document.getElementById('reportBadge').textContent = reportsData.length;
+        }
+
+        function updatePlansTable() {
+            const tbody = document.getElementById('plansTableBody');
+            tbody.innerHTML = plansData.map(plan => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; font-size: 16px;">${plan.name}</div>
+                        <div style="font-size: 13px; color: var(--gray);">Subscription plan</div>
+                    </td>
+                    <td style="font-weight: 700; font-size: 20px;">${plan.price}</td>
+                    <td>${plan.subscribers}</td>
+                    <td style="font-weight: 700; color: var(--success);">${plan.revenue}</td>
+                    <td><span class="status-badge status-active">${plan.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="table-btn edit" onclick="editPlan(${plan.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `);
+        }
+
+        function updateActivityTable() {
+            const tbody = document.querySelector('#activityTable tbody');
+            tbody.innerHTML = activitiesData.map(activity => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #1a73e8, #4285f4); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                ${activity.user.charAt(0)}
+                            </div>
+                            <span>${activity.user}</span>
+                        </div>
+                    </td>
+                    <td>${activity.activity}</td>
+                    <td><span class="status-badge">${activity.type}</span></td>
+                    <td>${activity.time}</td>
+                    <td><span class="status-badge status-${activity.status}">${activity.status}</span></td>
+                    <td>
+                        <button class="table-btn edit" onclick="viewActivity('${activity.user}')">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = usersData.length;
+            document.getElementById('activeUsers').textContent = usersData.filter(u => u.status === 'active').length;
+            document.getElementById('newUsers').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('premiumUsers').textContent = Math.floor(Math.random() * 100) + 20;
+        }
+
+        // ==================== USER FUNCTIONS ====================
+        function saveUser() {
+            const name = document.getElementById('userNameInput').value;
+            const email = document.getElementById('userEmailInput').value;
+            const type = document.getElementById('userTypeInput').value;
+            const status = document.getElementById('userStatusInput').value;
+
+            if (!name || !email) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            const newUser = {
+                id: usersData.length + 1,
+                name: name,
+                email: email,
+                type: type.charAt(0).toUpperCase() + type.slice(1),
+                joined: new Date().toISOString().split('T')[0],
+                status: status
+            };
+
+            usersData.push(newUser);
+            updateUsersTable();
+            closeModal('addUser');
+            showToast('success', `User "${name}" added successfully!`);
+            
+            // Clear form
+            document.getElementById('userNameInput').value = '';
+            document.getElementById('userEmailInput').value = '';
+        }
+
+        function editUser(id) {
+            const user = usersData.find(u => u.id === id);
+            if (user) {
+                showToast('info', `Editing user: ${user.name}`);
+                // In a real app, open edit modal with user data
+                setTimeout(() => {
+                    showToast('success', `User "${user.name}" updated successfully!`);
+                }, 1000);
+            }
+        }
+
+        function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                const user = usersData.find(u => u.id === id);
+                usersData = usersData.filter(u => u.id !== id);
+                updateUsersTable();
+                showToast('success', `User "${user.name}" deleted successfully!`);
+            }
+        }
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // ==================== INTEREST FUNCTIONS ====================
+        function saveInterest() {
+            const name = document.getElementById('interestNameInput').value;
+            const desc = document.getElementById('interestDescInput').value;
+            const category = document.getElementById('interestCategoryInput').value;
+            const icon = document.getElementById('interestIconInput').value;
+
+            if (!name) {
+                showToast('error', 'Please enter an interest name');
+                return;
+            }
+
+            const newInterest = {
+                id: interestsData.length + 1,
+                name: name,
+                users: Math.floor(Math.random() * 2000) + 500,
+                engagement: Math.floor(Math.random() * 30) + 70 + '%',
+                trend: Math.random() > 0.3 ? 'up' : 'stable'
+            };
+
+            interestsData.push(newInterest);
+            updateInterestsTable();
+            closeModal('addInterest');
+            showToast('success', `Interest "${name}" added successfully!`);
+            
+            // Clear form
+            document.getElementById('interestNameInput').value = '';
+            document.getElementById('interestDescInput').value = '';
+        }
+
+        function editInterest(id) {
+            const interest = interestsData.find(i => i.id === id);
+            if (interest) {
+                showToast('info', `Editing interest: ${interest.name}`);
+            }
+        }
+
+        function deleteInterest(id) {
+            if (confirm('Are you sure you want to delete this interest?')) {
+                const interest = interestsData.find(i => i.id === id);
+                interestsData = interestsData.filter(i => i.id !== id);
+                updateInterestsTable();
+                showToast('success', `Interest "${interest.name}" deleted successfully!`);
+            }
+        }
+
+        function refreshInterests() {
+            showToast('info', 'Refreshing interests data...');
+            setTimeout(() => {
+                showToast('success', 'Interests data refreshed successfully!');
+            }, 1000);
+        }
+
+        // ==================== REPORT FUNCTIONS ====================
+        function viewReport(id) {
+            const report = reportsData.find(r => r.id === id);
+            if (report) {
+                showToast('info', `Viewing report: ${report.id}`);
+            }
+        }
+
+        function resolveReport(id) {
+            if (confirm('Mark this report as resolved?')) {
+                reportsData = reportsData.filter(r => r.id !== id);
+                updateReportsTable();
+                showToast('success', 'Report marked as resolved!');
+            }
+        }
+
+        // ==================== PLAN FUNCTIONS ====================
+        function savePlan() {
+            const name = document.getElementById('planNameInput').value;
+            const desc = document.getElementById('planDescInput').value;
+            const price = document.getElementById('planPriceInput').value;
+            const features = document.getElementById('planFeaturesInput').value;
+            const status = document.getElementById('planStatusInput').value;
+
+            if (!name || !price) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            const newPlan = {
+                id: plansData.length + 1,
+                name: name,
+                price: `$${parseFloat(price).toFixed(2)}`,
+                subscribers: Math.floor(Math.random() * 200) + 50,
+                revenue: `$${(parseFloat(price) * (Math.floor(Math.random() * 200) + 50)).toFixed(2)}`,
+                status: status
+            };
+
+            plansData.push(newPlan);
+            updatePlansTable();
+            closeModal('addPlan');
+            showToast('success', `Plan "${name}" added successfully!`);
+            
+            // Clear form
+            document.getElementById('planNameInput').value = '';
+            document.getElementById('planDescInput').value = '';
+            document.getElementById('planPriceInput').value = '';
+            document.getElementById('planFeaturesInput').value = '';
+        }
+
+        function editPlan(id) {
+            const plan = plansData.find(p => p.id === id);
+            if (plan) {
+                showToast('info', `Editing plan: ${plan.name}`);
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function openModal(modalId) {
+            document.getElementById(modalId + 'Modal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId + 'Modal').style.display = 'none';
+        }
+
+        // ==================== TOAST FUNCTIONS ====================
+        function showToast(type, message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${icons[type] || 'info-circle'}"></i>
+                </div>
+                <div class="toast-content">
+                    <h4>${type.charAt(0).toUpperCase() + type.slice(1)}</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            // Remove toast after 5 seconds
+            setTimeout(() => {
+                toast.style.animation = 'toastSlideIn 0.3s reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function exportData() {
+            showToast('info', 'Preparing data for export...');
+            setTimeout(() => {
+                showToast('success', 'Data exported successfully!');
+            }, 1500);
+        }
+
+        function exportUsers() {
+            showToast('info', 'Exporting users data...');
+            setTimeout(() => {
+                showToast('success', 'Users data exported to CSV!');
+            }, 1500);
+        }
+
+        function bulkAction(type) {
+            showToast('info', `Processing bulk action for ${type}...`);
+        }
+
+        function refreshDashboard() {
+            showToast('info', 'Refreshing dashboard data...');
+            setTimeout(() => {
+                updateLastUpdated();
+                showToast('success', 'Dashboard refreshed successfully!');
+            }, 1000);
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('lastUpdated').textContent = `Today at ${timeString}`;
+        }
+
+        function viewActivity(user) {
+            showToast('info', `Viewing activity for ${user}`);
+        }
+
+        // ==================== CHART FUNCTIONS ====================
+        function initializeCharts() {
+            // Growth Chart
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'User Growth',
+                        data: [1200, 1500, 1800, 2100, 2400, 2700, 2847],
+                        borderColor: '#1a73e8',
+                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                        x: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+                    }
+                }
+            });
+
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [4200, 5200, 6100, 7300, 8200, 9450],
+                        backgroundColor: [
+                            'rgba(52, 168, 83, 0.7)',
+                            'rgba(66, 133, 244, 0.7)',
+                            'rgba(251, 188, 5, 0.7)',
+                            'rgba(234, 67, 53, 0.7)',
+                            'rgba(155, 81, 224, 0.7)',
+                            'rgba(26, 115, 232, 0.7)'
+                        ],
+                        borderColor: [
+                            '#34a853',
+                            '#4285f4',
+                            '#fbbc05',
+                            '#ea4335',
+                            '#9b51e0',
+                            '#1a73e8'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                        x: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }
+                    }
+                }
+            });
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function setupEventListeners() {
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    sessionStorage.removeItem('currentAdmin');
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // Menu item clicks
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items
+                    document.querySelectorAll('.menu-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Hide all pages
+                    document.querySelectorAll('.page-content').forEach(page => {
+                        page.classList.remove('active');
+                    });
+                    
+                    // Show selected page
+                    const pageId = this.getAttribute('data-page') + '-page';
+                    document.getElementById(pageId).classList.add('active');
+                    
+                    // Update page title
+                    const pageTitle = document.querySelector('.page-title');
+                    const titleText = this.querySelector('span').textContent;
+                    const icon = this.querySelector('i').className;
+                    
+                    pageTitle.querySelector('h1').innerHTML = `<i class="${icon}"></i> ${titleText}`;
+                    pageTitle.querySelector('p').textContent = getPageDescription(titleText);
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth <= 992) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                });
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                const sidebar = document.getElementById('sidebar');
+                const mobileBtn = document.getElementById('mobileMenuBtn');
+                
+                if (window.innerWidth <= 992 && 
+                    !sidebar.contains(e.target) && 
+                    e.target !== mobileBtn && 
+                    !mobileBtn.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            });
+
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            });
+
+            // Select all users checkbox
+            document.getElementById('selectAllUsers')?.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.user-checkbox');
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+
+            // Period select changes
+            document.getElementById('growthPeriod')?.addEventListener('change', function() {
+                showToast('info', `Growth period changed to: ${this.value}`);
+            });
+
+            document.getElementById('revenuePeriod')?.addEventListener('change', function() {
+                showToast('info', `Revenue period changed to: ${this.value}`);
+            });
+        }
+
+        function getPageDescription(title) {
+            const descriptions = {
+                'Dashboard': 'Welcome back! Here\'s what\'s happening with your platform today.',
+                'Users': 'Manage all users, explorers, and creators on your platform',
+                'Interests': 'Manage user interests and track engagement analytics',
+                'Reports': 'Review and take action on reported content',
+                'Memberships': 'Manage subscription plans and user memberships',
+                'Revenue': 'Track income, expenses, and financial growth',
+                'Shops': 'Manage stores and product listings',
+                'Events': 'Create and manage platform events',
+                'Hashtags': 'Track trending hashtags and usage',
+                'Moderation': 'Monitor and moderate platform content'
+            };
+            return descriptions[title] || 'Manage your platform';
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        });
+
+        // Show welcome toast
+        setTimeout(() => {
+            showToast('success', 'Welcome to Hatch Social Admin Dashboard!');
+        }, 1000);
+    </script>
+</body>
+</html>
