@@ -69,7 +69,7 @@
                 radial-gradient(circle at 25% 25%, var(--primary) 1px, transparent 2px),
                 radial-gradient(circle at 75% 75%, var(--secondary) 1px, transparent 2px);
             background-size: 100px 100px;
-            animation: patternMove 40s linear infinite;
+            animation: patternMove 80s linear infinite; /* SLOWED DOWN */
         }
 
         @keyframes patternMove {
@@ -95,14 +95,14 @@
         .corner-top-right {
             top: -150px;
             right: -150px;
-            animation: accentFloat 25s ease-in-out infinite alternate;
+            animation: accentFloat 40s ease-in-out infinite alternate; /* SLOWED DOWN */
         }
 
         .corner-bottom-left {
             bottom: -150px;
             left: -150px;
             background: linear-gradient(135deg, var(--secondary-light), rgba(255, 255, 255, 0));
-            animation: accentFloat 30s ease-in-out infinite alternate-reverse;
+            animation: accentFloat 50s ease-in-out infinite alternate-reverse; /* SLOWED DOWN */
         }
 
         @keyframes accentFloat {
@@ -118,7 +118,7 @@
         .container {
             width: 100%;
             max-width: 500px;
-            animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: slideInUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* SLOWED DOWN */
         }
 
         @keyframes slideInUp {
@@ -135,8 +135,8 @@
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 40px; /* Reduced margin */
-            animation: fadeIn 0.8s ease-out 0.2s both;
+            margin-bottom: 40px;
+            animation: fadeIn 1.2s ease-out 0.3s both; /* SLOWED DOWN */
         }
 
         @keyframes fadeIn {
@@ -153,19 +153,19 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px; /* Reduced gap */
-            margin-bottom: 20px; /* Reduced margin */
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         /* LOGO STYLING - SMALLER SIZE */
         .logo-wrapper {
             position: relative;
-            width: 80px; /* MUCH SMALLER */
-            height: 80px; /* MUCH SMALLER */
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: logoEntrance 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s both;
+            animation: logoEntrance 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s both; /* SLOWED DOWN */
         }
 
         @keyframes logoEntrance {
@@ -189,7 +189,7 @@
             border-radius: 0;
             padding: 0;
             background: transparent;
-            animation: logoFloat 6s ease-in-out infinite;
+            animation: logoFloat 8s ease-in-out infinite; /* SLOWED DOWN */
             filter: drop-shadow(0 5px 15px rgba(58, 87, 232, 0.3));
             border-radius: 15px;
         }
@@ -204,14 +204,14 @@
         }
 
         .logo-text {
-            font-size: 28px; /* Reduced size */
+            font-size: 28px;
             font-weight: 900;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             letter-spacing: -1px;
-            animation: textShine 4s ease-in-out infinite;
+            animation: textShine 6s ease-in-out infinite; /* SLOWED DOWN */
             margin-top: 5px;
         }
 
@@ -228,25 +228,25 @@
 
         .tagline {
             color: var(--gray);
-            font-size: 16px; /* Reduced size */
+            font-size: 16px;
             line-height: 1.6;
             max-width: 400px;
             margin: 0 auto;
             font-weight: 500;
-            animation: slideInUp 0.8s ease-out 0.6s both;
+            animation: slideInUp 1.2s ease-out 0.6s both; /* SLOWED DOWN */
         }
 
         /* Card - DARK THEME */
         .card {
-            background: var(--card-bg); /* DARK BACKGROUND */
-            color: var(--card-text); /* WHITE TEXT */
+            background: var(--card-bg);
+            color: var(--card-text);
             border-radius: var(--radius);
-            padding: 50px 40px; /* Adjusted padding */
+            padding: 50px 40px;
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+            animation: cardAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both; /* SLOWED DOWN */
         }
 
         @keyframes cardAppear {
@@ -269,7 +269,7 @@
             height: 6px;
             background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
             background-size: 200% 100%;
-            animation: gradientFlow 3s linear infinite;
+            animation: gradientFlow 5s linear infinite; /* SLOWED DOWN */
         }
 
         @keyframes gradientFlow {
@@ -284,11 +284,11 @@
         .card-header {
             text-align: center;
             margin-bottom: 40px;
-            animation: fadeIn 0.8s ease-out 0.6s both;
+            animation: fadeIn 1.2s ease-out 0.6s both; /* SLOWED DOWN */
         }
 
         .card-header h2 {
-            font-size: 30px; /* Reduced size */
+            font-size: 30px;
             font-weight: 800;
             color: var(--white);
             margin-bottom: 15px;
@@ -306,7 +306,7 @@
             height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: 2px;
-            animation: lineWidth 3s ease-in-out infinite;
+            animation: lineWidth 5s ease-in-out infinite; /* SLOWED DOWN */
         }
 
         @keyframes lineWidth {
@@ -326,9 +326,9 @@
 
         /* Form - DARK THEME */
         .form-group {
-            margin-bottom: 28px; /* Reduced */
+            margin-bottom: 28px;
             position: relative;
-            animation: formSlide 0.6s ease-out 0.8s both;
+            animation: formSlide 0.8s ease-out 0.8s both; /* SLOWED DOWN */
         }
 
         @keyframes formSlide {
@@ -343,7 +343,7 @@
         }
 
         .form-group:nth-child(2) {
-            animation-delay: 1s;
+            animation-delay: 1s; /* SLOWED DOWN */
         }
 
         .form-group label {
@@ -390,7 +390,7 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(58, 87, 232, 0.2);
             transform: translateY(-2px);
-            animation: inputFocus 0.4s ease;
+            animation: inputFocus 0.6s ease; /* SLOWED DOWN */
         }
 
         @keyframes inputFocus {
@@ -404,7 +404,7 @@
 
         .input-with-icon input:focus + .input-icon {
             color: var(--primary);
-            animation: iconSpin 0.6s ease;
+            animation: iconSpin 0.8s ease; /* SLOWED DOWN */
         }
 
         @keyframes iconSpin {
@@ -446,7 +446,7 @@
             margin-bottom: 35px;
             flex-wrap: wrap;
             gap: 20px;
-            animation: fadeIn 0.8s ease-out 1.2s both;
+            animation: fadeIn 1.2s ease-out 1.2s both; /* SLOWED DOWN */
         }
 
         .remember {
@@ -458,6 +458,7 @@
             font-weight: 500;
         }
 
+        /* FIXED: Mobile main checkbox ka size chhota kiya */
         .remember input[type="checkbox"] {
             width: 20px;
             height: 20px;
@@ -465,10 +466,41 @@
             accent-color: var(--primary);
             cursor: pointer;
             transition: var(--transition);
+            /* Mobile devices ke liye touch-friendly size */
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        /* Mobile screens par checkbox aur zada chhota */
+        @media (max-width: 768px) {
+            .remember input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                min-width: 18px;
+                min-height: 18px;
+            }
+            
+            .remember label {
+                font-size: 14px;
+            }
+        }
+
+        /* Very small mobile screens par checkbox aur chhota */
+        @media (max-width: 400px) {
+            .remember input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                min-width: 16px;
+                min-height: 16px;
+            }
+            
+            .remember {
+                gap: 10px;
+            }
         }
 
         .remember input[type="checkbox"]:checked {
-            animation: checkboxPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: checkboxPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* SLOWED DOWN */
         }
 
         @keyframes checkboxPop {
@@ -531,7 +563,7 @@
             gap: 12px;
             position: relative;
             overflow: hidden;
-            animation: buttonGlow 4s ease-in-out infinite;
+            animation: buttonGlow 6s ease-in-out infinite; /* SLOWED DOWN */
         }
 
         @keyframes buttonGlow {
@@ -551,7 +583,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.6s;
+            transition: 0.8s; /* SLOWED DOWN */
         }
 
         .btn:hover {
@@ -576,7 +608,7 @@
             padding: 28px;
             margin-top: 35px;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            animation: slideInUp 0.8s ease-out 1.4s both;
+            animation: slideInUp 1.2s ease-out 1.4s both; /* SLOWED DOWN */
             position: relative;
             overflow: hidden;
         }
@@ -613,7 +645,7 @@
         .demo-credentials p i {
             color: var(--primary);
             width: 20px;
-            animation: iconBounce 2.5s ease-in-out infinite;
+            animation: iconBounce 3.5s ease-in-out infinite; /* SLOWED DOWN */
         }
 
         @keyframes iconBounce {
@@ -656,7 +688,7 @@
             line-height: 1.6;
             padding-top: 30px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeIn 0.8s ease-out 1.6s both;
+            animation: fadeIn 1.2s ease-out 1.6s both; /* SLOWED DOWN */
         }
 
         .footer p {
@@ -673,7 +705,7 @@
             font-weight: 700;
             margin-top: 12px;
             color: var(--primary-light);
-            animation: versionGlow 4s ease-in-out infinite;
+            animation: versionGlow 6s ease-in-out infinite; /* SLOWED DOWN */
         }
 
         @keyframes versionGlow {
@@ -694,7 +726,7 @@
             align-items: center;
             gap: 8px;
             font-weight: 500;
-            animation: errorShake 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: errorShake 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* SLOWED DOWN */
         }
 
         @keyframes errorShake {
@@ -725,7 +757,7 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: modalFadeIn 0.3s ease;
+            animation: modalFadeIn 0.5s ease; /* SLOWED DOWN */
             backdrop-filter: blur(10px);
             padding: 20px;
         }
@@ -751,7 +783,7 @@
             box-shadow: 
                 0 30px 60px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.05);
-            animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: modalSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* SLOWED DOWN */
         }
 
         @keyframes modalSlideUp {
@@ -819,7 +851,7 @@
         .success-message {
             text-align: center;
             padding: 40px 32px;
-            animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* SLOWED DOWN */
         }
 
         @keyframes successPop {
@@ -837,7 +869,7 @@
             font-size: 60px;
             color: var(--primary);
             margin-bottom: 24px;
-            animation: successIcon 0.8s ease 0.2s both;
+            animation: successIcon 1s ease 0.2s both; /* SLOWED DOWN */
         }
 
         @keyframes successIcon {
@@ -856,7 +888,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 16px;
-            animation: fadeInUp 0.6s ease 0.3s both;
+            animation: fadeInUp 0.8s ease 0.3s both; /* SLOWED DOWN */
         }
 
         .success-message p {
@@ -864,7 +896,7 @@
             font-size: 16px;
             margin-bottom: 24px;
             line-height: 1.6;
-            animation: fadeInUp 0.6s ease 0.4s both;
+            animation: fadeInUp 0.8s ease 0.4s both; /* SLOWED DOWN */
         }
 
         /* ==================== RESPONSIVE DESIGN ==================== */
@@ -1050,6 +1082,22 @@
                 right: 16px;
                 font-size: 18px;
             }
+            
+            /* Extra small checkbox for very small screens */
+            .remember input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                min-width: 16px;
+                min-height: 16px;
+            }
+            
+            .remember {
+                gap: 8px;
+            }
+            
+            .remember label {
+                font-size: 13px;
+            }
         }
 
         /* Very Small Mobile */
@@ -1097,6 +1145,21 @@
                 font-size: 13px;
                 padding: 5px 10px;
             }
+            
+            .options {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .remember {
+                justify-content: flex-start;
+            }
+            
+            .forgot {
+                text-align: left;
+                padding-left: 30px; /* Align with checkbox */
+            }
         }
 
         /* Extra Small Mobile */
@@ -1132,6 +1195,21 @@
             .version {
                 padding: 8px 18px;
                 font-size: 13px;
+            }
+            
+            .remember input[type="checkbox"] {
+                width: 14px;
+                height: 14px;
+                min-width: 14px;
+                min-height: 14px;
+            }
+            
+            .remember label {
+                font-size: 12px;
+            }
+            
+            .forgot {
+                font-size: 12px;
             }
         }
 
@@ -1178,6 +1256,14 @@
                 margin-top: 25px;
                 padding: 22px;
             }
+            
+            /* Landscape mode mein checkbox zada chhota */
+            .remember input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                min-width: 16px;
+                min-height: 16px;
+            }
         }
 
         /* Touch Device Optimizations */
@@ -1205,13 +1291,18 @@
                 transform: scale(0.98);
             }
             
-            /* Increase touch target size */
+            /* Increase touch target size for buttons */
             .btn,
             .password-toggle,
-            .modal-close,
-            .remember input[type="checkbox"] {
+            .modal-close {
                 min-height: 48px;
                 min-width: 48px;
+            }
+            
+            /* But keep checkbox small */
+            .remember input[type="checkbox"] {
+                min-height: 20px;
+                min-width: 20px;
             }
         }
 
@@ -1368,10 +1459,10 @@
             this.innerHTML = type === 'password' ? 
                 '<i class="fas fa-eye"></i>' : 
                 '<i class="fas fa-eye-slash"></i>';
-            this.style.animation = 'iconSpin 0.5s ease';
+            this.style.animation = 'iconSpin 0.6s ease'; /* SLOWED DOWN */
             setTimeout(() => {
                 this.style.animation = '';
-            }, 500);
+            }, 600);
         });
 
         // ==================== SHOW/HIDE ERROR ====================
@@ -1379,7 +1470,7 @@
             const errorEl = document.getElementById(elementId);
             errorEl.querySelector('span').textContent = message;
             errorEl.style.display = 'flex';
-            errorEl.style.animation = 'errorShake 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            errorEl.style.animation = 'errorShake 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'; /* SLOWED DOWN */
         }
 
         function hideError(elementId) {
@@ -1417,7 +1508,7 @@
             const originalBg = signinBtn.style.background;
             signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
             signinBtn.disabled = true;
-            signinBtn.style.animation = 'buttonGlow 1s ease-in-out infinite';
+            signinBtn.style.animation = 'buttonGlow 1.5s ease-in-out infinite'; /* SLOWED DOWN */
             
             // Simulate API call delay
             setTimeout(() => {
@@ -1438,7 +1529,7 @@
                     signinBtn.style.animation = 'none';
                     
                     // Add success animation to card
-                    document.querySelector('.card').style.animation = 'successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                    document.querySelector('.card').style.animation = 'successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'; /* SLOWED DOWN */
                     
                     // Redirect to dashboard
                     setTimeout(() => {
@@ -1450,13 +1541,13 @@
                     signinBtn.innerHTML = originalText;
                     signinBtn.disabled = false;
                     signinBtn.style.background = originalBg;
-                    signinBtn.style.animation = 'buttonGlow 3s ease-in-out infinite';
+                    signinBtn.style.animation = 'buttonGlow 4s ease-in-out infinite'; /* SLOWED DOWN */
                     
                     // Add shake animation to card
-                    document.querySelector('.card').style.animation = 'errorShake 0.6s ease';
+                    document.querySelector('.card').style.animation = 'errorShake 0.8s ease'; /* SLOWED DOWN */
                     setTimeout(() => {
                         document.querySelector('.card').style.animation = '';
-                    }, 600);
+                    }, 800);
                 }
             }, 1500);
         });
@@ -1564,13 +1655,13 @@
                 passwordInput.select();
                 
                 // Add subtle animation to autofilled fields
-                emailInput.style.animation = 'inputFocus 0.4s ease';
-                passwordInput.style.animation = 'inputFocus 0.4s ease 0.2s';
+                emailInput.style.animation = 'inputFocus 0.6s ease'; /* SLOWED DOWN */
+                passwordInput.style.animation = 'inputFocus 0.6s ease 0.3s'; /* SLOWED DOWN */
                 
                 setTimeout(() => {
                     emailInput.style.animation = '';
                     passwordInput.style.animation = '';
-                }, 1000);
+                }, 1200);
             }, 500);
         });
 
@@ -1670,7 +1761,7 @@
         // Add loading animation to page load
         window.addEventListener('load', function() {
             document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s ease';
+            document.body.style.transition = 'opacity 0.8s ease'; /* SLOWED DOWN */
             
             setTimeout(() => {
                 document.body.style.opacity = '1';
