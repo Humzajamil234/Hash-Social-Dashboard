@@ -1,55 +1,386 @@
-// API Service for Hatch Social Admin Dashboard - COMPLETE IMPLEMENTATION
-class APIService {
+// Complete API Service for Hatch Social - REAL + MOCK HYBRID
+class HybridAPIService {
     constructor() {
-        this.baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:8000/api'
-            : '/api';
-        this.token = localStorage.getItem('hatch_admin_token');
-        this.user = JSON.parse(localStorage.getItem('hatch_admin_user') || '{}');
-        this.isOnline = true;
+        this.baseURL = CONFIG.API.BASE_URL;
+        this.token = localStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        this.user = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.USER_DATA) || '{}');
+        this.useRealAPI = false;
+        this.mockService = null;
+        this.isOnline = navigator.onLine;
         this.pendingRequests = [];
+        this.requestQueue = [];
+        this.cache = new Map();
         
-        // Check online status
-        this.checkOnlineStatus();
-        window.addEventListener('online', () => this.handleOnlineStatus(true));
-        window.addEventListener('offline', () => this.handleOnlineStatus(false));
+        // Auto-detect API mode
+        this.detectAPIMode();
+        
+        // Setup event listeners
+        this.setupEventListeners();
     }
-
-    // Set authentication token
+    
+    detectAPIMode() {
+        // Try to connect to real API
+        this.testRealAPI().then(connected => {
+            this.useRealAPI = connected;
+            console.log(`🌐 API Mode: ${this.useRealAPI ? 'REAL' : 'MOCK'}`);
+            
+            // Initialize mock service if needed
+            if (!this.useRealAPI) {
+                this.mockService = new MockAPIService();
+            }
+        });
+    }
+    
+    async testRealAPI() {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(`${this.baseURL}/health`, {
+                signal: controller.signal,
+                method: 'GET'
+            });
+            
+            clearTimeout(timeoutId);
+            return response.ok;
+        } catch (error) {
+            return false;
+        }
+    }
+    
+    setupEventListeners() {
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+            this.processPendingRequests();
+            this.showToast('success', 'Back online! Syncing data...');
+        });
+        
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+            this.showToast('warning', 'You are offline. Changes saved locally.');
+        });
+        
+        // Auto-sync every 30 seconds
+        setInterval(() => this.processPendingRequests(), 30000);
+    }
+    
+    // ==================== SMART REQUEST HANDLER ====================
+    async smartRequest(endpoint, options = {}, useCache = true) {
+        const cacheKey = `${endpoint}_${JSON.stringify(options)}`;
+        
+        // Check cache first
+        if (useCache && this.cache.has(cacheKey)) {
+            const cached = this.cache.get(cacheKey);
+            if (Date.now() - cached.timestamp < 60000) { // 1 minute cache
+                return cached.data;
+            }
+        }
+        
+        try {
+            let response;
+            
+            if (this.useRealAPI && this.isOnline) {
+                response = await this.realRequest(endpoint, options);
+            } else {
+                response = await this.mockRequest(endpoint, options);
+            }
+            
+            // Cache the response
+            this.cache.set(cacheKey, {
+                data: response,
+                timestamp: Date.now()
+            });
+            
+            return response;
+        } catch (error) {
+            console.error(`API Error (${endpoint}):`, error);
+            
+            // Fallback to mock
+            try {
+                const mockResponse = await this.mockRequest(endpoint, options);
+                this.showToast('warning', 'Using mock data (API unavailable)');
+                return mockResponse;
+            } catch (mockError) {
+                throw new Error(`API and Mock both failed: ${error.message}`);
+            }
+        }
+    }
+    
+    async realRequest(endpoint, options) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), CONFIG.API.TIMEOUT);
+        
+        const url = `${this.baseURL}${endpoint}`;
+        const defaultOptions = {
+            signal: controller.signal,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': this.token ? `Bearer ${this.token}` : ''
+            }
+        };
+        
+        try {
+            const response = await fetch(url, { ...defaultOptions, ...options });
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            clearTimeout(timeoutId);
+            
+            // Queue for retry
+            if (error.name !== 'AbortError') {
+                this.requestQueue.push({ endpoint, options });
+            }
+            
+            throw error;
+        }
+    }
+    
+    async mockRequest(endpoint, options) {
+        if (!this.mockService) {
+            this.mockService = new MockAPIService();
+        }
+        
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, CONFIG.MOCK.DELAY));
+        
+        // Parse endpoint to determine which mock method to call
+        const endpointMap = {
+            // Authentication
+            '/api/login': () => {
+                const body = JSON.parse(options.body || '{}');
+                return this.mockService.login(body.email, body.password);
+            },
+            '/api/auth/logout': () => this.mockService.logout(),
+            '/api/auth/me': () => this.mockService.getCurrentUser(),
+            
+            // Users
+            '/api/auth/profile': () => {
+                if (options.method === 'GET') {
+                    const params = new URLSearchParams(endpoint.split('?')[1] || '');
+                    return this.mockService.getUsers(Object.fromEntries(params));
+                } else if (options.method === 'POST') {
+                    const body = JSON.parse(options.body || '{}');
+                    return this.mockService.createUser(body);
+                }
+            },
+            '/api/auth/profile/': (id) => {
+                if (options.method === 'GET') {
+                    return this.mockService.getUserById(id);
+                } else if (options.method === 'PUT') {
+                    const body = JSON.parse(options.body || '{}');
+                    return this.mockService.updateUser(id, body);
+                } else if (options.method === 'DELETE') {
+                    return this.mockService.deleteUser(id);
+                }
+            },
+            
+            // Dashboard
+            '/api/auth/dashboard-stats': () => this.mockService.getDashboardStats(),
+            '/api/auth/activities': () => this.mockService.getActivities(),
+            
+            // Interests
+            '/api/auth/interest_list': () => this.mockService.getInterests(),
+            '/api/auth/interest_detail/': (id) => this.mockService.getInterestById(id),
+            
+            // Reports
+            '/api/auth/reports': () => this.mockService.getReports(),
+            
+            // Revenue
+            '/api/auth/transaction': () => this.mockService.getTransactions(),
+            
+            // Communities
+            '/api/auth/community': () => this.mockService.getCommunities(),
+            
+            // Posts
+            '/api/auth/post': () => this.mockService.getPosts(),
+            
+            // Default
+            'default': () => ({ status: 'success', data: [], message: 'Mock response' })
+        };
+        
+        // Find matching endpoint
+        for (const [pattern, handler] of Object.entries(endpointMap)) {
+            if (endpoint.startsWith(pattern)) {
+                const id = endpoint.replace(pattern, '');
+                return await handler(id || undefined);
+            }
+        }
+        
+        return await endpointMap['default']();
+    }
+    
+    async processPendingRequests() {
+        if (!this.isOnline || this.requestQueue.length === 0) return;
+        
+        const queue = [...this.requestQueue];
+        this.requestQueue = [];
+        
+        for (const request of queue) {
+            try {
+                await this.realRequest(request.endpoint, request.options);
+                console.log(`✅ Processed queued request: ${request.endpoint}`);
+            } catch (error) {
+                console.error(`❌ Failed queued request: ${request.endpoint}`, error);
+                this.requestQueue.push(request); // Retry later
+            }
+        }
+    }
+    
+    // ==================== AUTHENTICATION APIS ====================
+    async login(email, password) {
+        const response = await this.smartRequest('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+        }, false); // Don't cache login
+        
+        if (response.token) {
+            this.setAuth(response.token, response.user);
+            this.showToast('success', 'Login successful!');
+        }
+        
+        return response;
+    }
+    
+    async logout() {
+        try {
+            await this.smartRequest('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            // Ignore errors for logout
+        }
+        
+        this.clearAuth();
+        this.showToast('success', 'Logged out successfully!');
+        return { status: 'success' };
+    }
+    
+    async getCurrentUser() {
+        return await this.smartRequest('/api/auth/me');
+    }
+    
     setAuth(token, user) {
         this.token = token;
         this.user = user;
-        localStorage.setItem('hatch_admin_token', token);
-        localStorage.setItem('hatch_admin_user', JSON.stringify(user));
-        
-        // Update all auth headers
-        this.updateAuthHeaders();
+        localStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, token);
+        localStorage.setItem(CONFIG.STORAGE_KEYS.USER_DATA, JSON.stringify(user));
     }
-
-    // Clear authentication
+    
     clearAuth() {
         this.token = null;
         this.user = null;
-        localStorage.removeItem('hatch_admin_token');
-        localStorage.removeItem('hatch_admin_user');
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.USER_DATA);
     }
-
-    // Check online status
-    checkOnlineStatus() {
-        this.isOnline = navigator.onLine;
+    
+    // ==================== USER MANAGEMENT APIS ====================
+    async getUsers(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.smartRequest(`/api/auth/profile${queryString ? '?' + queryString : ''}`);
     }
-
-    handleOnlineStatus(online) {
-        this.isOnline = online;
-        if (online) {
-            this.processPendingRequests();
-            this.showToast('success', 'Back online! Syncing data...');
-        } else {
-            this.showToast('warning', 'You are offline. Changes will be saved locally.');
+    
+    async getUserById(id) {
+        return await this.smartRequest(`/api/auth/profile/${id}`);
+    }
+    
+    async createUser(userData) {
+        const response = await this.smartRequest('/api/auth/profile', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        }, false);
+        
+        this.showToast('success', 'User created successfully!');
+        this.clearCache('users');
+        return response;
+    }
+    
+    async updateUser(id, userData) {
+        const response = await this.smartRequest(`/api/auth/profile/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(userData)
+        }, false);
+        
+        this.showToast('success', 'User updated successfully!');
+        this.clearCache('users');
+        return response;
+    }
+    
+    async deleteUser(id) {
+        const response = await this.smartRequest(`/api/auth/profile/${id}`, {
+            method: 'DELETE'
+        }, false);
+        
+        this.showToast('success', 'User deleted successfully!');
+        this.clearCache('users');
+        return response;
+    }
+    
+    // ==================== INTERESTS APIS ====================
+    async getInterests(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.smartRequest(`/api/auth/interest_list${queryString ? '?' + queryString : ''}`);
+    }
+    
+    async getInterestById(id) {
+        return await this.smartRequest(`/api/auth/interest_detail/${id}`);
+    }
+    
+    async createInterest(interestData) {
+        const response = await this.smartRequest('/api/auth/interest', {
+            method: 'POST',
+            body: JSON.stringify(interestData)
+        }, false);
+        
+        this.showToast('success', 'Interest created successfully!');
+        this.clearCache('interests');
+        return response;
+    }
+    
+    // ==================== DASHBOARD APIS ====================
+    async getDashboardStats() {
+        return await this.smartRequest('/api/auth/dashboard-stats');
+    }
+    
+    async getActivities() {
+        return await this.smartRequest('/api/auth/activities');
+    }
+    
+    // ==================== REPORTS APIS ====================
+    async getReports(params = {}) {
+        return await this.smartRequest('/api/auth/reports');
+    }
+    
+    // ==================== REVENUE APIS ====================
+    async getTransactions(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.smartRequest(`/api/auth/transaction${queryString ? '?' + queryString : ''}`);
+    }
+    
+    // ==================== COMMUNITY APIS ====================
+    async getCommunities(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.smartRequest(`/api/auth/community${queryString ? '?' + queryString : ''}`);
+    }
+    
+    // ==================== POST APIS ====================
+    async getPosts(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return await this.smartRequest(`/api/auth/post${queryString ? '?' + queryString : ''}`);
+    }
+    
+    // ==================== UTILITY METHODS ====================
+    clearCache(pattern = '') {
+        for (const key of this.cache.keys()) {
+            if (key.includes(pattern)) {
+                this.cache.delete(key);
+            }
         }
     }
-
-    // Show toast notification
+    
     showToast(type, message) {
         if (typeof window.showToast === 'function') {
             window.showToast(type, message);
@@ -57,1995 +388,361 @@ class APIService {
             console.log(`${type.toUpperCase()}: ${message}`);
         }
     }
-
-    // Update auth headers
-    updateAuthHeaders() {
-        // This will be used by fetch interceptor
-        this.authHeaders = this.token ? {
-            'Authorization': `Bearer ${this.token}`
-        } : {};
-    }
-
-    // Get headers for API requests
-    getHeaders(contentType = 'application/json') {
-        const headers = {
-            'Accept': 'application/json',
-            'Content-Type': contentType,
-            'X-Requested-With': 'XMLHttpRequest'
-        };
-        
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
-        }
-        
-        return headers;
-    }
-
-    // Handle API response with retry logic
-    async handleResponse(response, retryCount = 0) {
-        if (response.status === 401) {
-            this.clearAuth();
-            window.location.href = 'index.html';
-            throw new Error('Session expired. Please login again.');
-        }
-        
-        if (response.status === 429 && retryCount < 3) {
-            await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-            return this.request(response.url, response.init, retryCount + 1);
-        }
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw {
-                status: response.status,
-                message: errorData.message || errorData.error || `HTTP error! status: ${response.status}`,
-                data: errorData
-            };
-        }
-        
-        return response.json();
-    }
-
-    // Generic request method with retry logic
-    async request(url, options = {}, retryCount = 0) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
-        
-        const defaultOptions = {
-            ...options,
-            signal: controller.signal,
-            headers: { ...this.getHeaders(), ...options.headers }
-        };
-        
-        try {
-            const response = await fetch(url, defaultOptions);
-            clearTimeout(timeoutId);
-            return await this.handleResponse(response);
-        } catch (error) {
-            clearTimeout(timeoutId);
-            
-            if (error.name === 'AbortError') {
-                throw new Error('Request timeout. Please try again.');
-            }
-            
-            if (!this.isOnline) {
-                // Store request for later when online
-                this.pendingRequests.push({ url, options });
-                throw new Error('You are offline. Request queued for later.');
-            }
-            
-            if (retryCount < 2) {
-                await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-                return this.request(url, options, retryCount + 1);
-            }
-            
-            throw error;
-        }
-    }
-
-    // Process pending requests when back online
-    async processPendingRequests() {
-        if (this.pendingRequests.length === 0 || !this.isOnline) return;
-        
-        this.showToast('info', `Syncing ${this.pendingRequests.length} pending requests...`);
-        
-        const requests = [...this.pendingRequests];
-        this.pendingRequests = [];
-        
-        for (const req of requests) {
-            try {
-                await this.request(req.url, req.options);
-            } catch (error) {
-                console.error('Failed to process pending request:', error);
-            }
-        }
-        
-        this.showToast('success', 'Sync completed!');
-    }
-
-    // ==================== AUTHENTICATION APIS ====================
     
-    async login(email, password) {
+    // Health check
+    async healthCheck() {
         try {
-            const response = await fetch(`${this.baseURL}/login`, {
-                method: 'POST',
-                headers: this.getHeaders(),
-                body: JSON.stringify({ email, password })
-            });
-            
-            const data = await this.handleResponse(response);
-            
-            if (data.token || data.access_token) {
-                const token = data.token || data.access_token;
-                const user = data.user || data.data;
-                this.setAuth(token, user);
-                this.showToast('success', 'Login successful!');
-            }
-            
-            return data;
+            await this.smartRequest('/api/health', {}, false);
+            return { healthy: true, mode: this.useRealAPI ? 'REAL' : 'MOCK' };
         } catch (error) {
-            console.error('Login error:', error);
-            this.showToast('error', error.message || 'Login failed. Please check your credentials.');
-            throw error;
+            return { healthy: false, mode: 'MOCK', error: error.message };
         }
-    }
-
-    async register(userData) {
-        try {
-            return await this.request(`${this.baseURL}/register`, {
-                method: 'POST',
-                body: JSON.stringify(userData)
-            });
-        } catch (error) {
-            console.error('Register error:', error);
-            this.showToast('error', error.message || 'Registration failed.');
-            throw error;
-        }
-    }
-
-    async logout() {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/logout`, {
-                method: 'POST'
-            });
-            
-            this.clearAuth();
-            this.showToast('success', 'Logged out successfully!');
-            return response;
-        } catch (error) {
-            console.error('Logout error:', error);
-            this.clearAuth(); // Clear anyway
-            throw error;
-        }
-    }
-
-    async getCurrentUser() {
-        try {
-            return await this.request(`${this.baseURL}/auth/me`, {
-                method: 'GET'
-            });
-        } catch (error) {
-            console.error('Get current user error:', error);
-            throw error;
-        }
-    }
-
-    async changePassword(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/change_password`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Password changed successfully!');
-            return response;
-        } catch (error) {
-            console.error('Change password error:', error);
-            this.showToast('error', error.message || 'Failed to change password.');
-            throw error;
-        }
-    }
-
-    async verifyEmail(code) {
-        try {
-            return await this.request(`${this.baseURL}/verify`, {
-                method: 'POST',
-                body: JSON.stringify({ code })
-            });
-        } catch (error) {
-            console.error('Verify email error:', error);
-            throw error;
-        }
-    }
-
-    async forgotPassword(email) {
-        try {
-            return await this.request(`${this.baseURL}/password/email`, {
-                method: 'POST',
-                body: JSON.stringify({ email })
-            });
-        } catch (error) {
-            console.error('Forgot password error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== USER MANAGEMENT APIS ====================
-    
-    async getUsers(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/profile${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            // Handle different response formats
-            return Array.isArray(data) ? data : (data.data || data.users || []);
-        } catch (error) {
-            console.error('Get users error:', error);
-            throw error;
-        }
-    }
-
-    async getUserById(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/profile/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get user by ID error:', error);
-            throw error;
-        }
-    }
-
-    async createUser(userData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/profile`, {
-                method: 'POST',
-                body: JSON.stringify(userData)
-            });
-            
-            this.showToast('success', 'User created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create user error:', error);
-            this.showToast('error', error.message || 'Failed to create user.');
-            throw error;
-        }
-    }
-
-    async updateUser(id, userData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/profile/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(userData)
-            });
-            
-            this.showToast('success', 'User updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update user error:', error);
-            this.showToast('error', error.message || 'Failed to update user.');
-            throw error;
-        }
-    }
-
-    async deleteUser(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/profile/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'User deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete user error:', error);
-            this.showToast('error', error.message || 'Failed to delete user.');
-            throw error;
-        }
-    }
-
-    async searchUsers(searchTerm) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/member_search`, {
-                method: 'POST',
-                body: JSON.stringify({ search: searchTerm })
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Search users error:', error);
-            throw error;
-        }
-    }
-
-    async getMemberList() {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/member`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get member list error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== PROFILE APIS ====================
-    
-    async getProfileMe(profileId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/profile_me/${profileId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get profile me error:', error);
-            throw error;
-        }
-    }
-
-    async profileLogin(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/profile_login`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Profile login error:', error);
-            throw error;
-        }
-    }
-
-    async updateAccount(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/update_account`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Account updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update account error:', error);
-            this.showToast('error', error.message || 'Failed to update account.');
-            throw error;
-        }
-    }
-
-    // ==================== COMMUNITY APIS ====================
-    
-    async getCommunities(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/community${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.communities || []);
-        } catch (error) {
-            console.error('Get communities error:', error);
-            throw error;
-        }
-    }
-
-    async getCommunityById(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/community/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get community by ID error:', error);
-            throw error;
-        }
-    }
-
-    async createCommunity(communityData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/community`, {
-                method: 'POST',
-                body: JSON.stringify(communityData)
-            });
-            
-            this.showToast('success', 'Community created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create community error:', error);
-            this.showToast('error', error.message || 'Failed to create community.');
-            throw error;
-        }
-    }
-
-    async updateCommunity(id, communityData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/community/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(communityData)
-            });
-            
-            this.showToast('success', 'Community updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update community error:', error);
-            this.showToast('error', error.message || 'Failed to update community.');
-            throw error;
-        }
-    }
-
-    async deleteCommunity(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/community/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Community deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete community error:', error);
-            this.showToast('error', error.message || 'Failed to delete community.');
-            throw error;
-        }
-    }
-
-    async getCommunityMembers(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/community_member/list/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get community members error:', error);
-            throw error;
-        }
-    }
-
-    async addCommunityMember(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/community_member/add`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Member added to community!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Add community member error:', error);
-            this.showToast('error', error.message || 'Failed to add member.');
-            throw error;
-        }
-    }
-
-    async removeCommunityMember(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/community_member/remove/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Member removed from community!');
-            return response;
-        } catch (error) {
-            console.error('Remove community member error:', error);
-            this.showToast('error', error.message || 'Failed to remove member.');
-            throw error;
-        }
-    }
-
-    async searchCommunities(searchTerm) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/search`, {
-                method: 'POST',
-                body: JSON.stringify({ search: searchTerm })
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Search communities error:', error);
-            throw error;
-        }
-    }
-
-    async getCommunityByRoles(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/community_by_roles/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get community by roles error:', error);
-            throw error;
-        }
-    }
-
-    async getCommunityDetail(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/community_detail/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get community detail error:', error);
-            throw error;
-        }
-    }
-
-    async getCommunityInterest(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/community_interest/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get community interest error:', error);
-            throw error;
-        }
-    }
-
-    async getCommunityList(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/community_list/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get community list error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== POST MANAGEMENT APIS ====================
-    
-    async getPosts(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/post${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.posts || []);
-        } catch (error) {
-            console.error('Get posts error:', error);
-            throw error;
-        }
-    }
-
-    async getPostById(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/post/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get post by ID error:', error);
-            throw error;
-        }
-    }
-
-    async createPost(postData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/post`, {
-                method: 'POST',
-                body: JSON.stringify(postData)
-            });
-            
-            this.showToast('success', 'Post created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create post error:', error);
-            this.showToast('error', error.message || 'Failed to create post.');
-            throw error;
-        }
-    }
-
-    async updatePost(id, postData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/post/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(postData)
-            });
-            
-            this.showToast('success', 'Post updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update post error:', error);
-            this.showToast('error', error.message || 'Failed to update post.');
-            throw error;
-        }
-    }
-
-    async deletePost(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/post/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Post deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete post error:', error);
-            this.showToast('error', error.message || 'Failed to delete post.');
-            throw error;
-        }
-    }
-
-    async reportPost(reportData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/report`, {
-                method: 'POST',
-                body: JSON.stringify(reportData)
-            });
-            
-            this.showToast('success', 'Report submitted successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Report post error:', error);
-            this.showToast('error', error.message || 'Failed to submit report.');
-            throw error;
-        }
-    }
-
-    async likePost(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/post_like`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Like post error:', error);
-            throw error;
-        }
-    }
-
-    async getPostVideoDetail(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/post_video_detail/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get post video detail error:', error);
-            throw error;
-        }
-    }
-
-    async getPostVideoList(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/post_video_list/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get post video list error:', error);
-            throw error;
-        }
-    }
-
-    async getPendingPost(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/pending_post/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get pending post error:', error);
-            throw error;
-        }
-    }
-
-    async updatePendingPost(id, data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/pending_post_update/${id}`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Pending post updated!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update pending post error:', error);
-            this.showToast('error', error.message || 'Failed to update pending post.');
-            throw error;
-        }
-    }
-
-    // ==================== FEED MANAGEMENT APIS ====================
-    
-    async getFeeds(params = {}) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/show-feed`, {
-                method: 'POST',
-                body: JSON.stringify(params)
-            });
-            
-            return data.data || data.feeds || [];
-        } catch (error) {
-            console.error('Get feeds error:', error);
-            throw error;
-        }
-    }
-
-    async getFeedById(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/feed-detail/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get feed by ID error:', error);
-            throw error;
-        }
-    }
-
-    async createFeed(feedData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed`, {
-                method: 'POST',
-                body: JSON.stringify(feedData)
-            });
-            
-            this.showToast('success', 'Feed created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create feed error:', error);
-            this.showToast('error', error.message || 'Failed to create feed.');
-            throw error;
-        }
-    }
-
-    async updateFeed(id, feedData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed/${id}`, {
-                method: 'POST',
-                body: JSON.stringify(feedData)
-            });
-            
-            this.showToast('success', 'Feed updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update feed error:', error);
-            this.showToast('error', error.message || 'Failed to update feed.');
-            throw error;
-        }
-    }
-
-    async deleteFeed(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Feed deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete feed error:', error);
-            this.showToast('error', error.message || 'Failed to delete feed.');
-            throw error;
-        }
-    }
-
-    async getMyFeedList(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/my-feed-list/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get my feed list error:', error);
-            throw error;
-        }
-    }
-
-    async getAllFeedList() {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/all-feed-list`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get all feed list error:', error);
-            throw error;
-        }
-    }
-
-    async getFeedPostList(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/feed-post-list/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get feed post list error:', error);
-            throw error;
-        }
-    }
-
-    async postByFeed(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/post-by-feed/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get post by feed error:', error);
-            throw error;
-        }
-    }
-
-    async postByProfile(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/post-by-profile/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get post by profile error:', error);
-            throw error;
-        }
-    }
-
-    async feedFollow(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed-follow`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Feed follow error:', error);
-            throw error;
-        }
-    }
-
-    async updatePostByFeed(id, data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/update-post-by-feed/${id}`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Feed post updated!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update post by feed error:', error);
-            this.showToast('error', error.message || 'Failed to update feed post.');
-            throw error;
-        }
-    }
-
-    // ==================== INTEREST MANAGEMENT APIS ====================
-    
-    async getInterests(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/interest_list${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.interests || []);
-        } catch (error) {
-            console.error('Get interests error:', error);
-            throw error;
-        }
-    }
-
-    async getInterestById(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/interest_detail/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get interest by ID error:', error);
-            throw error;
-        }
-    }
-
-    async createInterest(interestData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/interest`, {
-                method: 'POST',
-                body: JSON.stringify(interestData)
-            });
-            
-            this.showToast('success', 'Interest created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create interest error:', error);
-            this.showToast('error', error.message || 'Failed to create interest.');
-            throw error;
-        }
-    }
-
-    async purchaseInterest(purchaseData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/interest_buy`, {
-                method: 'POST',
-                body: JSON.stringify(purchaseData)
-            });
-            
-            this.showToast('success', 'Interest purchased successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Purchase interest error:', error);
-            this.showToast('error', error.message || 'Failed to purchase interest.');
-            throw error;
-        }
-    }
-
-    async getProfileInterest(profileId, interestId = null) {
-        try {
-            const url = interestId 
-                ? `${this.baseURL}/auth/interest/${profileId}/${interestId}`
-                : `${this.baseURL}/auth/interest/${profileId}`;
-            
-            const data = await this.request(url, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get profile interest error:', error);
-            throw error;
-        }
-    }
-
-    async purchaseProfileInterest(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/purchase_interest`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Interest purchased!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Purchase profile interest error:', error);
-            this.showToast('error', error.message || 'Failed to purchase interest.');
-            throw error;
-        }
-    }
-
-    // ==================== EVENT MANAGEMENT APIS ====================
-    
-    async getEvents(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/event${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.events || []);
-        } catch (error) {
-            console.error('Get events error:', error);
-            throw error;
-        }
-    }
-
-    async getEventById(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/event/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get event by ID error:', error);
-            throw error;
-        }
-    }
-
-    async createEvent(eventData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/event`, {
-                method: 'POST',
-                body: JSON.stringify(eventData)
-            });
-            
-            this.showToast('success', 'Event created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create event error:', error);
-            this.showToast('error', error.message || 'Failed to create event.');
-            throw error;
-        }
-    }
-
-    async updateEvent(id, eventData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/event/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(eventData)
-            });
-            
-            this.showToast('success', 'Event updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update event error:', error);
-            this.showToast('error', error.message || 'Failed to update event.');
-            throw error;
-        }
-    }
-
-    async deleteEvent(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/event/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Event deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete event error:', error);
-            this.showToast('error', error.message || 'Failed to delete event.');
-            throw error;
-        }
-    }
-
-    async joinEvent(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/event_join`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Joined event successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Join event error:', error);
-            this.showToast('error', error.message || 'Failed to join event.');
-            throw error;
-        }
-    }
-
-    // ==================== COMMENT MANAGEMENT APIS ====================
-    
-    async getComments(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/comment${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.comments || []);
-        } catch (error) {
-            console.error('Get comments error:', error);
-            throw error;
-        }
-    }
-
-    async createComment(commentData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/comment`, {
-                method: 'POST',
-                body: JSON.stringify(commentData)
-            });
-            
-            this.showToast('success', 'Comment added successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create comment error:', error);
-            this.showToast('error', error.message || 'Failed to add comment.');
-            throw error;
-        }
-    }
-
-    async updateComment(id, commentData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/comment/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(commentData)
-            });
-            
-            this.showToast('success', 'Comment updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update comment error:', error);
-            this.showToast('error', error.message || 'Failed to update comment.');
-            throw error;
-        }
-    }
-
-    async deleteComment(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/comment/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Comment deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete comment error:', error);
-            this.showToast('error', error.message || 'Failed to delete comment.');
-            throw error;
-        }
-    }
-
-    async feedPostComment(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed_post_comment`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Feed post comment error:', error);
-            throw error;
-        }
-    }
-
-    async deleteFeedPostComment(commentId) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed_post_comment/${commentId}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Feed comment deleted!');
-            return response;
-        } catch (error) {
-            console.error('Delete feed post comment error:', error);
-            this.showToast('error', error.message || 'Failed to delete feed comment.');
-            throw error;
-        }
-    }
-
-    async feedPostLike(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/feed_post_like`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Feed post like error:', error);
-            throw error;
-        }
-    }
-
-    async getStreamCommentList(roomId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/stream_comment_list/${roomId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get stream comment list error:', error);
-            throw error;
-        }
-    }
-
-    async streamingComment(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/streaming_comment`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Streaming comment error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== CHAT APIS ====================
-    
-    async getConversations(profileId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/conversations-list/${profileId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get conversations error:', error);
-            throw error;
-        }
-    }
-
-    async getChatroomMessages(chatroomId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/chatroom-message-list/${chatroomId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get chatroom messages error:', error);
-            throw error;
-        }
-    }
-
-    async sendChatMessage(chatroomId, messageData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/chatroom-send-message/${chatroomId}`, {
-                method: 'POST',
-                body: JSON.stringify(messageData)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Send chat message error:', error);
-            throw error;
-        }
-    }
-
-    async createChatroom(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/chatroom/create`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Chatroom created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create chatroom error:', error);
-            this.showToast('error', error.message || 'Failed to create chatroom.');
-            throw error;
-        }
-    }
-
-    async deleteChatroom(chatroomId) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/chatroom/delete/${chatroomId}`, {
-                method: 'POST'
-            });
-            
-            this.showToast('success', 'Chatroom deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete chatroom error:', error);
-            this.showToast('error', error.message || 'Failed to delete chatroom.');
-            throw error;
-        }
-    }
-
-    async addUserToChatroom(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/chatroom/user/add`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'User added to chatroom!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Add user to chatroom error:', error);
-            this.showToast('error', error.message || 'Failed to add user to chatroom.');
-            throw error;
-        }
-    }
-
-    async sendDirectMessage(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/send-message`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Send direct message error:', error);
-            throw error;
-        }
-    }
-
-    async getMessageList(chatId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/message-list/${chatId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get message list error:', error);
-            throw error;
-        }
-    }
-
-    async deleteMessage(messageId) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/message-delete/${messageId}`, {
-                method: 'POST'
-            });
-            
-            this.showToast('success', 'Message deleted!');
-            return response;
-        } catch (error) {
-            console.error('Delete message error:', error);
-            this.showToast('error', error.message || 'Failed to delete message.');
-            throw error;
-        }
-    }
-
-    async deleteChat(chatId) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/chat-delete/${chatId}`, {
-                method: 'POST'
-            });
-            
-            this.showToast('success', 'Chat deleted!');
-            return response;
-        } catch (error) {
-            console.error('Delete chat error:', error);
-            this.showToast('error', error.message || 'Failed to delete chat.');
-            throw error;
-        }
-    }
-
-    async updateChatStatus(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/chat-status`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Update chat status error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== STREAMING APIS ====================
-    
-    async getStreamingData(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/streaming${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.streams || []);
-        } catch (error) {
-            console.error('Get streaming data error:', error);
-            throw error;
-        }
-    }
-
-    async createStreaming(streamingData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/streaming`, {
-                method: 'POST',
-                body: JSON.stringify(streamingData)
-            });
-            
-            this.showToast('success', 'Stream created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create streaming error:', error);
-            this.showToast('error', error.message || 'Failed to create stream.');
-            throw error;
-        }
-    }
-
-    async updateStreaming(id, streamingData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/streaming/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(streamingData)
-            });
-            
-            this.showToast('success', 'Stream updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update streaming error:', error);
-            this.showToast('error', error.message || 'Failed to update stream.');
-            throw error;
-        }
-    }
-
-    async deleteStreaming(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/streaming/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Stream deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete streaming error:', error);
-            this.showToast('error', error.message || 'Failed to delete stream.');
-            throw error;
-        }
-    }
-
-    async getStreamUsers() {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/stream_users`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get stream users error:', error);
-            throw error;
-        }
-    }
-
-    async getAgoraToken(profileId, data = {}) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/generate-rtc-token/${profileId}`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Get Agora token error:', error);
-            throw error;
-        }
-    }
-
-    async acquireAgora(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/agora/acquire`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Acquire Agora error:', error);
-            throw error;
-        }
-    }
-
-    async startAgora(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/agora/start`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Start Agora error:', error);
-            throw error;
-        }
-    }
-
-    async stopAgora(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/agora/stop`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Stop Agora error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== NOTIFICATION APIS ====================
-    
-    async getNotifications(profileId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/notification-list/${profileId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data.notifications || [];
-        } catch (error) {
-            console.error('Get notifications error:', error);
-            throw error;
-        }
-    }
-
-    async markNotificationsAsRead() {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/notifications/read`, {
-                method: 'POST'
-            });
-            
-            this.showToast('success', 'Notifications marked as read!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Mark notifications as read error:', error);
-            this.showToast('error', error.message || 'Failed to mark notifications as read.');
-            throw error;
-        }
-    }
-
-    // ==================== TRANSACTION/REVENUE APIS ====================
-    
-    async getTransactions(params = {}) {
-        try {
-            const queryString = new URLSearchParams(params).toString();
-            const data = await this.request(`${this.baseURL}/auth/transaction${queryString ? `?${queryString}` : ''}`, {
-                method: 'GET'
-            });
-            
-            return Array.isArray(data) ? data : (data.data || data.transactions || []);
-        } catch (error) {
-            console.error('Get transactions error:', error);
-            throw error;
-        }
-    }
-
-    async getSubscriptionPlans() {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/package_list`, {
-                method: 'GET'
-            });
-            
-            return data.data || data.packages || [];
-        } catch (error) {
-            console.error('Get subscription plans error:', error);
-            throw error;
-        }
-    }
-
-    async updateSubscription(planData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/subscription`, {
-                method: 'POST',
-                body: JSON.stringify(planData)
-            });
-            
-            this.showToast('success', 'Subscription updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update subscription error:', error);
-            this.showToast('error', error.message || 'Failed to update subscription.');
-            throw error;
-        }
-    }
-
-    async getCurrentPlan() {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/current/plan`, {
-                method: 'POST'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get current plan error:', error);
-            throw error;
-        }
-    }
-
-    async updatePlan(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/update/plan`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Plan updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update plan error:', error);
-            this.showToast('error', error.message || 'Failed to update plan.');
-            throw error;
-        }
-    }
-
-    // ==================== PRODUCT MANAGEMENT APIS ====================
-    
-    async getProducts(communityId) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/products/${communityId}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data.products || [];
-        } catch (error) {
-            console.error('Get products error:', error);
-            throw error;
-        }
-    }
-
-    async createProduct(productData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/products`, {
-                method: 'POST',
-                body: JSON.stringify(productData)
-            });
-            
-            this.showToast('success', 'Product created successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create product error:', error);
-            this.showToast('error', error.message || 'Failed to create product.');
-            throw error;
-        }
-    }
-
-    async updateProduct(id, productData) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/products/${id}`, {
-                method: 'POST',
-                body: JSON.stringify(productData)
-            });
-            
-            this.showToast('success', 'Product updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update product error:', error);
-            this.showToast('error', error.message || 'Failed to update product.');
-            throw error;
-        }
-    }
-
-    async deleteProduct(id) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/products/${id}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Product deleted successfully!');
-            return response;
-        } catch (error) {
-            console.error('Delete product error:', error);
-            this.showToast('error', error.message || 'Failed to delete product.');
-            throw error;
-        }
-    }
-
-    // ==================== FEED POST APIS ====================
-    
-    async createFeedPost(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/post-feed`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Feed post created!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Create feed post error:', error);
-            this.showToast('error', error.message || 'Failed to create feed post.');
-            throw error;
-        }
-    }
-
-    async deleteFeedPost(postId) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/post-feed/${postId}`, {
-                method: 'DELETE'
-            });
-            
-            this.showToast('success', 'Feed post deleted!');
-            return response;
-        } catch (error) {
-            console.error('Delete feed post error:', error);
-            this.showToast('error', error.message || 'Failed to delete feed post.');
-            throw error;
-        }
-    }
-
-    async bunnyPost(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/bunny_post`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Bunny post error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== CARD APIS ====================
-    
-    async addCard(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/addcard`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Card added successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Add card error:', error);
-            this.showToast('error', error.message || 'Failed to add card.');
-            throw error;
-        }
-    }
-
-    async updateCard(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/updatecard`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Card updated successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Update card error:', error);
-            this.showToast('error', error.message || 'Failed to update card.');
-            throw error;
-        }
-    }
-
-    // ==================== SUBSCRIPTION APIS ====================
-    
-    async subscribe(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/subscribe`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Subscribed successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Subscribe error:', error);
-            this.showToast('error', error.message || 'Failed to subscribe.');
-            throw error;
-        }
-    }
-
-    async unsubscribe(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/unsubscribe`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Unsubscribed successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Unsubscribe error:', error);
-            this.showToast('error', error.message || 'Failed to unsubscribe.');
-            throw error;
-        }
-    }
-
-    // ==================== UTILITY APIS ====================
-    
-    async clearCache() {
-        try {
-            const response = await this.request(`${this.baseURL}/clear-cache`, {
-                method: 'GET'
-            });
-            
-            this.showToast('success', 'Cache cleared successfully!');
-            return response;
-        } catch (error) {
-            console.error('Clear cache error:', error);
-            this.showToast('error', error.message || 'Failed to clear cache.');
-            throw error;
-        }
-    }
-
-    async getHashtagsList() {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/hashtags_list`, {
-                method: 'POST'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get hashtags error:', error);
-            throw error;
-        }
-    }
-
-    async getMyCommunities(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/my_community/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get my communities error:', error);
-            throw error;
-        }
-    }
-
-    async getAllMyCommunities(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/my_all_communities/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get all my communities error:', error);
-            throw error;
-        }
-    }
-
-    async getHomeMultipleCommunity(id) {
-        try {
-            const data = await this.request(`${this.baseURL}/auth/home_multiple_community/${id}`, {
-                method: 'GET'
-            });
-            
-            return data.data || data;
-        } catch (error) {
-            console.error('Get home multiple community error:', error);
-            throw error;
-        }
-    }
-
-    // ==================== CRON/MAINTENANCE APIS ====================
-    
-    async runCron() {
-        try {
-            const response = await this.request(`${this.baseURL}/cron`, {
-                method: 'GET'
-            });
-            
-            this.showToast('success', 'Cron job executed successfully!');
-            return response;
-        } catch (error) {
-            console.error('Run cron error:', error);
-            this.showToast('error', error.message || 'Failed to run cron job.');
-            throw error;
-        }
-    }
-
-    async runCronPlane() {
-        try {
-            const response = await this.request(`${this.baseURL}/cron/plane`, {
-                method: 'GET'
-            });
-            
-            return response;
-        } catch (error) {
-            console.error('Run cron plane error:', error);
-            throw error;
-        }
-    }
-
-    async runRecurringPlan() {
-        try {
-            const response = await this.request(`${this.baseURL}/recurring/plane`, {
-                method: 'GET'
-            });
-            
-            return response;
-        } catch (error) {
-            console.error('Run recurring plan error:', error);
-            throw error;
-        }
-    }
-
-    async noAuth() {
-        try {
-            const response = await this.request(`${this.baseURL}/noauth`, {
-                method: 'GET'
-            });
-            
-            return response;
-        } catch (error) {
-            console.error('No auth error:', error);
-            throw error;
-        }
-    }
-
-    async saad(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/saad`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Saad error:', error);
-            throw error;
-        }
-    }
-
-    async registerWithChatAppToken(data) {
-        try {
-            const response = await this.request(`${this.baseURL}/registeruserwithchatapptoken`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            return response.data || response;
-        } catch (error) {
-            console.error('Register with chat app token error:', error);
-            throw error;
-        }
-    }
-
-    async changePasscode(id, data) {
-        try {
-            const response = await this.request(`${this.baseURL}/auth/change_passcode/${id}`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            });
-            
-            this.showToast('success', 'Passcode changed successfully!');
-            return response.data || response;
-        } catch (error) {
-            console.error('Change passcode error:', error);
-            this.showToast('error', error.message || 'Failed to change passcode.');
-            throw error;
-        }
-    }
-
-    // ==================== OFFLINE DATA MANAGEMENT ====================
-    
-    async syncOfflineData() {
-        if (!this.isOnline) {
-            this.showToast('warning', 'Cannot sync while offline');
-            return;
-        }
-        
-        const offlineData = JSON.parse(localStorage.getItem('hatch_offline_data') || '{}');
-        if (Object.keys(offlineData).length === 0) {
-            this.showToast('info', 'No offline data to sync');
-            return;
-        }
-        
-        this.showToast('info', 'Syncing offline data...');
-        
-        for (const [endpoint, data] of Object.entries(offlineData)) {
-            try {
-                await this.request(`${this.baseURL}${endpoint}`, {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-                
-                // Remove from offline storage on success
-                delete offlineData[endpoint];
-            } catch (error) {
-                console.error(`Failed to sync ${endpoint}:`, error);
-            }
-        }
-        
-        localStorage.setItem('hatch_offline_data', JSON.stringify(offlineData));
-        this.showToast('success', 'Offline data synced successfully!');
-    }
-
-    // Store data offline
-    storeOffline(endpoint, data) {
-        const offlineData = JSON.parse(localStorage.getItem('hatch_offline_data') || '{}');
-        offlineData[endpoint] = data;
-        localStorage.setItem('hatch_offline_data', JSON.stringify(offlineData));
-        
-        this.showToast('info', 'Data saved offline. Will sync when online.');
     }
 }
 
-// Create global API instance
-window.apiService = new APIService();
+// ==================== MOCK API SERVICE ====================
+class MockAPIService {
+    constructor() {
+        this.data = this.generateMockData();
+        this.delay = CONFIG.MOCK.DELAY;
+    }
+    
+    generateMockData() {
+        const data = {
+            users: [],
+            interests: [],
+            posts: [],
+            communities: [],
+            transactions: [],
+            reports: [],
+            activities: [],
+            dashboardStats: null
+        };
+        
+        // Generate users
+        for (let i = 1; i <= CONFIG.MOCK.TOTAL_USERS; i++) {
+            data.users.push({
+                id: i,
+                name: `User ${i}`,
+                email: `user${i}@example.com`,
+                type: ['explorer', 'creator', 'admin'][Math.floor(Math.random() * 3)],
+                status: ['active', 'inactive', 'pending'][Math.floor(Math.random() * 3)],
+                joinDate: new Date(Date.now() - Math.random() * 10000000000).toISOString().split('T')[0],
+                lastLogin: new Date(Date.now() - Math.random() * 1000000000).toISOString(),
+                profilePicture: `https://i.pravatar.cc/150?img=${i}`,
+                bio: `This is bio of user ${i}`,
+                location: ['New York', 'London', 'Tokyo'][Math.floor(Math.random() * 3)],
+                followers: Math.floor(Math.random() * 1000),
+                following: Math.floor(Math.random() * 500),
+                postsCount: Math.floor(Math.random() * 50)
+            });
+        }
+        
+        // Generate interests
+        const categories = ['Technology', 'Arts', 'Health', 'Food', 'Sports', 'Music', 'Travel'];
+        for (let i = 1; i <= CONFIG.MOCK.TOTAL_INTERESTS; i++) {
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            data.interests.push({
+                id: i,
+                name: `${category} ${i}`,
+                category: category,
+                description: `This is ${category.toLowerCase()} interest ${i}`,
+                users: Math.floor(Math.random() * 1000),
+                engagement: ['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)],
+                status: Math.random() > 0.2 ? 'active' : 'inactive',
+                createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString()
+            });
+        }
+        
+        // Generate transactions
+        for (let i = 1; i <= CONFIG.MOCK.TOTAL_TRANSACTIONS; i++) {
+            data.transactions.push({
+                id: i,
+                userId: Math.floor(Math.random() * CONFIG.MOCK.TOTAL_USERS) + 1,
+                amount: parseFloat((Math.random() * 100 + 10).toFixed(2)),
+                type: ['subscription', 'purchase', 'refund'][Math.floor(Math.random() * 3)],
+                plan: ['Basic', 'Pro', 'Enterprise'][Math.floor(Math.random() * 3)],
+                status: ['completed', 'pending', 'failed'][Math.floor(Math.random() * 3)],
+                createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+                transactionId: `txn_${Math.random().toString(36).substr(2, 9)}`
+            });
+        }
+        
+        // Generate activities
+        const actions = ['registered', 'logged in', 'created post', 'updated profile', 'made purchase'];
+        for (let i = 1; i <= 20; i++) {
+            data.activities.push({
+                id: i,
+                userId: Math.floor(Math.random() * CONFIG.MOCK.TOTAL_USERS) + 1,
+                action: actions[Math.floor(Math.random() * actions.length)],
+                type: ['user', 'system', 'payment'][Math.floor(Math.random() * 3)],
+                timestamp: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+                details: `Activity ${i} details`,
+                ip: `192.168.1.${Math.floor(Math.random() * 255)}`
+            });
+        }
+        
+        // Generate dashboard stats
+        const totalRevenue = data.transactions
+            .filter(t => t.status === 'completed')
+            .reduce((sum, t) => sum + t.amount, 0);
+        
+        data.dashboardStats = {
+            totalUsers: data.users.length,
+            activeUsers: data.users.filter(u => u.status === 'active').length,
+            totalInterests: data.interests.length,
+            activeInterests: data.interests.filter(i => i.status === 'active').length,
+            totalRevenue: totalRevenue,
+            monthlyRevenue: totalRevenue * 0.3,
+            activeSubscriptions: data.transactions.filter(t => 
+                t.type === 'subscription' && t.status === 'completed'
+            ).length,
+            pendingReports: Math.floor(Math.random() * 20),
+            growthRate: `${(Math.random() * 30 + 5).toFixed(1)}%`,
+            engagementRate: `${(Math.random() * 40 + 50).toFixed(1)}%`
+        };
+        
+        return data;
+    }
+    
+    async delayResponse() {
+        return new Promise(resolve => setTimeout(resolve, this.delay));
+    }
+    
+    // Mock responses
+    async login(email, password) {
+        await this.delayResponse();
+        
+        if (email === 'admin@hatchsocial.com' && password === 'admin123') {
+            return {
+                status: 'success',
+                token: 'mock_jwt_token_' + Date.now(),
+                user: {
+                    id: 1,
+                    name: 'Admin User',
+                    email: 'admin@hatchsocial.com',
+                    type: 'admin',
+                    status: 'active'
+                },
+                message: 'Login successful'
+            };
+        }
+        
+        throw new Error('Invalid credentials');
+    }
+    
+    async logout() {
+        await this.delayResponse();
+        return { status: 'success', message: 'Logged out' };
+    }
+    
+    async getCurrentUser() {
+        await this.delayResponse();
+        return {
+            status: 'success',
+            data: {
+                id: 1,
+                name: 'Admin User',
+                email: 'admin@hatchsocial.com',
+                type: 'admin',
+                status: 'active'
+            }
+        };
+    }
+    
+    async getUsers(params = {}) {
+        await this.delayResponse();
+        let users = [...this.data.users];
+        
+        // Apply filters
+        if (params.status) users = users.filter(u => u.status === params.status);
+        if (params.type) users = users.filter(u => u.type === params.type);
+        if (params.search) {
+            const search = params.search.toLowerCase();
+            users = users.filter(u => 
+                u.name.toLowerCase().includes(search) || 
+                u.email.toLowerCase().includes(search)
+            );
+        }
+        
+        // Pagination
+        const page = parseInt(params.page) || 1;
+        const limit = parseInt(params.limit) || CONFIG.PAGINATION.DEFAULT_LIMIT;
+        const start = (page - 1) * limit;
+        
+        return {
+            status: 'success',
+            data: users.slice(start, start + limit),
+            total: users.length,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(users.length / limit)
+        };
+    }
+    
+    async getUserById(id) {
+        await this.delayResponse();
+        const user = this.data.users.find(u => u.id === parseInt(id));
+        
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        return { status: 'success', data: user };
+    }
+    
+    async createUser(userData) {
+        await this.delayResponse();
+        
+        const newUser = {
+            id: this.data.users.length + 1,
+            ...userData,
+            joinDate: new Date().toISOString().split('T')[0],
+            lastLogin: null,
+            followers: 0,
+            following: 0,
+            postsCount: 0
+        };
+        
+        this.data.users.push(newUser);
+        
+        return {
+            status: 'success',
+            data: newUser,
+            message: 'User created successfully'
+        };
+    }
+    
+    async updateUser(id, userData) {
+        await this.delayResponse();
+        
+        const index = this.data.users.findIndex(u => u.id === parseInt(id));
+        if (index === -1) {
+            throw new Error('User not found');
+        }
+        
+        this.data.users[index] = { ...this.data.users[index], ...userData };
+        
+        return {
+            status: 'success',
+            data: this.data.users[index],
+            message: 'User updated successfully'
+        };
+    }
+    
+    async deleteUser(id) {
+        await this.delayResponse();
+        
+        const index = this.data.users.findIndex(u => u.id === parseInt(id));
+        if (index === -1) {
+            throw new Error('User not found');
+        }
+        
+        this.data.users.splice(index, 1);
+        
+        return {
+            status: 'success',
+            message: 'User deleted successfully'
+        };
+    }
+    
+    async getInterests(params = {}) {
+        await this.delayResponse();
+        
+        let interests = [...this.data.interests];
+        if (params.category) {
+            interests = interests.filter(i => i.category === params.category);
+        }
+        
+        return {
+            status: 'success',
+            data: interests
+        };
+    }
+    
+    async getInterestById(id) {
+        await this.delayResponse();
+        
+        const interest = this.data.interests.find(i => i.id === parseInt(id));
+        if (!interest) {
+            throw new Error('Interest not found');
+        }
+        
+        return { status: 'success', data: interest };
+    }
+    
+    async getDashboardStats() {
+        await this.delayResponse();
+        return { status: 'success', data: this.data.dashboardStats };
+    }
+    
+    async getActivities() {
+        await this.delayResponse();
+        return { status: 'success', data: this.data.activities };
+    }
+    
+    async getReports() {
+        await this.delayResponse();
+        
+        const reports = [
+            { id: 1, content: 'Inappropriate post', reporter: 'user1', status: 'pending', date: '2024-03-15' },
+            { id: 2, content: 'Spam account', reporter: 'user2', status: 'investigating', date: '2024-03-14' },
+            { id: 3, content: 'Copyright issue', reporter: 'user3', status: 'resolved', date: '2024-03-13' }
+        ];
+        
+        return { status: 'success', data: reports };
+    }
+    
+    async getTransactions(params = {}) {
+        await this.delayResponse();
+        
+        let transactions = [...this.data.transactions];
+        if (params.type) {
+            transactions = transactions.filter(t => t.type === params.type);
+        }
+        
+        return {
+            status: 'success',
+            data: transactions,
+            totals: {
+                total: transactions.length,
+                totalRevenue: transactions
+                    .filter(t => t.status === 'completed')
+                    .reduce((sum, t) => sum + t.amount, 0),
+                pending: transactions.filter(t => t.status === 'pending').length
+            }
+        };
+    }
+    
+    async getCommunities(params = {}) {
+        await this.delayResponse();
+        
+        const communities = [
+            { id: 1, name: 'Tech Enthusiasts', members: 1250, posts: 320, category: 'Technology' },
+            { id: 2, name: 'Art Lovers', members: 890, posts: 210, category: 'Arts' },
+            { id: 3, name: 'Fitness Group', members: 2100, posts: 540, category: 'Health' }
+        ];
+        
+        return { status: 'success', data: communities };
+    }
+    
+    async getPosts(params = {}) {
+        await this.delayResponse();
+        
+        const posts = [
+            { id: 1, userId: 1, content: 'First post!', likes: 45, comments: 12, shares: 3 },
+            { id: 2, userId: 2, content: 'Check out my new artwork', likes: 120, comments: 24, shares: 8 },
+            { id: 3, userId: 3, content: 'Fitness tips for beginners', likes: 89, comments: 15, shares: 5 }
+        ];
+        
+        return { status: 'success', data: posts };
+    }
+}
 
-// Export for module usage
+// Create global instance
+window.apiService = new HybridAPIService();
+
+// Export for Node.js
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = APIService;
+    module.exports = { HybridAPIService, MockAPIService };
 }
