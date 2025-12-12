@@ -791,116 +791,29 @@
             animation: fadeInUp 0.8s ease 0.4s both;
         }
 
-        /* ==================== RESPONSIVE DESIGN ==================== */
-        @media (min-width: 1400px) {
-            .container { max-width: 520px; }
-            .card { padding: 55px 45px; }
-            .logo-wrapper { width: 90px; height: 90px; }
-            .logo-text { font-size: 32px; }
-            .tagline { font-size: 17px; }
-        }
-
-        @media (max-width: 992px) {
-            .container { max-width: 480px; }
-            .card { padding: 45px 35px; }
-            .card-header h2 { font-size: 28px; }
-            .logo-text { font-size: 26px; }
-            .logo-wrapper { width: 75px; height: 75px; }
-            .tagline { font-size: 16px; }
-        }
-
+        /* Responsive Styles */
         @media (max-width: 768px) {
-            body { padding: 15px; align-items: flex-start; min-height: 100vh; }
-            .container { max-width: 100%; margin-top: 30px; }
-            .card { padding: 35px 30px; border-radius: 22px; }
-            .card-header { margin-bottom: 30px; }
+            .card { padding: 35px 30px; }
             .card-header h2 { font-size: 26px; }
-            .card-header p { font-size: 15px; }
             .logo-text { font-size: 24px; }
             .logo-wrapper { width: 70px; height: 70px; }
-            .input-with-icon input { padding: 18px 18px 18px 55px; font-size: 15px; }
-            .btn { padding: 18px; font-size: 16px; }
-            .options { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .demo-credentials { padding: 24px; }
-            .header { margin-bottom: 30px; }
-            .corner-accent { opacity: 0.1; }
+            .input-with-icon input { padding: 18px 18px 18px 55px; }
+            .btn { padding: 18px; }
         }
 
         @media (max-width: 576px) {
-            body { padding: 12px; }
-            .card { padding: 30px 25px; border-radius: 20px; }
+            .card { padding: 30px 25px; }
             .card-header h2 { font-size: 24px; }
-            .logo-container { gap: 12px; }
             .logo-text { font-size: 22px; }
             .logo-wrapper { width: 65px; height: 65px; }
-            .tagline { font-size: 15px; }
             .demo-credentials { padding: 22px; }
-            .demo-credentials h4 { font-size: 16px; }
-            .demo-credentials p { font-size: 14px; }
-            .modal-content { width: 95%; }
             .input-icon { left: 16px; font-size: 18px; }
             .input-with-icon input { padding: 16px 16px 16px 50px; }
-            .password-toggle { right: 16px; font-size: 18px; }
-            .remember input[type="checkbox"] { width: 16px; height: 16px; min-width: 16px; min-height: 16px; }
-            .remember { gap: 8px; }
-            .remember label { font-size: 13px; }
-        }
-
-        @media (max-width: 400px) {
-            .card { padding: 25px 20px; border-radius: 18px; }
-            .card-header h2 { font-size: 22px; }
-            .logo-text { font-size: 20px; }
-            .logo-wrapper { width: 60px; height: 60px; }
-            .btn { padding: 16px; font-size: 15px; }
-            .tagline { font-size: 14px; }
-            .footer { font-size: 13px; }
-            .modal-body { padding: 28px; }
-            .modal-header { padding: 24px 28px; }
-            .demo-credentials strong { font-size: 13px; padding: 5px 10px; }
-            .options { flex-direction: column; align-items: stretch; gap: 15px; }
-            .remember { justify-content: flex-start; }
-            .forgot { text-align: left; padding-left: 30px; }
-        }
-
-        @media (max-width: 320px) {
-            body { padding: 10px; }
-            .card { padding: 22px 18px; border-radius: 16px; }
-            .input-with-icon input { padding: 15px 15px 15px 45px; font-size: 14px; }
-            .btn { padding: 15px; font-size: 14px; }
-            .logo-wrapper { width: 55px; height: 55px; }
-            .logo-text { font-size: 18px; }
-            .version { padding: 8px 18px; font-size: 13px; }
-            .remember input[type="checkbox"] { width: 14px; height: 14px; min-width: 14px; min-height: 14px; }
-            .remember label { font-size: 12px; }
-            .forgot { font-size: 12px; }
-        }
-
-        @media (max-height: 700px) and (orientation: landscape) {
-            body { padding: 15px; align-items: flex-start; min-height: auto; }
-            .container { margin: 15px 0; max-width: 520px; }
-            .header { margin-bottom: 25px; }
-            .logo-container { flex-direction: row; gap: 20px; margin-bottom: 15px; }
-            .logo-text { font-size: 24px; }
-            .card { padding: 25px 30px; }
-            .form-group { margin-bottom: 20px; }
-            .tagline { display: none; }
-            .demo-credentials { margin-top: 25px; padding: 22px; }
-            .remember input[type="checkbox"] { width: 16px; height: 16px; min-width: 16px; min-height: 16px; }
-        }
-
-        @media (hover: none) and (pointer: coarse) {
-            .btn:hover { transform: none; }
-            .forgot:hover { transform: none; }
-            .password-toggle:hover { transform: none; }
-            .modal-close:hover { transform: none; }
-            .btn:active, .forgot:active, .password-toggle:active, .modal-close:active { transform: scale(0.98); }
-            .btn, .password-toggle, .modal-close { min-height: 48px; min-width: 48px; }
-            .remember input[type="checkbox"] { min-height: 20px; min-width: 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- Background elements remain the same -->
+    <!-- Background elements -->
     <div class="background">
         <div class="subtle-pattern"></div>
         <div class="corner-accent corner-top-right"></div>
@@ -984,7 +897,7 @@
                 <p>Secure admin portal • Encrypted connection</p>
                 <div class="version">
                     <i class="fas fa-shield-alt"></i>
-                    v1.2.0 • Admin Dashboard
+                    v2.0.0 • Admin Dashboard
                 </div>
             </div>
         </div>
@@ -998,7 +911,7 @@
                 <button class="modal-close" id="modalClose">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
-                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions. We'll send you a secure link to reset your password.</p>
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions.</p>
                 <div class="form-group">
                     <label for="forgotEmail">Email Address</label>
                     <div class="input-with-icon">
@@ -1018,558 +931,478 @@
         </div>
     </div>
 
-
     <script>
-        // ==================== ENHANCED STORAGE MANAGER ====================
-        class StorageManager {
+    // ==================== API CONFIGURATION ====================
+    const API_CONFIG = {
+        BASE_URL: 'http://localhost:8000/api',
+        USE_MOCK: true,
+        VERSION: '2.0.0'
+    };
+
+    // ==================== MOCK API SERVICE ====================
+    // Check if already exists
+    if (!window.MockAPIService) {
+        class MockAPIService {
             constructor() {
-                this.prefix = 'hatch_';
-                this.backupPrefix = 'hatch_backup_';
+                this.delay = 300;
+                console.log('🎭 Mock API Service initialized');
             }
-            
-            // Secure save with encryption
-            save(key, data) {
-                try {
-                    const encrypted = btoa(JSON.stringify(data));
-                    localStorage.setItem(this.prefix + key, encrypted);
-                    
-                    // Create backup
-                    this.createBackup(key, data);
-                    
-                    return true;
-                } catch (e) {
-                    console.error('Storage save error:', e);
-                    return false;
-                }
-            }
-            
-            // Secure load
-            load(key) {
-                try {
-                    const encrypted = localStorage.getItem(this.prefix + key);
-                    if (!encrypted) return this.getDefaultData(key);
-                    
-                    return JSON.parse(atob(encrypted));
-                } catch (e) {
-                    console.error('Storage load error:', e);
-                    return this.loadFromBackup(key) || this.getDefaultData(key);
-                }
-            }
-            
-            // Create backup
-            createBackup(key, data) {
-                try {
-                    const timestamp = new Date().getTime();
-                    const backupKey = `${this.backupPrefix}${key}_${timestamp}`;
-                    localStorage.setItem(backupKey, btoa(JSON.stringify(data)));
-                    
-                    // Cleanup old backups (keep last 3)
-                    this.cleanupBackups(key, 3);
-                } catch (e) {
-                    console.error('Backup creation error:', e);
-                }
-            }
-            
-            // Load from backup
-            loadFromBackup(key) {
-                try {
-                    const backups = [];
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const storageKey = localStorage.key(i);
-                        if (storageKey.startsWith(`${this.backupPrefix}${key}_`)) {
-                            const timestamp = parseInt(storageKey.split('_').pop());
-                            backups.push({ key: storageKey, timestamp });
-                        }
-                    }
-                    
-                    if (backups.length > 0) {
-                        backups.sort((a, b) => b.timestamp - a.timestamp);
-                        const latest = backups[0];
-                        const encrypted = localStorage.getItem(latest.key);
-                        return JSON.parse(atob(encrypted));
-                    }
-                } catch (e) {
-                    console.error('Backup load error:', e);
-                }
-                return null;
-            }
-            
-            // Cleanup old backups
-            cleanupBackups(key, keepCount) {
-                try {
-                    const backups = [];
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const storageKey = localStorage.key(i);
-                        if (storageKey.startsWith(`${this.backupPrefix}${key}_`)) {
-                            const timestamp = parseInt(storageKey.split('_').pop());
-                            backups.push({ key: storageKey, timestamp });
-                        }
-                    }
-                    
-                    if (backups.length > keepCount) {
-                        backups.sort((a, b) => b.timestamp - a.timestamp);
-                        const toDelete = backups.slice(keepCount);
-                        toDelete.forEach(backup => {
-                            localStorage.removeItem(backup.key);
-                        });
-                    }
-                } catch (e) {
-                    console.error('Backup cleanup error:', e);
-                }
-            }
-            
-            // Export all data
-            exportAll() {
-                const allData = {};
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key.startsWith(this.prefix) && !key.includes('backup')) {
-                        try {
-                            const encrypted = localStorage.getItem(key);
-                            if (encrypted) {
-                                const cleanKey = key.replace(this.prefix, '');
-                                allData[cleanKey] = JSON.parse(atob(encrypted));
-                            }
-                        } catch (e) {
-                            console.error(`Failed to export ${key}:`, e);
-                        }
-                    }
-                }
-                return allData;
-            }
-            
-            // Get default data
-            getDefaultData(key) {
-                const defaults = {
-                    users: [],
-                    interests: [],
-                    reports: [],
-                    memberships: [],
-                    revenue: [],
-                    moderation: [],
-                    activities: [],
-                    settings: {
-                        theme: 'dark',
-                        notifications: true,
-                        autoBackup: true
-                    }
-                };
-                return defaults[key] || null;
-            }
-        }
 
-        // Initialize storage manager
-        const storage = new StorageManager();
+            async delayResponse() {
+                return new Promise(resolve => setTimeout(resolve, this.delay));
+            }
 
-        // ==================== ADMIN CREDENTIALS ====================
-        const ADMIN_CREDENTIALS = {
-            email: 'admin@hatchsocial.com',
-            password: 'admin123',
-            name: 'Admin User',
-            role: 'admin',
-            userType: 'admin'
-        };
-
-        // ==================== DOM ELEMENTS ====================
-        const signinForm = document.getElementById('signin-form');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const togglePassword = document.getElementById('togglePassword');
-        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-        const forgotModal = document.getElementById('forgotModal');
-        const forgotEmail = document.getElementById('forgotEmail');
-        const modalClose = document.getElementById('modalClose');
-        const sendResetBtn = document.getElementById('sendResetBtn');
-        const modalBody = document.getElementById('modalBody');
-        const signinBtn = document.getElementById('signin-btn');
-
-        // ==================== INITIALIZE DATA ====================
-        function initializeData() {
-            // Check if it's first time login
-            const firstTime = !storage.load('users');
-            
-            if (firstTime) {
-                // Create default admin user
-                const defaultAdmin = {
-                    id: 1,
-                    name: "Admin User",
-                    email: "admin@hatchsocial.com",
-                    type: "admin",
-                    status: "active",
-                    joinDate: new Date().toISOString().split('T')[0],
-                    notes: "Default administrator account"
-                };
+            async login(email, password) {
+                await this.delayResponse();
                 
-                // Save default data
-                storage.save('users', [defaultAdmin]);
-                storage.save('settings', {
-                    theme: 'dark',
-                    notifications: true,
-                    autoBackup: true,
-                    lastBackup: new Date().toISOString()
-                });
+                if (email === 'admin@hatchsocial.com' && password === 'admin123') {
+                    return {
+                        status: 'success',
+                        token: 'mock_jwt_token_' + Date.now(),
+                        user: {
+                            id: 1,
+                            name: 'Admin User',
+                            email: 'admin@hatchsocial.com',
+                            type: 'admin',
+                            status: 'active'
+                        },
+                        message: 'Login successful'
+                    };
+                }
                 
-                console.log('First time setup: Default data created');
+                return {
+                    status: 'error',
+                    message: 'Invalid credentials'
+                };
+            }
+
+            async forgotPassword(email) {
+                await this.delayResponse();
+                return {
+                    status: 'success',
+                    message: `Password reset instructions sent to ${email}`
+                };
             }
         }
+        
+        window.MockAPIService = MockAPIService;
+    }
 
-        // ==================== PASSWORD TOGGLE ====================
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.innerHTML = type === 'password' ? 
-                '<i class="fas fa-eye"></i>' : 
-                '<i class="fas fa-eye-slash"></i>';
-            this.style.animation = 'iconSpin 0.6s ease';
-            setTimeout(() => {
-                this.style.animation = '';
-            }, 600);
-        });
-
-        // ==================== SHOW/HIDE ERROR ====================
-        function showError(elementId, message) {
-            const errorEl = document.getElementById(elementId);
-            errorEl.querySelector('span').textContent = message;
-            errorEl.style.display = 'flex';
-            errorEl.style.animation = 'errorShake 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    // ==================== MAIN API SERVICE ====================
+    class APIService {
+        constructor() {
+            this.baseURL = API_CONFIG.BASE_URL;
+            this.token = localStorage.getItem('hatch_admin_token');
+            this.user = JSON.parse(localStorage.getItem('hatch_admin_user') || '{}');
+            this.mockService = new window.MockAPIService();
+            this.useRealAPI = false;
+            
+            console.log('🚀 API Service Initializing...');
+            this.init();
         }
 
-        function hideError(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-
-        // ==================== SIGN IN FUNCTION ====================
-        signinForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            // Hide errors
-            hideError('email-error');
-            hideError('password-error');
-            
-            // Validation
-            let isValid = true;
-            
-            if (!email || !email.includes('@')) {
-                showError('email-error', 'Please enter a valid email address');
-                isValid = false;
-            }
-            
-            if (!password) {
-                showError('password-error', 'Please enter your password');
-                isValid = false;
-            }
-            
-            if (!isValid) return;
-            
-            // Show loading
-            const originalText = signinBtn.innerHTML;
-            const originalBg = signinBtn.style.background;
-            signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-            signinBtn.disabled = true;
-            signinBtn.style.animation = 'buttonGlow 1.5s ease-in-out infinite';
-            
-            // Simulate API call delay
-            setTimeout(() => {
-                // Check credentials against admin account
-                if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-                    // Get users data to ensure admin exists
-                    let users = storage.load('users') || [];
-                    
-                    // Check if admin user exists
-                    let adminUser = users.find(u => u.email === ADMIN_CREDENTIALS.email);
-                    
-                    if (!adminUser) {
-                        // Create admin user
-                        adminUser = {
-                            id: users.length + 1,
-                            name: ADMIN_CREDENTIALS.name,
-                            email: ADMIN_CREDENTIALS.email,
-                            type: ADMIN_CREDENTIALS.role,
-                            status: 'active',
-                            joinDate: new Date().toISOString().split('T')[0],
-                            notes: 'Administrator account',
-                            lastLogin: new Date().toISOString()
-                        };
-                        users.push(adminUser);
-                        storage.save('users', users);
-                    } else {
-                        // Update last login
-                        adminUser.lastLogin = new Date().toISOString();
-                        storage.save('users', users);
-                    }
-                    
-                    // Save to session storage
-                    sessionStorage.setItem('currentAdmin', JSON.stringify({
-                        name: adminUser.name,
-                        email: adminUser.email,
-                        role: adminUser.type,
-                        userType: adminUser.type,
-                        loginTime: new Date().toISOString(),
-                        userId: adminUser.id
-                    }));
-                    
-                    // Create login activity
-                    const activities = storage.load('activities') || [];
-                    activities.unshift({
-                        id: activities.length + 1,
-                        userName: adminUser.name,
-                        activity: 'Admin login successful',
-                        type: 'Security',
-                        time: 'Just now',
-                        status: 'Completed',
-                        details: `IP: 192.168.1.1, Browser: ${navigator.userAgent}`
-                    });
-                    storage.save('activities', activities.slice(0, 50)); // Keep last 50 activities
-                    
-                    // Success animation
-                    signinBtn.innerHTML = '<i class="fas fa-check"></i> Access Granted';
-                    signinBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
-                    signinBtn.style.animation = 'none';
-                    
-                    // Add success animation to card
-                    document.querySelector('.card').style.animation = 'successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-                    
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } else {
-                    // Invalid credentials
-                    showError('password-error', 'Invalid email or password');
-                    signinBtn.innerHTML = originalText;
-                    signinBtn.disabled = false;
-                    signinBtn.style.background = originalBg;
-                    signinBtn.style.animation = 'buttonGlow 4s ease-in-out infinite';
-                    
-                    // Add shake animation to card
-                    document.querySelector('.card').style.animation = 'errorShake 0.8s ease';
-                    setTimeout(() => {
-                        document.querySelector('.card').style.animation = '';
-                    }, 800);
-                }
-            }, 1500);
-        });
-
-        // ==================== FORGOT PASSWORD ====================
-        forgotPasswordLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            openForgotModal();
-        });
-
-        modalClose.addEventListener('click', closeForgotModal);
-
-        function openForgotModal() {
-            forgotModal.style.display = 'flex';
-            forgotEmail.value = '';
-            forgotEmail.focus();
-            hideError('forgotError');
-            
-            // Reset modal to form view
-            modalBody.innerHTML = `
-                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions. We'll send you a secure link to reset your password.</p>
-                <div class="form-group">
-                    <label for="forgotEmail">Email Address</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" id="forgotEmail" placeholder="Enter your email address">
-                    </div>
-                    <div class="error" id="forgotError" style="display: none;">
-                        <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
-                    </div>
-                </div>
-            `;
-            
-            // Re-attach event listeners
-            document.getElementById('forgotEmail').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendResetEmail();
-                }
-            });
-        }
-
-        function closeForgotModal() {
-            forgotModal.style.display = 'none';
-        }
-
-        function showSuccessMessage(email) {
-            modalBody.innerHTML = `
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Reset Link Sent!</h3>
-                    <p>Password reset instructions have been sent to:<br><strong style="color: var(--primary);">${email}</strong></p>
-                    <p style="font-size: 16px; color: rgba(255, 255, 255, 0.7);">Please check your inbox and follow the instructions to reset your password. The link will expire in 24 hours.</p>
-                </div>
-            `;
-        }
-
-        sendResetBtn.addEventListener('click', sendResetEmail);
-
-        function sendResetEmail() {
-            const email = forgotEmail.value.trim();
-            
-            if (!email || !email.includes('@')) {
-                document.getElementById('forgotError').style.display = 'flex';
-                forgotEmail.focus();
+        async init() {
+            // If running from file://, use mock
+            if (window.location.protocol === 'file:') {
+                console.log('📁 Local file - Using MOCK API');
+                this.useRealAPI = false;
                 return;
             }
             
-            // Show loading
-            const originalText = sendResetBtn.innerHTML;
-            sendResetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            sendResetBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Show success message
-                showSuccessMessage(email);
-                
-                // Reset button
-                sendResetBtn.innerHTML = originalText;
-                sendResetBtn.disabled = false;
-                
-                // Auto close modal after 3 seconds
-                setTimeout(() => {
-                    closeForgotModal();
-                }, 3000);
-            }, 1500);
+            // Try to connect to real API
+            await this.testConnection();
         }
 
-        // Close modal when clicking outside
-        forgotModal.addEventListener('click', function(e) {
-            if (e.target === forgotModal) {
-                closeForgotModal();
+        async testConnection() {
+            try {
+                console.log('🔍 Testing API connection...');
+                
+                // Quick timeout test
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 2000);
+                
+                const response = await fetch(`${this.baseURL}/health`, {
+                    signal: controller.signal,
+                    method: 'GET'
+                }).catch(() => null);
+                
+                clearTimeout(timeoutId);
+                
+                if (response && response.ok) {
+                    this.useRealAPI = true;
+                    console.log('✅ Connected to REAL API');
+                } else {
+                    this.useRealAPI = false;
+                    console.log('🎭 Using MOCK API');
+                }
+            } catch (error) {
+                this.useRealAPI = false;
+                console.log('🎭 Using MOCK API (error)');
             }
-        });
+        }
 
-        // ==================== AUTO-FILL FOR DEMO ====================
-        window.addEventListener('DOMContentLoaded', function() {
-            // Initialize data
-            initializeData();
+        async login(email, password) {
+            console.log(`🔐 Login attempt: ${email}`);
             
-            // Auto-fill admin credentials for demo
+            // DEMO CREDENTIALS - Always work
+            if (email === 'admin@hatchsocial.com' && password === 'admin123') {
+                const demoUser = {
+                    id: 1,
+                    name: 'Admin User',
+                    email: 'admin@hatchsocial.com',
+                    type: 'admin',
+                    status: 'active'
+                };
+                
+                const demoToken = 'demo_token_' + Date.now();
+                
+                this.setAuth(demoToken, demoUser);
+                
+                return {
+                    status: 'success',
+                    token: demoToken,
+                    user: demoUser,
+                    message: 'Login successful'
+                };
+            }
+            
+            // Try real API if available
+            if (this.useRealAPI) {
+                try {
+                    const response = await fetch(`${this.baseURL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.token) {
+                            this.setAuth(data.token, data.user);
+                            return data;
+                        }
+                    }
+                } catch (error) {
+                    console.log('🌐 Real API failed, using mock');
+                }
+            }
+            
+            // Use mock
+            const mockResponse = await this.mockService.login(email, password);
+            if (mockResponse.status === 'success') {
+                this.setAuth(mockResponse.token, mockResponse.user);
+            }
+            return mockResponse;
+        }
+
+        async forgotPassword(email) {
+            if (this.useRealAPI) {
+                try {
+                    const response = await fetch(`${this.baseURL}/password/email`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (error) {
+                    console.log('🌐 Real API failed');
+                }
+            }
+            
+            return await this.mockService.forgotPassword(email);
+        }
+
+        setAuth(token, user) {
+            this.token = token;
+            this.user = user;
+            localStorage.setItem('hatch_admin_token', token);
+            localStorage.setItem('hatch_admin_user', JSON.stringify(user));
+            console.log('🔐 Auth saved');
+        }
+
+        clearAuth() {
+            this.token = null;
+            this.user = null;
+            localStorage.removeItem('hatch_admin_token');
+            localStorage.removeItem('hatch_admin_user');
+            console.log('🔐 Auth cleared');
+        }
+    }
+
+    // ==================== INITIALIZE ====================
+    console.log('🏁 Starting Hatch Social Admin...');
+    
+    // Check if API service already exists
+    if (!window.apiService) {
+        window.apiService = new APIService();
+        console.log('✅ API Service loaded successfully');
+    } else {
+        console.log('⚠️ API Service already loaded');
+    }
+</script>
+    <!-- Main Application Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const signinForm = document.getElementById('signin-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+            const signinBtn = document.getElementById('signin-btn');
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const forgotModal = document.getElementById('forgotModal');
+            const modalClose = document.getElementById('modalClose');
+            const sendResetBtn = document.getElementById('sendResetBtn');
+            const forgotEmail = document.getElementById('forgotEmail');
+            
+            // Demo credentials auto-fill
             setTimeout(() => {
-                emailInput.value = ADMIN_CREDENTIALS.email;
-                passwordInput.value = ADMIN_CREDENTIALS.password;
-                
-                // Focus on password field
+                emailInput.value = 'admin@hatchsocial.com';
+                passwordInput.value = 'admin123';
                 passwordInput.focus();
-                passwordInput.select();
                 
-                // Add subtle animation to autofilled fields
+                // Animation effects
                 emailInput.style.animation = 'inputFocus 0.6s ease';
                 passwordInput.style.animation = 'inputFocus 0.6s ease 0.3s';
-                
                 setTimeout(() => {
                     emailInput.style.animation = '';
                     passwordInput.style.animation = '';
                 }, 1200);
             }, 500);
-        });
-
-        // ==================== KEYBOARD SHORTCUTS ====================
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+Enter to submit form
-            if (e.ctrlKey && e.key === 'Enter') {
-                signinForm.requestSubmit();
+            
+            // Password toggle
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                this.innerHTML = type === 'password' ? 
+                    '<i class="fas fa-eye"></i>' : 
+                    '<i class="fas fa-eye-slash"></i>';
+                this.style.animation = 'iconSpin 0.6s ease';
+                setTimeout(() => this.style.animation = '', 600);
+            });
+            
+            // Error handling
+            function showError(elementId, message) {
+                const errorEl = document.getElementById(elementId);
+                errorEl.querySelector('span').textContent = message;
+                errorEl.style.display = 'flex';
+                errorEl.style.animation = 'errorShake 0.8s ease';
             }
             
-            // Escape to close modal
-            if (e.key === 'Escape' && forgotModal.style.display === 'flex') {
-                closeForgotModal();
+            function hideError(elementId) {
+                document.getElementById(elementId).style.display = 'none';
             }
             
-            // Enter key in forgot password email field
-            if (e.key === 'Enter' && forgotEmail === document.activeElement) {
-                sendResetEmail();
-            }
-            
-            // F1 for help
-            if (e.key === 'F1') {
+            // Login form submission
+            signinForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                alert('Hatch Social Admin Login\n\nDemo Credentials:\nEmail: admin@hatchsocial.com\nPassword: admin123\n\nShortcuts:\nCtrl+Enter: Submit form\nEscape: Close modal\nF1: This help message');
-            }
-        });
-
-        // ==================== RESPONSIVE HELPERS ====================
-        function handleResize() {
-            const width = window.innerWidth;
-            
-            // Adjust animations for mobile
-            if (width <= 768) {
-                document.querySelectorAll('.corner-accent').forEach(el => {
-                    el.style.opacity = '0.05';
-                });
-            } else {
-                document.querySelectorAll('.corner-accent').forEach(el => {
-                    el.style.opacity = '0.3';
-                });
-            }
-            
-            // Adjust font size for very small screens
-            if (width <= 320) {
-                document.documentElement.style.fontSize = '14px';
-            } else if (width <= 400) {
-                document.documentElement.style.fontSize = '15px';
-            } else if (width <= 768) {
-                document.documentElement.style.fontSize = '15.5px';
-            } else {
-                document.documentElement.style.fontSize = '16px';
-            }
-            
-            // Handle landscape orientation
-            if (window.innerHeight < 500) {
-                document.body.style.alignItems = 'flex-start';
-                document.querySelector('.container').style.marginTop = '20px';
-                document.querySelector('.tagline').style.display = 'none';
-            } else {
-                document.body.style.alignItems = 'center';
-                document.querySelector('.container').style.marginTop = '0';
-                document.querySelector('.tagline').style.display = 'block';
-            }
-        }
-
-        // Initial call
-        handleResize();
-        
-        // Listen for resize
-        window.addEventListener('resize', handleResize);
-        
-        // Listen for orientation change
-        window.addEventListener('orientationchange', function() {
-            setTimeout(handleResize, 100);
-        });
-
-        // ==================== TOUCH DEVICE OPTIMIZATIONS ====================
-        if ('ontouchstart' in window) {
-            // Add touch feedback to interactive elements
-            document.querySelectorAll('.btn, .forgot, .password-toggle, .modal-close').forEach(el => {
-                el.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.98)';
-                });
                 
-                el.addEventListener('touchend', function() {
-                    this.style.transform = '';
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+                
+                // Hide errors
+                hideError('email-error');
+                hideError('password-error');
+                
+                // Validation
+                let isValid = true;
+                
+                if (!email || !email.includes('@')) {
+                    showError('email-error', 'Please enter a valid email address');
+                    isValid = false;
+                }
+                
+                if (!password) {
+                    showError('password-error', 'Please enter your password');
+                    isValid = false;
+                }
+                
+                if (!isValid) return;
+                
+                // Show loading
+                const originalText = signinBtn.innerHTML;
+                const originalBg = signinBtn.style.background;
+                signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                signinBtn.disabled = true;
+                signinBtn.style.animation = 'buttonGlow 1.5s ease-in-out infinite';
+                
+                try {
+                    // API Login
+                    const response = await window.apiService.login(email, password);
+                    
+                    if (response.status === 'success') {
+                        // Store session
+                        sessionStorage.setItem('currentAdmin', JSON.stringify({
+                            name: response.user.name,
+                            email: response.user.email,
+                            role: response.user.type,
+                            loginTime: new Date().toISOString(),
+                            userId: response.user.id
+                        }));
+                        
+                        // Success animation
+                        signinBtn.innerHTML = '<i class="fas fa-check"></i> Login Successful!';
+                        signinBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
+                        signinBtn.style.animation = 'none';
+                        
+                        // Card animation
+                        document.querySelector('.card').style.animation = 'successPop 0.8s ease';
+                        
+                        // Redirect to dashboard
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+                    } else {
+                        throw new Error(response.message || 'Login failed');
+                    }
+                } catch (error) {
+                    // Show error
+                    showError('password-error', error.message || 'Invalid email or password');
+                    signinBtn.innerHTML = originalText;
+                    signinBtn.disabled = false;
+                    signinBtn.style.background = originalBg;
+                    signinBtn.style.animation = 'buttonGlow 4s ease-in-out infinite';
+                    
+                    // Card shake animation
+                    document.querySelector('.card').style.animation = 'errorShake 0.8s ease';
+                    setTimeout(() => {
+                        document.querySelector('.card').style.animation = '';
+                    }, 800);
+                }
+            });
+            
+            // Forgot password
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                openForgotModal();
+            });
+            
+            modalClose.addEventListener('click', closeForgotModal);
+            
+            function openForgotModal() {
+                forgotModal.style.display = 'flex';
+                forgotEmail.value = '';
+                forgotEmail.focus();
+                document.getElementById('forgotError').style.display = 'none';
+            }
+            
+            function closeForgotModal() {
+                forgotModal.style.display = 'none';
+            }
+            
+            sendResetBtn.addEventListener('click', async function() {
+                const email = forgotEmail.value.trim();
+                
+                if (!email || !email.includes('@')) {
+                    document.getElementById('forgotError').style.display = 'flex';
+                    forgotEmail.focus();
+                    return;
+                }
+                
+                // Show loading
+                const originalText = sendResetBtn.innerHTML;
+                sendResetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                sendResetBtn.disabled = true;
+                
+                try {
+                    // API call
+                    const response = await window.apiService.forgotPassword(email);
+                    
+                    // Show success
+                    document.getElementById('modalBody').innerHTML = `
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Reset Link Sent!</h3>
+                            <p>Password reset instructions have been sent to:<br><strong style="color: var(--primary);">${email}</strong></p>
+                            <p style="font-size: 16px; color: rgba(255, 255, 255, 0.7);">Please check your inbox and follow the instructions.</p>
+                        </div>
+                    `;
+                    
+                    // Auto close after 3 seconds
+                    setTimeout(() => {
+                        closeForgotModal();
+                        // Reset modal content
+                        document.getElementById('modalBody').innerHTML = `
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions.</p>
+                            <div class="form-group">
+                                <label for="forgotEmail">Email Address</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="forgotEmail" placeholder="Enter your email address">
+                                </div>
+                                <div class="error" id="forgotError" style="display: none;">
+                                    <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
+                                </div>
+                            </div>
+                        `;
+                    }, 3000);
+                    
+                } catch (error) {
+                    document.getElementById('forgotError').textContent = error.message;
+                    document.getElementById('forgotError').style.display = 'flex';
+                } finally {
+                    sendResetBtn.innerHTML = originalText;
+                    sendResetBtn.disabled = false;
+                }
+            });
+            
+            // Close modal when clicking outside
+            forgotModal.addEventListener('click', function(e) {
+                if (e.target === forgotModal) {
+                    closeForgotModal();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+Enter to submit form
+                if (e.ctrlKey && e.key === 'Enter') {
+                    signinForm.requestSubmit();
+                }
+                
+                // Escape to close modal
+                if (e.key === 'Escape' && forgotModal.style.display === 'flex') {
+                    closeForgotModal();
+                }
+                
+                // F1 for help
+                if (e.key === 'F1') {
+                    e.preventDefault();
+                    alert('Hatch Social Admin Login\n\nDemo Credentials:\nEmail: admin@hatchsocial.com\nPassword: admin123\n\nShortcuts:\nCtrl+Enter: Submit form\nEscape: Close modal\nF1: This help message');
+                }
+            });
+            
+            // Handle resize
+            function handleResize() {
+                if (window.innerHeight < 500) {
+                    document.body.style.alignItems = 'flex-start';
+                    document.querySelector('.container').style.marginTop = '20px';
+                } else {
+                    document.body.style.alignItems = 'center';
+                    document.querySelector('.container').style.marginTop = '0';
+                }
+            }
+            
+            handleResize();
+            window.addEventListener('resize', handleResize);
+            
+            // Touch device optimizations
+            if ('ontouchstart' in window) {
+                document.querySelectorAll('.btn, .password-toggle').forEach(el => {
+                    el.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    el.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
                 });
-            });
-            
-            // Prevent double tap zoom on form elements
-            document.querySelectorAll('input, button, a').forEach(el => {
-                el.style.touchAction = 'manipulation';
-            });
-        }
-
-        // ==================== LOADING ANIMATIONS ====================
-        // Add loading animation to page load
-        window.addEventListener('load', function() {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.8s ease';
-            
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
+            }
         });
     </script>
 </body>
