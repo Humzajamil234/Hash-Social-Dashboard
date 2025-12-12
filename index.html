@@ -1019,39 +1019,156 @@
     </div>
 
 
-   <!-- Add API Service -->
-    <script src="api-service.js"></script>
-    
     <script>
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize API service
-            if (!window.apiService) {
-                console.error('API Service not loaded');
-                showToast('error', 'API Service failed to load. Please refresh.');
-                return;
+        // ==================== ENHANCED STORAGE MANAGER ====================
+        class StorageManager {
+            constructor() {
+                this.prefix = 'hatch_';
+                this.backupPrefix = 'hatch_backup_';
             }
             
-            // Auto-fill demo credentials
-            setTimeout(() => {
-                emailInput.value = 'admin@hatchsocial.com';
-                passwordInput.value = 'admin123';
-                passwordInput.focus();
-            }, 500);
-            
-            // Check if already logged in
-            const token = localStorage.getItem('hatch_admin_token');
-            if (token) {
-                // Try to get current user
-                window.apiService.getCurrentUser().then(() => {
-                    // If successful, redirect to dashboard
-                    window.location.href = 'dashboard.html';
-                }).catch(() => {
-                    // If failed, stay on login page
-                    localStorage.removeItem('hatch_admin_token');
-                });
+            // Secure save with encryption
+            save(key, data) {
+                try {
+                    const encrypted = btoa(JSON.stringify(data));
+                    localStorage.setItem(this.prefix + key, encrypted);
+                    
+                    // Create backup
+                    this.createBackup(key, data);
+                    
+                    return true;
+                } catch (e) {
+                    console.error('Storage save error:', e);
+                    return false;
+                }
             }
-        });
+            
+            // Secure load
+            load(key) {
+                try {
+                    const encrypted = localStorage.getItem(this.prefix + key);
+                    if (!encrypted) return this.getDefaultData(key);
+                    
+                    return JSON.parse(atob(encrypted));
+                } catch (e) {
+                    console.error('Storage load error:', e);
+                    return this.loadFromBackup(key) || this.getDefaultData(key);
+                }
+            }
+            
+            // Create backup
+            createBackup(key, data) {
+                try {
+                    const timestamp = new Date().getTime();
+                    const backupKey = `${this.backupPrefix}${key}_${timestamp}`;
+                    localStorage.setItem(backupKey, btoa(JSON.stringify(data)));
+                    
+                    // Cleanup old backups (keep last 3)
+                    this.cleanupBackups(key, 3);
+                } catch (e) {
+                    console.error('Backup creation error:', e);
+                }
+            }
+            
+            // Load from backup
+            loadFromBackup(key) {
+                try {
+                    const backups = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const storageKey = localStorage.key(i);
+                        if (storageKey.startsWith(`${this.backupPrefix}${key}_`)) {
+                            const timestamp = parseInt(storageKey.split('_').pop());
+                            backups.push({ key: storageKey, timestamp });
+                        }
+                    }
+                    
+                    if (backups.length > 0) {
+                        backups.sort((a, b) => b.timestamp - a.timestamp);
+                        const latest = backups[0];
+                        const encrypted = localStorage.getItem(latest.key);
+                        return JSON.parse(atob(encrypted));
+                    }
+                } catch (e) {
+                    console.error('Backup load error:', e);
+                }
+                return null;
+            }
+            
+            // Cleanup old backups
+            cleanupBackups(key, keepCount) {
+                try {
+                    const backups = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const storageKey = localStorage.key(i);
+                        if (storageKey.startsWith(`${this.backupPrefix}${key}_`)) {
+                            const timestamp = parseInt(storageKey.split('_').pop());
+                            backups.push({ key: storageKey, timestamp });
+                        }
+                    }
+                    
+                    if (backups.length > keepCount) {
+                        backups.sort((a, b) => b.timestamp - a.timestamp);
+                        const toDelete = backups.slice(keepCount);
+                        toDelete.forEach(backup => {
+                            localStorage.removeItem(backup.key);
+                        });
+                    }
+                } catch (e) {
+                    console.error('Backup cleanup error:', e);
+                }
+            }
+            
+            // Export all data
+            exportAll() {
+                const allData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith(this.prefix) && !key.includes('backup')) {
+                        try {
+                            const encrypted = localStorage.getItem(key);
+                            if (encrypted) {
+                                const cleanKey = key.replace(this.prefix, '');
+                                allData[cleanKey] = JSON.parse(atob(encrypted));
+                            }
+                        } catch (e) {
+                            console.error(`Failed to export ${key}:`, e);
+                        }
+                    }
+                }
+                return allData;
+            }
+            
+            // Get default data
+            getDefaultData(key) {
+                const defaults = {
+                    users: [],
+                    interests: [],
+                    reports: [],
+                    memberships: [],
+                    revenue: [],
+                    moderation: [],
+                    activities: [],
+                    settings: {
+                        theme: 'dark',
+                        notifications: true,
+                        autoBackup: true
+                    }
+                };
+                return defaults[key] || null;
+            }
+        }
+
+        // Initialize storage manager
+        const storage = new StorageManager();
+
+        // ==================== ADMIN CREDENTIALS ====================
+        const ADMIN_CREDENTIALS = {
+            email: 'admin@hatchsocial.com',
+            password: 'admin123',
+            name: 'Admin User',
+            role: 'admin',
+            userType: 'admin'
+        };
 
         // ==================== DOM ELEMENTS ====================
         const signinForm = document.getElementById('signin-form');
@@ -1063,7 +1180,38 @@
         const forgotEmail = document.getElementById('forgotEmail');
         const modalClose = document.getElementById('modalClose');
         const sendResetBtn = document.getElementById('sendResetBtn');
+        const modalBody = document.getElementById('modalBody');
         const signinBtn = document.getElementById('signin-btn');
+
+        // ==================== INITIALIZE DATA ====================
+        function initializeData() {
+            // Check if it's first time login
+            const firstTime = !storage.load('users');
+            
+            if (firstTime) {
+                // Create default admin user
+                const defaultAdmin = {
+                    id: 1,
+                    name: "Admin User",
+                    email: "admin@hatchsocial.com",
+                    type: "admin",
+                    status: "active",
+                    joinDate: new Date().toISOString().split('T')[0],
+                    notes: "Default administrator account"
+                };
+                
+                // Save default data
+                storage.save('users', [defaultAdmin]);
+                storage.save('settings', {
+                    theme: 'dark',
+                    notifications: true,
+                    autoBackup: true,
+                    lastBackup: new Date().toISOString()
+                });
+                
+                console.log('First time setup: Default data created');
+            }
+        }
 
         // ==================== PASSWORD TOGGLE ====================
         togglePassword.addEventListener('click', function() {
@@ -1072,6 +1220,10 @@
             this.innerHTML = type === 'password' ? 
                 '<i class="fas fa-eye"></i>' : 
                 '<i class="fas fa-eye-slash"></i>';
+            this.style.animation = 'iconSpin 0.6s ease';
+            setTimeout(() => {
+                this.style.animation = '';
+            }, 600);
         });
 
         // ==================== SHOW/HIDE ERROR ====================
@@ -1084,66 +1236,6 @@
 
         function hideError(elementId) {
             document.getElementById(elementId).style.display = 'none';
-        }
-
-        // ==================== TOAST FUNCTION ====================
-        function showToast(type, message) {
-            // Create toast container if not exists
-            let toastContainer = document.getElementById('toastContainer');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.id = 'toastContainer';
-                toastContainer.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 9999;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                `;
-                document.body.appendChild(toastContainer);
-            }
-            
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                animation: toastSlideIn 0.3s ease;
-            `;
-            
-            toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            
-            toastContainer.appendChild(toast);
-            
-            // Remove toast after 5 seconds
-            setTimeout(() => {
-                toast.style.animation = 'toastSlideOut 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 5000);
-            
-            // Add CSS animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes toastSlideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes toastSlideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
         }
 
         // ==================== SIGN IN FUNCTION ====================
@@ -1174,50 +1266,91 @@
             
             // Show loading
             const originalText = signinBtn.innerHTML;
+            const originalBg = signinBtn.style.background;
             signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
             signinBtn.disabled = true;
+            signinBtn.style.animation = 'buttonGlow 1.5s ease-in-out infinite';
             
-            try {
-                // API Login
-                const response = await window.apiService.login(email, password);
-                
-                if (response && (response.token || response.access_token)) {
-                    // Success
-                    signinBtn.innerHTML = '<i class="fas fa-check"></i> Access Granted';
-                    signinBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
+            // Simulate API call delay
+            setTimeout(() => {
+                // Check credentials against admin account
+                if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+                    // Get users data to ensure admin exists
+                    let users = storage.load('users') || [];
+                    
+                    // Check if admin user exists
+                    let adminUser = users.find(u => u.email === ADMIN_CREDENTIALS.email);
+                    
+                    if (!adminUser) {
+                        // Create admin user
+                        adminUser = {
+                            id: users.length + 1,
+                            name: ADMIN_CREDENTIALS.name,
+                            email: ADMIN_CREDENTIALS.email,
+                            type: ADMIN_CREDENTIALS.role,
+                            status: 'active',
+                            joinDate: new Date().toISOString().split('T')[0],
+                            notes: 'Administrator account',
+                            lastLogin: new Date().toISOString()
+                        };
+                        users.push(adminUser);
+                        storage.save('users', users);
+                    } else {
+                        // Update last login
+                        adminUser.lastLogin = new Date().toISOString();
+                        storage.save('users', users);
+                    }
+                    
+                    // Save to session storage
+                    sessionStorage.setItem('currentAdmin', JSON.stringify({
+                        name: adminUser.name,
+                        email: adminUser.email,
+                        role: adminUser.type,
+                        userType: adminUser.type,
+                        loginTime: new Date().toISOString(),
+                        userId: adminUser.id
+                    }));
+                    
+                    // Create login activity
+                    const activities = storage.load('activities') || [];
+                    activities.unshift({
+                        id: activities.length + 1,
+                        userName: adminUser.name,
+                        activity: 'Admin login successful',
+                        type: 'Security',
+                        time: 'Just now',
+                        status: 'Completed',
+                        details: `IP: 192.168.1.1, Browser: ${navigator.userAgent}`
+                    });
+                    storage.save('activities', activities.slice(0, 50)); // Keep last 50 activities
                     
                     // Success animation
-                    document.querySelector('.card').style.animation = 'successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                    signinBtn.innerHTML = '<i class="fas fa-check"></i> Access Granted';
+                    signinBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
+                    signinBtn.style.animation = 'none';
                     
-                    // Check "Remember me"
-                    const rememberMe = document.getElementById('remember').checked;
-                    if (!rememberMe) {
-                        // Session storage for temporary login
-                        sessionStorage.setItem('hatch_admin_token', response.token || response.access_token);
-                    }
+                    // Add success animation to card
+                    document.querySelector('.card').style.animation = 'successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
                     
                     // Redirect to dashboard
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 1500);
                 } else {
-                    throw new Error('Invalid response from server');
+                    // Invalid credentials
+                    showError('password-error', 'Invalid email or password');
+                    signinBtn.innerHTML = originalText;
+                    signinBtn.disabled = false;
+                    signinBtn.style.background = originalBg;
+                    signinBtn.style.animation = 'buttonGlow 4s ease-in-out infinite';
+                    
+                    // Add shake animation to card
+                    document.querySelector('.card').style.animation = 'errorShake 0.8s ease';
+                    setTimeout(() => {
+                        document.querySelector('.card').style.animation = '';
+                    }, 800);
                 }
-                
-            } catch (error) {
-                // Error handling
-                console.error('Login error:', error);
-                
-                showError('password-error', error.message || 'Invalid email or password');
-                signinBtn.innerHTML = originalText;
-                signinBtn.disabled = false;
-                
-                // Shake animation
-                document.querySelector('.card').style.animation = 'errorShake 0.8s ease';
-                setTimeout(() => {
-                    document.querySelector('.card').style.animation = '';
-                }, 800);
-            }
+            }, 1500);
         });
 
         // ==================== FORGOT PASSWORD ====================
@@ -1232,17 +1365,54 @@
             forgotModal.style.display = 'flex';
             forgotEmail.value = '';
             forgotEmail.focus();
+            hideError('forgotError');
+            
+            // Reset modal to form view
+            modalBody.innerHTML = `
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions. We'll send you a secure link to reset your password.</p>
+                <div class="form-group">
+                    <label for="forgotEmail">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="forgotEmail" placeholder="Enter your email address">
+                    </div>
+                    <div class="error" id="forgotError" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
+                    </div>
+                </div>
+            `;
+            
+            // Re-attach event listeners
+            document.getElementById('forgotEmail').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendResetEmail();
+                }
+            });
         }
 
         function closeForgotModal() {
             forgotModal.style.display = 'none';
         }
 
-        sendResetBtn.addEventListener('click', async function() {
+        function showSuccessMessage(email) {
+            modalBody.innerHTML = `
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Reset Link Sent!</h3>
+                    <p>Password reset instructions have been sent to:<br><strong style="color: var(--primary);">${email}</strong></p>
+                    <p style="font-size: 16px; color: rgba(255, 255, 255, 0.7);">Please check your inbox and follow the instructions to reset your password. The link will expire in 24 hours.</p>
+                </div>
+            `;
+        }
+
+        sendResetBtn.addEventListener('click', sendResetEmail);
+
+        function sendResetEmail() {
             const email = forgotEmail.value.trim();
             
             if (!email || !email.includes('@')) {
                 document.getElementById('forgotError').style.display = 'flex';
+                forgotEmail.focus();
                 return;
             }
             
@@ -1251,65 +1421,52 @@
             sendResetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             sendResetBtn.disabled = true;
             
-            try {
-                // Call API
-                await window.apiService.forgotPassword(email);
-                
+            // Simulate API call
+            setTimeout(() => {
                 // Show success message
-                document.getElementById('modalBody').innerHTML = `
-                    <div style="text-align: center; padding: 20px;">
-                        <i class="fas fa-check-circle" style="font-size: 48px; color: #10b981; margin-bottom: 20px;"></i>
-                        <h3 style="color: white; margin-bottom: 15px;">Reset Link Sent!</h3>
-                        <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                            Password reset instructions have been sent to:<br>
-                            <strong style="color: #3A57E8;">${email}</strong>
-                        </p>
-                        <p style="color: rgba(255, 255, 255, 0.5); font-size: 14px; margin-top: 20px;">
-                            Please check your inbox and follow the instructions to reset your password.
-                        </p>
-                    </div>
-                `;
+                showSuccessMessage(email);
                 
                 // Reset button
-                sendResetBtn.style.display = 'none';
-                
-                // Auto close modal after 5 seconds
-                setTimeout(() => {
-                    closeForgotModal();
-                    // Reset modal content
-                    setTimeout(() => {
-                        document.getElementById('modalBody').innerHTML = `
-                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions. We'll send you a secure link to reset your password.</p>
-                            <div class="form-group">
-                                <label for="forgotEmail">Email Address</label>
-                                <div class="input-with-icon">
-                                    <i class="fas fa-envelope input-icon"></i>
-                                    <input type="email" id="forgotEmail" placeholder="Enter your email address">
-                                </div>
-                                <div class="error" id="forgotError" style="display: none;">
-                                    <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
-                                </div>
-                            </div>
-                        `;
-                        sendResetBtn.style.display = 'block';
-                        sendResetBtn.innerHTML = originalText;
-                        sendResetBtn.disabled = false;
-                    }, 100);
-                }, 5000);
-                
-            } catch (error) {
-                console.error('Forgot password error:', error);
-                showToast('error', error.message || 'Failed to send reset link');
                 sendResetBtn.innerHTML = originalText;
                 sendResetBtn.disabled = false;
-            }
-        });
+                
+                // Auto close modal after 3 seconds
+                setTimeout(() => {
+                    closeForgotModal();
+                }, 3000);
+            }, 1500);
+        }
 
         // Close modal when clicking outside
         forgotModal.addEventListener('click', function(e) {
             if (e.target === forgotModal) {
                 closeForgotModal();
             }
+        });
+
+        // ==================== AUTO-FILL FOR DEMO ====================
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialize data
+            initializeData();
+            
+            // Auto-fill admin credentials for demo
+            setTimeout(() => {
+                emailInput.value = ADMIN_CREDENTIALS.email;
+                passwordInput.value = ADMIN_CREDENTIALS.password;
+                
+                // Focus on password field
+                passwordInput.focus();
+                passwordInput.select();
+                
+                // Add subtle animation to autofilled fields
+                emailInput.style.animation = 'inputFocus 0.6s ease';
+                passwordInput.style.animation = 'inputFocus 0.6s ease 0.3s';
+                
+                setTimeout(() => {
+                    emailInput.style.animation = '';
+                    passwordInput.style.animation = '';
+                }, 1200);
+            }, 500);
         });
 
         // ==================== KEYBOARD SHORTCUTS ====================
@@ -1324,10 +1481,15 @@
                 closeForgotModal();
             }
             
+            // Enter key in forgot password email field
+            if (e.key === 'Enter' && forgotEmail === document.activeElement) {
+                sendResetEmail();
+            }
+            
             // F1 for help
             if (e.key === 'F1') {
                 e.preventDefault();
-                showToast('info', 'Shortcuts: Ctrl+Enter = Submit form, Escape = Close modal');
+                alert('Hatch Social Admin Login\n\nDemo Credentials:\nEmail: admin@hatchsocial.com\nPassword: admin123\n\nShortcuts:\nCtrl+Enter: Submit form\nEscape: Close modal\nF1: This help message');
             }
         });
 
@@ -1335,6 +1497,7 @@
         function handleResize() {
             const width = window.innerWidth;
             
+            // Adjust animations for mobile
             if (width <= 768) {
                 document.querySelectorAll('.corner-accent').forEach(el => {
                     el.style.opacity = '0.05';
@@ -1344,13 +1507,62 @@
                     el.style.opacity = '0.3';
                 });
             }
+            
+            // Adjust font size for very small screens
+            if (width <= 320) {
+                document.documentElement.style.fontSize = '14px';
+            } else if (width <= 400) {
+                document.documentElement.style.fontSize = '15px';
+            } else if (width <= 768) {
+                document.documentElement.style.fontSize = '15.5px';
+            } else {
+                document.documentElement.style.fontSize = '16px';
+            }
+            
+            // Handle landscape orientation
+            if (window.innerHeight < 500) {
+                document.body.style.alignItems = 'flex-start';
+                document.querySelector('.container').style.marginTop = '20px';
+                document.querySelector('.tagline').style.display = 'none';
+            } else {
+                document.body.style.alignItems = 'center';
+                document.querySelector('.container').style.marginTop = '0';
+                document.querySelector('.tagline').style.display = 'block';
+            }
         }
 
         // Initial call
         handleResize();
+        
+        // Listen for resize
         window.addEventListener('resize', handleResize);
         
-        // Show loading animation
+        // Listen for orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(handleResize, 100);
+        });
+
+        // ==================== TOUCH DEVICE OPTIMIZATIONS ====================
+        if ('ontouchstart' in window) {
+            // Add touch feedback to interactive elements
+            document.querySelectorAll('.btn, .forgot, .password-toggle, .modal-close').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                el.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+            
+            // Prevent double tap zoom on form elements
+            document.querySelectorAll('input, button, a').forEach(el => {
+                el.style.touchAction = 'manipulation';
+            });
+        }
+
+        // ==================== LOADING ANIMATIONS ====================
+        // Add loading animation to page load
         window.addEventListener('load', function() {
             document.body.style.opacity = '0';
             document.body.style.transition = 'opacity 0.8s ease';
