@@ -7,14 +7,15 @@ const CONFIG = {
             : '/api',
         TIMEOUT: 30000,
         RETRY_ATTEMPTS: 3,
-        RETRY_DELAY: 1000
+        RETRY_DELAY: 1000,
+        USE_MOCK: true  // Auto-detect mode
     },
     
     // App Configuration
     APP: {
         NAME: 'Hatch Social',
-        VERSION: '1.2.0',
-        DESCRIPTION: 'Professional Admin Dashboard',
+        VERSION: '2.0.0',
+        DESCRIPTION: 'Professional Admin Dashboard with API Integration',
         COPYRIGHT: '© 2025 Hatch Social. All rights reserved.',
         SUPPORT_EMAIL: 'support@hatchsocial.com'
     },
@@ -25,7 +26,8 @@ const CONFIG = {
         REAL_TIME_UPDATES: true,
         EXPORT_FUNCTIONALITY: true,
         BULK_ACTIONS: true,
-        ADVANCED_FILTERS: true
+        ADVANCED_FILTERS: true,
+        AUTO_SYNC: true
     },
     
     // Pagination
@@ -33,6 +35,16 @@ const CONFIG = {
         DEFAULT_LIMIT: 20,
         LIMIT_OPTIONS: [10, 20, 50, 100],
         MAX_PAGES_SHOWN: 5
+    },
+    
+    // Mock Data Settings
+    MOCK: {
+        TOTAL_USERS: 50,
+        TOTAL_INTERESTS: 30,
+        TOTAL_POSTS: 100,
+        TOTAL_TRANSACTIONS: 40,
+        TOTAL_COMMUNITIES: 15,
+        DELAY: 300
     },
     
     // Charts Configuration
@@ -54,7 +66,8 @@ const CONFIG = {
         USER_DATA: 'hatch_admin_user',
         SETTINGS: 'hatch_settings',
         OFFLINE_DATA: 'hatch_offline_data',
-        CACHE: 'hatch_cache'
+        CACHE: 'hatch_cache',
+        MOCK_DATA: 'hatch_mock_data'
     },
     
     // Default Settings
@@ -65,14 +78,6 @@ const CONFIG = {
         REFRESH_INTERVAL: 30000,
         LANGUAGE: 'en',
         TIMEZONE: Intl.DateTimeFormat().resolvedOptions().timeZone
-    },
-    
-    // Notification Types
-    NOTIFICATION_TYPES: {
-        SUCCESS: 'success',
-        ERROR: 'error',
-        WARNING: 'warning',
-        INFO: 'info'
     },
     
     // User Types
@@ -110,31 +115,6 @@ const CONFIG = {
         OTHER: 'other'
     },
     
-    // Subscription Plans
-    SUBSCRIPTION_PLANS: {
-        BASIC: {
-            id: 1,
-            name: 'Basic',
-            price: 9.99,
-            duration: 'monthly',
-            features: ['Basic features', 'Limited storage', 'Standard support']
-        },
-        PRO: {
-            id: 2,
-            name: 'Pro',
-            price: 19.99,
-            duration: 'monthly',
-            features: ['All features', 'More storage', 'Priority support']
-        },
-        ENTERPRISE: {
-            id: 3,
-            name: 'Enterprise',
-            price: 49.99,
-            duration: 'monthly',
-            features: ['Enterprise features', 'Unlimited storage', '24/7 support']
-        }
-    },
-    
     // Date & Time Formats
     DATE_FORMATS: {
         SHORT: 'MMM dd, yyyy',
@@ -142,76 +122,10 @@ const CONFIG = {
         LONG: 'EEEE, MMMM dd, yyyy',
         TIME: 'hh:mm a',
         DATETIME: 'MMM dd, yyyy hh:mm a'
-    },
-    
-    // Validation Rules
-    VALIDATION: {
-        EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        PASSWORD: {
-            MIN_LENGTH: 6,
-            REQUIRE_UPPERCASE: true,
-            REQUIRE_LOWERCASE: true,
-            REQUIRE_NUMBER: true,
-            REQUIRE_SPECIAL: false
-        },
-        USERNAME: {
-            MIN_LENGTH: 3,
-            MAX_LENGTH: 30,
-            ALLOWED_CHARS: /^[a-zA-Z0-9_.-]+$/
-        }
-    },
-    
-    // Error Messages
-    ERROR_MESSAGES: {
-        NETWORK_ERROR: 'Network error. Please check your internet connection.',
-        SERVER_ERROR: 'Server error. Please try again later.',
-        UNAUTHORIZED: 'Your session has expired. Please login again.',
-        FORBIDDEN: 'You do not have permission to perform this action.',
-        NOT_FOUND: 'The requested resource was not found.',
-        VALIDATION_ERROR: 'Please check your input and try again.',
-        UNKNOWN_ERROR: 'An unknown error occurred. Please try again.'
-    },
-    
-    // Success Messages
-    SUCCESS_MESSAGES: {
-        LOGIN: 'Login successful!',
-        LOGOUT: 'Logged out successfully!',
-        CREATE: 'Item created successfully!',
-        UPDATE: 'Item updated successfully!',
-        DELETE: 'Item deleted successfully!',
-        SAVE: 'Changes saved successfully!',
-        IMPORT: 'Data imported successfully!',
-        EXPORT: 'Data exported successfully!'
-    },
-    
-    // Loading Messages
-    LOADING_MESSAGES: [
-        'Loading your data...',
-        'Almost there...',
-        'Fetching the latest information...',
-        'Preparing your dashboard...',
-        'Just a moment...'
-    ],
-    
-    // Demo Credentials (for development only)
-    DEMO_CREDENTIALS: {
-        EMAIL: 'admin@hatchsocial.com',
-        PASSWORD: 'admin123',
-        USER: {
-            id: 1,
-            name: 'Admin User',
-            email: 'admin@hatchsocial.com',
-            type: 'admin',
-            status: 'active',
-            created_at: '2024-01-01T00:00:00Z'
-        }
     }
 };
 
-// Export configuration
-window.CONFIG = CONFIG;
-
-// Utility functions
+// Utility Functions
 CONFIG.formatDate = function(dateString, format = 'SHORT') {
     if (!dateString) return 'N/A';
     
@@ -257,13 +171,10 @@ CONFIG.formatCurrency = function(amount, currency = 'USD') {
     }).format(amount);
 };
 
-CONFIG.getRandomLoadingMessage = function() {
-    return this.LOADING_MESSAGES[
-        Math.floor(Math.random() * this.LOADING_MESSAGES.length)
-    ];
+CONFIG.getRandomId = function() {
+    return Date.now() + Math.floor(Math.random() * 1000);
 };
 
-// Initialize on load
-document.addEventListener('DOMContentLoaded', function() {
-    console.log(`${CONFIG.APP.NAME} v${CONFIG.APP.VERSION} initialized`);
-});
+// Initialize
+window.CONFIG = CONFIG;
+console.log(`${CONFIG.APP.NAME} v${CONFIG.APP.VERSION} Configuration Loaded`);
