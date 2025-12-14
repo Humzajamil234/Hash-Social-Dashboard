@@ -1,1321 +1,1557 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hatch Social | Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            /* Logo ke colors ke hisaab se theme - DARK THEME INSIDE */
-            --primary: #3A57E8;
-            --primary-light: #E6EBFF;
-            --primary-dark: #2A47D8;
-            --secondary: #7C4DFF;
-            --accent: #FF4081;
-            --white: #ffffff;
-            --dark: #1A1A2E;
-            --gray: #6C757D;
-            --light-gray: #f8f9ff;
-            --bg: #ffffff; /* WHITE BACKGROUND */
-            --card-bg: #1A1A2E; /* DARK CARD BACKGROUND - LIKE BEFORE */
-            --card-text: #ffffff;
-            --input-bg: #2D2D44;
-            --input-border: #3A3A5A;
-            --shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-            --radius: 24px;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      :root {
+        /* Logo ke colors ke hisaab se theme - DARK THEME INSIDE */
+        --primary: #3a57e8;
+        --primary-light: #e6ebff;
+        --primary-dark: #2a47d8;
+        --secondary: #7c4dff;
+        --accent: #ff4081;
+        --white: #ffffff;
+        --dark: #1a1a2e;
+        --gray: #6c757d;
+        --light-gray: #f8f9ff;
+        --bg: #ffffff; /* WHITE BACKGROUND */
+        --card-bg: #1a1a2e; /* DARK CARD BACKGROUND - LIKE BEFORE */
+        --card-text: #ffffff;
+        --input-bg: #2d2d44;
+        --input-border: #3a3a5a;
+        --shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        --radius: 24px;
+        --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background: var(--bg); /* WHITE BACKGROUND */
+        color: var(--dark);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Clean White Background */
+      .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        background: var(--white); /* WHITE BACKGROUND */
+      }
+
+      /* Very Subtle Pattern */
+      .subtle-pattern {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0.02;
+        background-image: radial-gradient(
+            circle at 25% 25%,
+            var(--primary) 1px,
+            transparent 2px
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            var(--secondary) 1px,
+            transparent 2px
+          );
+        background-size: 100px 100px;
+        animation: patternMove 80s linear infinite;
+      }
+
+      @keyframes patternMove {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 100px 100px;
+        }
+      }
+
+      /* Corner Accents */
+      .corner-accent {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-light),
+          rgba(255, 255, 255, 0)
+        );
+        filter: blur(40px);
+        opacity: 0.3;
+      }
+
+      .corner-top-right {
+        top: -150px;
+        right: -150px;
+        animation: accentFloat 40s ease-in-out infinite alternate;
+      }
+
+      .corner-bottom-left {
+        bottom: -150px;
+        left: -150px;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          rgba(255, 255, 255, 0)
+        );
+        animation: accentFloat 50s ease-in-out infinite alternate-reverse;
+      }
+
+      @keyframes accentFloat {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        100% {
+          transform: translate(-20px, 20px) scale(1.1);
+        }
+      }
+
+      /* Container */
+      .container {
+        width: 100%;
+        max-width: 500px;
+        animation: slideInUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeIn 1.2s ease-out 0.3s both;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .logo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      /* LOGO STYLING */
+      .logo-wrapper {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: logoEntrance 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s
+          both;
+      }
+
+      @keyframes logoEntrance {
+        from {
+          opacity: 0;
+          transform: scale(0.5) rotate(-180deg);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) rotate(0);
+        }
+      }
+
+      /* Logo image styling */
+      .logo-img {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 0;
+        padding: 0;
+        background: transparent;
+        animation: logoFloat 8s ease-in-out infinite;
+        filter: drop-shadow(0 5px 15px rgba(58, 87, 232, 0.3));
+        border-radius: 15px;
+      }
+
+      @keyframes logoFloat {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+        }
+        50% {
+          transform: translateY(-5px) scale(1.02);
+        }
+      }
+
+      .logo-text {
+        font-size: 28px;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: -1px;
+        animation: textShine 6s ease-in-out infinite;
+        margin-top: 5px;
+      }
+
+      @keyframes textShine {
+        0%,
+        100% {
+          background-position: 0% 50%;
+          filter: drop-shadow(0 5px 15px rgba(58, 87, 232, 0.1));
+        }
+        50% {
+          background-position: 100% 50%;
+          filter: drop-shadow(0 8px 25px rgba(58, 87, 232, 0.2));
+        }
+      }
+
+      .tagline {
+        color: var(--gray);
+        font-size: 16px;
+        line-height: 1.6;
+        max-width: 400px;
+        margin: 0 auto;
+        font-weight: 500;
+        animation: slideInUp 1.2s ease-out 0.6s both;
+      }
+
+      /* Card - DARK THEME */
+      .card {
+        background: var(--card-bg);
+        color: var(--card-text);
+        border-radius: var(--radius);
+        padding: 50px 40px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        animation: cardAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+      }
+
+      @keyframes cardAppear {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(
+          90deg,
+          var(--primary),
+          var(--secondary),
+          var(--accent)
+        );
+        background-size: 200% 100%;
+        animation: gradientFlow 5s linear infinite;
+      }
+
+      @keyframes gradientFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 200% 50%;
+        }
+      }
+
+      .card-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeIn 1.2s ease-out 0.6s both;
+      }
+
+      .card-header h2 {
+        font-size: 30px;
+        font-weight: 800;
+        color: var(--white);
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+      }
+
+      .card-header h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 2px;
+        animation: lineWidth 5s ease-in-out infinite;
+      }
+
+      @keyframes lineWidth {
+        0%,
+        100% {
+          width: 70px;
+        }
+        50% {
+          width: 120px;
+        }
+      }
+
+      .card-header p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      /* Form - DARK THEME */
+      .form-group {
+        margin-bottom: 28px;
+        position: relative;
+        animation: formSlide 0.8s ease-out 0.8s both;
+      }
+
+      @keyframes formSlide {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .form-group:nth-child(2) {
+        animation-delay: 1s;
+      }
+
+      .form-group label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: var(--transition);
+      }
+
+      .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 20px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 20px;
+        z-index: 2;
+        transition: var(--transition);
+      }
+
+      .input-with-icon input {
+        width: 100%;
+        padding: 20px 20px 20px 60px;
+        border: 2px solid var(--input-border);
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--white);
+        background: var(--input-bg);
+        transition: var(--transition);
+      }
+
+      .input-with-icon input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(58, 87, 232, 0.2);
+        transform: translateY(-2px);
+        animation: inputFocus 0.6s ease;
+      }
+
+      @keyframes inputFocus {
+        from {
+          box-shadow: 0 0 0 0 rgba(58, 87, 232, 0.2);
+        }
+        to {
+          box-shadow: 0 0 0 4px rgba(58, 87, 232, 0.2);
+        }
+      }
+
+      .input-with-icon input:focus + .input-icon {
+        color: var(--primary);
+        animation: iconSpin 0.8s ease;
+      }
+
+      @keyframes iconSpin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .input-with-icon input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 20px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        font-size: 20px;
+        transition: var(--transition);
+        padding: 8px;
+        border-radius: 8px;
+      }
+
+      .password-toggle:hover {
+        color: var(--primary);
+        background: rgba(58, 87, 232, 0.1);
+        transform: scale(1.1);
+      }
+
+      .options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+        gap: 20px;
+        animation: fadeIn 1.2s ease-out 1.2s both;
+      }
+
+      .remember {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .remember input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        accent-color: var(--primary);
+        cursor: pointer;
+        transition: var(--transition);
+        min-width: 20px;
+        min-height: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .remember input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          min-width: 18px;
+          min-height: 18px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+        .remember label {
+          font-size: 14px;
         }
+      }
 
-        body {
-            background: var(--bg); /* WHITE BACKGROUND */
-            color: var(--dark);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Clean White Background */
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: var(--white); /* WHITE BACKGROUND */
-        }
-
-        /* Very Subtle Pattern */
-        .subtle-pattern {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.02;
-            background-image: 
-                radial-gradient(circle at 25% 25%, var(--primary) 1px, transparent 2px),
-                radial-gradient(circle at 75% 75%, var(--secondary) 1px, transparent 2px);
-            background-size: 100px 100px;
-            animation: patternMove 80s linear infinite;
-        }
-
-        @keyframes patternMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 100px 100px; }
-        }
-
-        /* Corner Accents */
-        .corner-accent {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-light), rgba(255, 255, 255, 0));
-            filter: blur(40px);
-            opacity: 0.3;
-        }
-
-        .corner-top-right {
-            top: -150px;
-            right: -150px;
-            animation: accentFloat 40s ease-in-out infinite alternate;
-        }
-
-        .corner-bottom-left {
-            bottom: -150px;
-            left: -150px;
-            background: linear-gradient(135deg, var(--secondary), rgba(255, 255, 255, 0));
-            animation: accentFloat 50s ease-in-out infinite alternate-reverse;
-        }
-
-        @keyframes accentFloat {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-20px, 20px) scale(1.1); }
-        }
-
-        /* Container */
-        .container {
-            width: 100%;
-            max-width: 500px;
-            animation: slideInUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeIn 1.2s ease-out 0.3s both;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        /* LOGO STYLING */
-        .logo-wrapper {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: logoEntrance 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s both;
-        }
-
-        @keyframes logoEntrance {
-            from { opacity: 0; transform: scale(0.5) rotate(-180deg); }
-            to { opacity: 1; transform: scale(1) rotate(0); }
-        }
-
-        /* Logo image styling */
-        .logo-img {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 0;
-            padding: 0;
-            background: transparent;
-            animation: logoFloat 8s ease-in-out infinite;
-            filter: drop-shadow(0 5px 15px rgba(58, 87, 232, 0.3));
-            border-radius: 15px;
-        }
-
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-5px) scale(1.02); }
-        }
-
-        .logo-text {
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -1px;
-            animation: textShine 6s ease-in-out infinite;
-            margin-top: 5px;
-        }
-
-        @keyframes textShine {
-            0%, 100% {
-                background-position: 0% 50%;
-                filter: drop-shadow(0 5px 15px rgba(58, 87, 232, 0.1));
-            }
-            50% {
-                background-position: 100% 50%;
-                filter: drop-shadow(0 8px 25px rgba(58, 87, 232, 0.2));
-            }
-        }
-
-        .tagline {
-            color: var(--gray);
-            font-size: 16px;
-            line-height: 1.6;
-            max-width: 400px;
-            margin: 0 auto;
-            font-weight: 500;
-            animation: slideInUp 1.2s ease-out 0.6s both;
-        }
-
-        /* Card - DARK THEME */
-        .card {
-            background: var(--card-bg);
-            color: var(--card-text);
-            border-radius: var(--radius);
-            padding: 50px 40px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            animation: cardAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
-        }
-
-        @keyframes cardAppear {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-            background-size: 200% 100%;
-            animation: gradientFlow 5s linear infinite;
-        }
-
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        .card-header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeIn 1.2s ease-out 0.6s both;
-        }
-
-        .card-header h2 {
-            font-size: 30px;
-            font-weight: 800;
-            color: var(--white);
-            margin-bottom: 15px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .card-header h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 2px;
-            animation: lineWidth 5s ease-in-out infinite;
-        }
-
-        @keyframes lineWidth {
-            0%, 100% { width: 70px; }
-            50% { width: 120px; }
-        }
-
-        .card-header p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        /* Form - DARK THEME */
-        .form-group {
-            margin-bottom: 28px;
-            position: relative;
-            animation: formSlide 0.8s ease-out 0.8s both;
-        }
-
-        @keyframes formSlide {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .form-group:nth-child(2) {
-            animation-delay: 1s;
-        }
-
-        .form-group label {
-            display: block;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition);
-        }
-
-        .input-with-icon {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 20px;
-            z-index: 2;
-            transition: var(--transition);
-        }
-
-        .input-with-icon input {
-            width: 100%;
-            padding: 20px 20px 20px 60px;
-            border: 2px solid var(--input-border);
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--white);
-            background: var(--input-bg);
-            transition: var(--transition);
-        }
-
-        .input-with-icon input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(58, 87, 232, 0.2);
-            transform: translateY(-2px);
-            animation: inputFocus 0.6s ease;
-        }
-
-        @keyframes inputFocus {
-            from { box-shadow: 0 0 0 0 rgba(58, 87, 232, 0.2); }
-            to { box-shadow: 0 0 0 4px rgba(58, 87, 232, 0.2); }
-        }
-
-        .input-with-icon input:focus + .input-icon {
-            color: var(--primary);
-            animation: iconSpin 0.8s ease;
-        }
-
-        @keyframes iconSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .input-with-icon input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 20px;
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            font-size: 20px;
-            transition: var(--transition);
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .password-toggle:hover {
-            color: var(--primary);
-            background: rgba(58, 87, 232, 0.1);
-            transform: scale(1.1);
-        }
-
-        .options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 35px;
-            flex-wrap: wrap;
-            gap: 20px;
-            animation: fadeIn 1.2s ease-out 1.2s both;
+      @media (max-width: 400px) {
+        .remember input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
         }
 
         .remember {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 15px;
-            font-weight: 500;
+          gap: 10px;
         }
+      }
 
-        .remember input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-            accent-color: var(--primary);
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 20px;
-            min-height: 20px;
+      .remember input[type="checkbox"]:checked {
+        animation: checkboxPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      @keyframes checkboxPop {
+        0% {
+          transform: scale(1);
         }
-
-        @media (max-width: 768px) {
-            .remember input[type="checkbox"] {
-                width: 18px;
-                height: 18px;
-                min-width: 18px;
-                min-height: 18px;
-            }
-            
-            .remember label {
-                font-size: 14px;
-            }
+        50% {
+          transform: scale(1.3);
         }
-
-        @media (max-width: 400px) {
-            .remember input[type="checkbox"] {
-                width: 16px;
-                height: 16px;
-                min-width: 16px;
-                min-height: 16px;
-            }
-            
-            .remember {
-                gap: 10px;
-            }
+        100% {
+          transform: scale(1);
         }
+      }
 
-        .remember input[type="checkbox"]:checked {
-            animation: checkboxPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      .forgot {
+        color: var(--primary-light);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: var(--transition);
+        padding: 6px 0;
+        position: relative;
+      }
+
+      .forgot::after {
+        content: "";
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        transition: var(--transition);
+      }
+
+      .forgot:hover {
+        color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .forgot:hover::after {
+        width: 100%;
+      }
+
+      /* Button */
+      .btn {
+        width: 100%;
+        padding: 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: var(--white);
+        border: none;
+        border-radius: 14px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+        animation: buttonGlow 6s ease-in-out infinite;
+      }
+
+      @keyframes buttonGlow {
+        0%,
+        100% {
+          box-shadow: 0 10px 30px rgba(58, 87, 232, 0.3);
         }
-
-        @keyframes checkboxPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
+        50% {
+          box-shadow: 0 15px 40px rgba(58, 87, 232, 0.4);
         }
+      }
 
-        .forgot {
-            color: var(--primary-light);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            transition: var(--transition);
-            padding: 6px 0;
-            position: relative;
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.8s;
+      }
+
+      .btn:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--secondary)
+        );
+        transform: translateY(-5px);
+        animation: none;
+        box-shadow: 0 20px 50px rgba(58, 87, 232, 0.35);
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn:active {
+        transform: translateY(-2px);
+      }
+
+      /* Demo Credentials - DARK THEME */
+      .demo-credentials {
+        background: linear-gradient(
+          135deg,
+          rgba(58, 87, 232, 0.1),
+          rgba(124, 77, 255, 0.05)
+        );
+        border-radius: 16px;
+        padding: 28px;
+        margin-top: 35px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        animation: slideInUp 1.2s ease-out 1.4s both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .demo-credentials::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--primary), var(--secondary));
+      }
+
+      .demo-credentials h4 {
+        color: var(--primary-light);
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .demo-credentials p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .demo-credentials p i {
+        color: var(--primary);
+        width: 20px;
+        animation: iconBounce 3.5s ease-in-out infinite;
+      }
+
+      @keyframes iconBounce {
+        0%,
+        100% {
+          transform: translateY(0);
         }
-
-        .forgot::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: var(--transition);
+        50% {
+          transform: translateY(-5px);
         }
+      }
 
-        .forgot:hover {
-            color: var(--primary);
-            transform: translateY(-3px);
+      .demo-credentials strong {
+        background: rgba(58, 87, 232, 0.15);
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        color: var(--primary-light);
+        margin-left: 10px;
+        font-family: "Courier New", monospace;
+        letter-spacing: 1px;
+        font-size: 15px;
+      }
+
+      .demo-note {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 18px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.6;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+        line-height: 1.6;
+        padding-top: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: fadeIn 1.2s ease-out 1.6s both;
+      }
+
+      .footer p {
+        margin-bottom: 8px;
+      }
+
+      .version {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(58, 87, 232, 0.1);
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-weight: 700;
+        margin-top: 12px;
+        color: var(--primary-light);
+        animation: versionGlow 6s ease-in-out infinite;
+      }
+
+      @keyframes versionGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 15px rgba(58, 87, 232, 0.2);
         }
-
-        .forgot:hover::after {
-            width: 100%;
+        50% {
+          box-shadow: 0 0 25px rgba(58, 87, 232, 0.3);
         }
+      }
 
-        /* Button */
+      /* Error */
+      .error {
+        color: #ff6b6b;
+        font-size: 14px;
+        margin-top: 10px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        animation: errorShake 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      @keyframes errorShake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-8px);
+        }
+        75% {
+          transform: translateX(8px);
+        }
+      }
+
+      .error i {
+        font-size: 16px;
+      }
+
+      /* Modal - DARK THEME */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: modalFadeIn 0.5s ease;
+        backdrop-filter: blur(10px);
+        padding: 20px;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          backdrop-filter: blur(0);
+        }
+        to {
+          opacity: 1;
+          backdrop-filter: blur(10px);
+        }
+      }
+
+      .modal-content {
+        background: var(--card-bg);
+        color: var(--white);
+        width: 100%;
+        max-width: 450px;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(255, 255, 255, 0.05);
+        animation: modalSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      @keyframes modalSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 28px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h3 {
+        font-size: 22px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        padding: 8px;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .modal-close:hover {
+        transform: rotate(90deg);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .modal-body {
+        padding: 32px;
+      }
+
+      .modal-footer {
+        padding: 24px 32px;
+        background: rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Success Message */
+      .success-message {
+        text-align: center;
+        padding: 40px 32px;
+        animation: successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      @keyframes successPop {
+        from {
+          opacity: 0;
+          transform: scale(0.8) rotate(-10deg);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) rotate(0);
+        }
+      }
+
+      .success-message i {
+        font-size: 60px;
+        color: var(--primary);
+        margin-bottom: 24px;
+        animation: successIcon 1s ease 0.2s both;
+      }
+
+      @keyframes successIcon {
+        from {
+          opacity: 0;
+          transform: scale(0) rotate(-180deg);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) rotate(0);
+        }
+      }
+
+      .success-message h3 {
+        color: var(--primary);
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        animation: fadeInUp 0.8s ease 0.3s both;
+      }
+
+      .success-message p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+        margin-bottom: 24px;
+        line-height: 1.6;
+        animation: fadeInUp 0.8s ease 0.4s both;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .card {
+          padding: 35px 30px;
+        }
+        .card-header h2 {
+          font-size: 26px;
+        }
+        .logo-text {
+          font-size: 24px;
+        }
+        .logo-wrapper {
+          width: 70px;
+          height: 70px;
+        }
+        .input-with-icon input {
+          padding: 18px 18px 18px 55px;
+        }
         .btn {
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--white);
-            border: none;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-            animation: buttonGlow 6s ease-in-out infinite;
+          padding: 18px;
         }
+      }
 
-        @keyframes buttonGlow {
-            0%, 100% { box-shadow: 0 10px 30px rgba(58, 87, 232, 0.3); }
-            50% { box-shadow: 0 15px 40px rgba(58, 87, 232, 0.4); }
+      @media (max-width: 576px) {
+        .card {
+          padding: 30px 25px;
         }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.8s;
+        .card-header h2 {
+          font-size: 24px;
         }
-
-        .btn:hover {
-            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
-            transform: translateY(-5px);
-            animation: none;
-            box-shadow: 0 20px 50px rgba(58, 87, 232, 0.35);
+        .logo-text {
+          font-size: 22px;
         }
-
-        .btn:hover::before {
-            left: 100%;
+        .logo-wrapper {
+          width: 65px;
+          height: 65px;
         }
-
-        .btn:active {
-            transform: translateY(-2px);
-        }
-
-        /* Demo Credentials - DARK THEME */
         .demo-credentials {
-            background: linear-gradient(135deg, rgba(58, 87, 232, 0.1), rgba(124, 77, 255, 0.05));
-            border-radius: 16px;
-            padding: 28px;
-            margin-top: 35px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            animation: slideInUp 1.2s ease-out 1.4s both;
-            position: relative;
-            overflow: hidden;
+          padding: 22px;
         }
-
-        .demo-credentials::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        .input-icon {
+          left: 16px;
+          font-size: 18px;
         }
-
-        .demo-credentials h4 {
-            color: var(--primary-light);
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .input-with-icon input {
+          padding: 16px 16px 16px 50px;
         }
-
-        .demo-credentials p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .demo-credentials p i {
-            color: var(--primary);
-            width: 20px;
-            animation: iconBounce 3.5s ease-in-out infinite;
-        }
-
-        @keyframes iconBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .demo-credentials strong {
-            background: rgba(58, 87, 232, 0.15);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            color: var(--primary-light);
-            margin-left: 10px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-            font-size: 15px;
-        }
-
-        .demo-note {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 18px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            line-height: 1.6;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            line-height: 1.6;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeIn 1.2s ease-out 1.6s both;
-        }
-
-        .footer p {
-            margin-bottom: 8px;
-        }
-
-        .version {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(58, 87, 232, 0.1);
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-weight: 700;
-            margin-top: 12px;
-            color: var(--primary-light);
-            animation: versionGlow 6s ease-in-out infinite;
-        }
-
-        @keyframes versionGlow {
-            0%, 100% { box-shadow: 0 0 15px rgba(58, 87, 232, 0.2); }
-            50% { box-shadow: 0 0 25px rgba(58, 87, 232, 0.3); }
-        }
-
-        /* Error */
-        .error {
-            color: #ff6b6b;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            animation: errorShake 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes errorShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-
-        .error i {
-            font-size: 16px;
-        }
-
-        /* Modal - DARK THEME */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: modalFadeIn 0.5s ease;
-            backdrop-filter: blur(10px);
-            padding: 20px;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; backdrop-filter: blur(0); }
-            to { opacity: 1; backdrop-filter: blur(10px); }
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            color: var(--white);
-            width: 100%;
-            max-width: 450px;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.05);
-            animation: modalSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes modalSlideUp {
-            from { opacity: 0; transform: translateY(50px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 28px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            font-size: 22px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            padding: 8px;
-            transition: var(--transition);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .modal-close:hover {
-            transform: rotate(90deg);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .modal-body {
-            padding: 32px;
-        }
-
-        .modal-footer {
-            padding: 24px 32px;
-            background: rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Success Message */
-        .success-message {
-            text-align: center;
-            padding: 40px 32px;
-            animation: successPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes successPop {
-            from { opacity: 0; transform: scale(0.8) rotate(-10deg); }
-            to { opacity: 1; transform: scale(1) rotate(0); }
-        }
-
-        .success-message i {
-            font-size: 60px;
-            color: var(--primary);
-            margin-bottom: 24px;
-            animation: successIcon 1s ease 0.2s both;
-        }
-
-        @keyframes successIcon {
-            from { opacity: 0; transform: scale(0) rotate(-180deg); }
-            to { opacity: 1; transform: scale(1) rotate(0); }
-        }
-
-        .success-message h3 {
-            color: var(--primary);
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            animation: fadeInUp 0.8s ease 0.3s both;
-        }
-
-        .success-message p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            margin-bottom: 24px;
-            line-height: 1.6;
-            animation: fadeInUp 0.8s ease 0.4s both;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .card { padding: 35px 30px; }
-            .card-header h2 { font-size: 26px; }
-            .logo-text { font-size: 24px; }
-            .logo-wrapper { width: 70px; height: 70px; }
-            .input-with-icon input { padding: 18px 18px 18px 55px; }
-            .btn { padding: 18px; }
-        }
-
-        @media (max-width: 576px) {
-            .card { padding: 30px 25px; }
-            .card-header h2 { font-size: 24px; }
-            .logo-text { font-size: 22px; }
-            .logo-wrapper { width: 65px; height: 65px; }
-            .demo-credentials { padding: 22px; }
-            .input-icon { left: 16px; font-size: 18px; }
-            .input-with-icon input { padding: 16px 16px 16px 50px; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Background elements -->
     <div class="background">
-        <div class="subtle-pattern"></div>
-        <div class="corner-accent corner-top-right"></div>
-        <div class="corner-accent corner-bottom-left"></div>
+      <div class="subtle-pattern"></div>
+      <div class="corner-accent corner-top-right"></div>
+      <div class="corner-accent corner-bottom-left"></div>
     </div>
-    
+
     <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <div class="logo-wrapper">
-                    <img src="./images/logo hash.jpg" alt="Hatch Social" class="logo-img" 
-                         onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/1006/1006363.png'">
-                </div>
-                <div class="logo-text">Hatch Social</div>
-            </div>
-            <p class="tagline">Professional Admin Dashboard for managing your social platform</p>
+      <div class="header">
+        <div class="logo-container">
+          <div class="logo-wrapper">
+            <img
+              src="./images/logo hash.jpg"
+              alt="Hatch Social"
+              class="logo-img"
+              onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/1006/1006363.png'"
+            />
+          </div>
+          <div class="logo-text">Hatch Social</div>
+        </div>
+        <p class="tagline">
+          Professional Admin Dashboard for managing your social platform
+        </p>
+      </div>
+
+      <!-- DARK THEME CARD -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Admin Sign In</h2>
+          <p>Sign in to access the admin dashboard</p>
         </div>
 
-        <!-- DARK THEME CARD -->
-        <div class="card">
-            <div class="card-header">
-                <h2>Admin Sign In</h2>
-                <p>Sign in to access the admin dashboard</p>
+        <form id="signin-form">
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i> Email Address
+            </label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope input-icon"></i>
+              <input
+                type="email"
+                id="email"
+                placeholder="admin@hatchsocial.com"
+                required
+              />
             </div>
-
-            <form id="signin-form">
-                <div class="form-group">
-                    <label for="email">
-                        <i class="fas fa-envelope"></i> Email Address
-                    </label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" id="email" placeholder="admin@hatchsocial.com" required>
-                    </div>
-                    <div class="error" id="email-error">
-                        <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">
-                        <i class="fas fa-lock"></i> Password
-                    </label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-lock input-icon"></i>
-                        <input type="password" id="password" placeholder="Enter your password" required>
-                        <button type="button" class="password-toggle" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="error" id="password-error">
-                        <i class="fas fa-exclamation-circle"></i> <span>Incorrect password</span>
-                    </div>
-                </div>
-
-                <div class="options">
-                    <div class="remember">
-                        <input type="checkbox" id="remember">
-                        <label for="remember">Keep me signed in</label>
-                    </div>
-                    <a href="#" class="forgot" id="forgotPasswordLink">Forgot password?</a>
-                </div>
-
-                <button type="submit" class="btn" id="signin-btn">
-                    <i class="fas fa-sign-in-alt"></i> Sign In to Dashboard
-                </button>
-            </form>
-
-            <div class="demo-credentials">
-                <h4><i class="fas fa-key"></i> Admin Credentials</h4>
-                <p><i class="fas fa-user"></i> Email: <strong>admin@hatchsocial.com</strong></p>
-                <p><i class="fas fa-lock"></i> Password: <strong>admin123</strong></p>
-                <div class="demo-note">
-                    <i class="fas fa-info-circle"></i>
-                    <span>This is a demo admin account with full access to all features</span>
-                </div>
+            <div class="error" id="email-error">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Please enter a valid email address</span>
             </div>
+          </div>
 
-            <div class="footer">
-                <p>© 2025 Hatch Social. All rights reserved.</p>
-                <p>Secure admin portal • Encrypted connection</p>
-                <div class="version">
-                    <i class="fas fa-shield-alt"></i>
-                    v2.0.0 • Admin Dashboard
-                </div>
+          <div class="form-group">
+            <label for="password"> <i class="fas fa-lock"></i> Password </label>
+            <div class="input-with-icon">
+              <i class="fas fa-lock input-icon"></i>
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+              />
+              <button type="button" class="password-toggle" id="togglePassword">
+                <i class="fas fa-eye"></i>
+              </button>
             </div>
+            <div class="error" id="password-error">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Incorrect password</span>
+            </div>
+          </div>
+
+          <div class="options">
+            <div class="remember">
+              <input type="checkbox" id="remember" />
+              <label for="remember">Keep me signed in</label>
+            </div>
+            <a href="#" class="forgot" id="forgotPasswordLink"
+              >Forgot password?</a
+            >
+          </div>
+
+          <button type="submit" class="btn" id="signin-btn">
+            <i class="fas fa-sign-in-alt"></i> Sign In to Dashboard
+          </button>
+        </form>
+
+        <div class="demo-credentials">
+          <h4><i class="fas fa-key"></i> Admin Credentials</h4>
+          <p>
+            <i class="fas fa-user"></i> Email:
+            <strong>admin@hatchsocial.com</strong>
+          </p>
+          <p><i class="fas fa-lock"></i> Password: <strong>admin123</strong></p>
+          <div class="demo-note">
+            <i class="fas fa-info-circle"></i>
+            <span
+              >This is a demo admin account with full access to all
+              features</span
+            >
+          </div>
         </div>
+
+        <div class="footer">
+          <p>© 2025 Hatch Social. All rights reserved.</p>
+          <p>Secure admin portal • Encrypted connection</p>
+          <div class="version">
+            <i class="fas fa-shield-alt"></i>
+            v2.0.0 • Admin Dashboard
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Forgot Password Modal -->
     <div class="modal-overlay" id="forgotModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> Reset Password</h3>
-                <button class="modal-close" id="modalClose">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions.</p>
-                <div class="form-group">
-                    <label for="forgotEmail">Email Address</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" id="forgotEmail" placeholder="Enter your email address">
-                    </div>
-                    <div class="error" id="forgotError" style="display: none;">
-                        <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" style="width: auto; padding: 16px 40px; font-size: 16px;" id="sendResetBtn">
-                    <i class="fas fa-paper-plane"></i> Send Reset Link
-                </button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-key"></i> Reset Password</h3>
+          <button class="modal-close" id="modalClose">&times;</button>
         </div>
+        <div class="modal-body" id="modalBody">
+          <p
+            style="
+              color: rgba(255, 255, 255, 0.7);
+              margin-bottom: 25px;
+              line-height: 1.6;
+            "
+          >
+            Enter your email to receive password reset instructions.
+          </p>
+          <div class="form-group">
+            <label for="forgotEmail">Email Address</label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope input-icon"></i>
+              <input
+                type="email"
+                id="forgotEmail"
+                placeholder="Enter your email address"
+              />
+            </div>
+            <div class="error" id="forgotError" style="display: none">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Please enter a valid email address</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn"
+            style="width: auto; padding: 16px 40px; font-size: 16px"
+            id="sendResetBtn"
+          >
+            <i class="fas fa-paper-plane"></i> Send Reset Link
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-    // ==================== API CONFIGURATION ====================
-    const API_CONFIG = {
-        BASE_URL: 'http://localhost:8000/api',
+      // ==================== API CONFIGURATION ====================
+      const API_CONFIG = {
+        BASE_URL: "https://hatch-social.cstmpanel.com/api/",
         USE_MOCK: true,
-        VERSION: '2.0.0'
-    };
+        VERSION: "2.0.0",
+      };
 
-    // ==================== MOCK API SERVICE ====================
-    // Check if already exists
-    if (!window.MockAPIService) {
+      // ==================== MOCK API SERVICE ====================
+      // Check if already exists
+      if (!window.MockAPIService) {
         class MockAPIService {
-            constructor() {
-                this.delay = 300;
-                console.log('🎭 Mock API Service initialized');
+          constructor() {
+            this.delay = 300;
+            console.log("🎭 Mock API Service initialized");
+          }
+
+          async delayResponse() {
+            return new Promise((resolve) => setTimeout(resolve, this.delay));
+          }
+
+          async login(email, password) {
+            await this.delayResponse();
+
+            if (email === "admin@hatchsocial.com" && password === "admin123") {
+              return {
+                status: "success",
+                token: "mock_jwt_token_" + Date.now(),
+                user: {
+                  id: 1,
+                  name: "Admin User",
+                  email: "admin@hatchsocial.com",
+                  type: "admin",
+                  status: "active",
+                },
+                message: "Login successful",
+              };
             }
 
-            async delayResponse() {
-                return new Promise(resolve => setTimeout(resolve, this.delay));
-            }
+            return {
+              status: "error",
+              message: "Invalid credentials",
+            };
+          }
 
-            async login(email, password) {
-                await this.delayResponse();
-                
-                if (email === 'admin@hatchsocial.com' && password === 'admin123') {
-                    return {
-                        status: 'success',
-                        token: 'mock_jwt_token_' + Date.now(),
-                        user: {
-                            id: 1,
-                            name: 'Admin User',
-                            email: 'admin@hatchsocial.com',
-                            type: 'admin',
-                            status: 'active'
-                        },
-                        message: 'Login successful'
-                    };
-                }
-                
-                return {
-                    status: 'error',
-                    message: 'Invalid credentials'
-                };
-            }
-
-            async forgotPassword(email) {
-                await this.delayResponse();
-                return {
-                    status: 'success',
-                    message: `Password reset instructions sent to ${email}`
-                };
-            }
+          async forgotPassword(email) {
+            await this.delayResponse();
+            return {
+              status: "success",
+              message: `Password reset instructions sent to ${email}`,
+            };
+          }
         }
-        
-        window.MockAPIService = MockAPIService;
-    }
 
-    // ==================== MAIN API SERVICE ====================
-    class APIService {
+        window.MockAPIService = MockAPIService;
+      }
+
+      // ==================== MAIN API SERVICE ====================
+      class APIService {
         constructor() {
-            this.baseURL = API_CONFIG.BASE_URL;
-            this.token = localStorage.getItem('hatch_admin_token');
-            this.user = JSON.parse(localStorage.getItem('hatch_admin_user') || '{}');
-            this.mockService = new window.MockAPIService();
-            this.useRealAPI = false;
-            
-            console.log('🚀 API Service Initializing...');
-            this.init();
+          this.baseURL = API_CONFIG.BASE_URL;
+          this.token = localStorage.getItem("hatch_admin_token");
+          this.user = JSON.parse(
+            localStorage.getItem("hatch_admin_user") || "{}"
+          );
+          this.mockService = new window.MockAPIService();
+          this.useRealAPI = false;
+
+          console.log("🚀 API Service Initializing...");
+          this.init();
         }
 
         async init() {
-            // If running from file://, use mock
-            if (window.location.protocol === 'file:') {
-                console.log('📁 Local file - Using MOCK API');
-                this.useRealAPI = false;
-                return;
-            }
-            
-            // Try to connect to real API
-            await this.testConnection();
+          // If running from file://, use mock
+          if (window.location.protocol === "file:") {
+            console.log("📁 Local file - Using MOCK API");
+            this.useRealAPI = false;
+            return;
+          }
+
+          // Try to connect to real API
+          await this.testConnection();
         }
 
         async testConnection() {
-            try {
-                console.log('🔍 Testing API connection...');
-                
-                // Quick timeout test
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2000);
-                
-                const response = await fetch(`${this.baseURL}/health`, {
-                    signal: controller.signal,
-                    method: 'GET'
-                }).catch(() => null);
-                
-                clearTimeout(timeoutId);
-                
-                if (response && response.ok) {
-                    this.useRealAPI = true;
-                    console.log('✅ Connected to REAL API');
-                } else {
-                    this.useRealAPI = false;
-                    console.log('🎭 Using MOCK API');
-                }
-            } catch (error) {
-                this.useRealAPI = false;
-                console.log('🎭 Using MOCK API (error)');
+          try {
+            console.log("🔍 Testing API connection...");
+
+            // Quick timeout test
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+            const response = await fetch(`${this.baseURL}/health`, {
+              signal: controller.signal,
+              method: "GET",
+            }).catch(() => null);
+
+            clearTimeout(timeoutId);
+
+            if (response && response.ok) {
+              this.useRealAPI = true;
+              console.log("✅ Connected to REAL API");
+            } else {
+              this.useRealAPI = false;
+              console.log("🎭 Using MOCK API");
             }
+          } catch (error) {
+            this.useRealAPI = false;
+            console.log("🎭 Using MOCK API (error)");
+          }
         }
 
         async login(email, password) {
-            console.log(`🔐 Login attempt: ${email}`);
-            
-            // DEMO CREDENTIALS - Always work
-            if (email === 'admin@hatchsocial.com' && password === 'admin123') {
-                const demoUser = {
-                    id: 1,
-                    name: 'Admin User',
-                    email: 'admin@hatchsocial.com',
-                    type: 'admin',
-                    status: 'active'
-                };
-                
-                const demoToken = 'demo_token_' + Date.now();
-                
-                this.setAuth(demoToken, demoUser);
-                
-                return {
-                    status: 'success',
-                    token: demoToken,
-                    user: demoUser,
-                    message: 'Login successful'
-                };
-            }
-            
-            // Try real API if available
-            if (this.useRealAPI) {
-                try {
-                    const response = await fetch(`${this.baseURL}/login`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ email, password })
-                    });
+          console.log(`🔐 Login attempt: ${email}`);
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.token) {
-                            this.setAuth(data.token, data.user);
-                            return data;
-                        }
-                    }
-                } catch (error) {
-                    console.log('🌐 Real API failed, using mock');
+          // DEMO CREDENTIALS - Always work
+          if (email === "admin@hatchsocial.com" && password === "admin123") {
+            const demoUser = {
+              id: 1,
+              name: "Admin User",
+              email: "admin@hatchsocial.com",
+              type: "admin",
+              status: "active",
+            };
+
+            const demoToken = "demo_token_" + Date.now();
+
+            this.setAuth(demoToken, demoUser);
+
+            return {
+              status: "success",
+              token: demoToken,
+              user: demoUser,
+              message: "Login successful",
+            };
+          }
+
+          // Try real API if available
+          if (this.useRealAPI) {
+            try {
+              const response = await fetch(`${this.baseURL}/login`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                if (data.token) {
+                  this.setAuth(data.token, data.user);
+                  return data;
                 }
+              }
+            } catch (error) {
+              console.log("🌐 Real API failed, using mock");
             }
-            
-            // Use mock
-            const mockResponse = await this.mockService.login(email, password);
-            if (mockResponse.status === 'success') {
-                this.setAuth(mockResponse.token, mockResponse.user);
-            }
-            return mockResponse;
+          }
+
+          // Use mock
+          const mockResponse = await this.mockService.login(email, password);
+          if (mockResponse.status === "success") {
+            this.setAuth(mockResponse.token, mockResponse.user);
+          }
+          return mockResponse;
         }
 
         async forgotPassword(email) {
-            if (this.useRealAPI) {
-                try {
-                    const response = await fetch(`${this.baseURL}/password/email`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email })
-                    });
-                    
-                    if (response.ok) {
-                        return await response.json();
-                    }
-                } catch (error) {
-                    console.log('🌐 Real API failed');
-                }
+          if (this.useRealAPI) {
+            try {
+              const response = await fetch(`${this.baseURL}/password/email`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+              });
+
+              if (response.ok) {
+                return await response.json();
+              }
+            } catch (error) {
+              console.log("🌐 Real API failed");
             }
-            
-            return await this.mockService.forgotPassword(email);
+          }
+
+          return await this.mockService.forgotPassword(email);
         }
 
         setAuth(token, user) {
-            this.token = token;
-            this.user = user;
-            localStorage.setItem('hatch_admin_token', token);
-            localStorage.setItem('hatch_admin_user', JSON.stringify(user));
-            console.log('🔐 Auth saved');
+          this.token = token;
+          this.user = user;
+          localStorage.setItem("hatch_admin_token", token);
+          localStorage.setItem("hatch_admin_user", JSON.stringify(user));
+          console.log("🔐 Auth saved");
         }
 
         clearAuth() {
-            this.token = null;
-            this.user = null;
-            localStorage.removeItem('hatch_admin_token');
-            localStorage.removeItem('hatch_admin_user');
-            console.log('🔐 Auth cleared');
+          this.token = null;
+          this.user = null;
+          localStorage.removeItem("hatch_admin_token");
+          localStorage.removeItem("hatch_admin_user");
+          console.log("🔐 Auth cleared");
         }
-    }
+      }
 
-    // ==================== INITIALIZE ====================
-    console.log('🏁 Starting Hatch Social Admin...');
-    
-    // Check if API service already exists
-    if (!window.apiService) {
+      // ==================== INITIALIZE ====================
+      console.log("🏁 Starting Hatch Social Admin...");
+
+      // Check if API service already exists
+      if (!window.apiService) {
         window.apiService = new APIService();
-        console.log('✅ API Service loaded successfully');
-    } else {
-        console.log('⚠️ API Service already loaded');
-    }
-</script>
+        console.log("✅ API Service loaded successfully");
+      } else {
+        console.log("⚠️ API Service already loaded");
+      }
+    </script>
     <!-- Main Application Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const signinForm = document.getElementById('signin-form');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const togglePassword = document.getElementById('togglePassword');
-            const signinBtn = document.getElementById('signin-btn');
-            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-            const forgotModal = document.getElementById('forgotModal');
-            const modalClose = document.getElementById('modalClose');
-            const sendResetBtn = document.getElementById('sendResetBtn');
-            const forgotEmail = document.getElementById('forgotEmail');
-            
-            // Demo credentials auto-fill
+      document.addEventListener("DOMContentLoaded", function () {
+        // DOM Elements
+        const signinForm = document.getElementById("signin-form");
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const togglePassword = document.getElementById("togglePassword");
+        const signinBtn = document.getElementById("signin-btn");
+        const forgotPasswordLink =
+          document.getElementById("forgotPasswordLink");
+        const forgotModal = document.getElementById("forgotModal");
+        const modalClose = document.getElementById("modalClose");
+        const sendResetBtn = document.getElementById("sendResetBtn");
+        const forgotEmail = document.getElementById("forgotEmail");
+
+        // Demo credentials auto-fill
+        setTimeout(() => {
+          emailInput.value = "admin@hatchsocial.com";
+          passwordInput.value = "admin123";
+          passwordInput.focus();
+
+          // Animation effects
+          emailInput.style.animation = "inputFocus 0.6s ease";
+          passwordInput.style.animation = "inputFocus 0.6s ease 0.3s";
+          setTimeout(() => {
+            emailInput.style.animation = "";
+            passwordInput.style.animation = "";
+          }, 1200);
+        }, 500);
+
+        // Password toggle
+        togglePassword.addEventListener("click", function () {
+          const type = passwordInput.type === "password" ? "text" : "password";
+          passwordInput.type = type;
+          this.innerHTML =
+            type === "password"
+              ? '<i class="fas fa-eye"></i>'
+              : '<i class="fas fa-eye-slash"></i>';
+          this.style.animation = "iconSpin 0.6s ease";
+          setTimeout(() => (this.style.animation = ""), 600);
+        });
+
+        // Error handling
+        function showError(elementId, message) {
+          const errorEl = document.getElementById(elementId);
+          errorEl.querySelector("span").textContent = message;
+          errorEl.style.display = "flex";
+          errorEl.style.animation = "errorShake 0.8s ease";
+        }
+
+        function hideError(elementId) {
+          document.getElementById(elementId).style.display = "none";
+        }
+
+        // Login form submission
+        signinForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const email = emailInput.value.trim();
+          const password = passwordInput.value.trim();
+
+          // Hide errors
+          hideError("email-error");
+          hideError("password-error");
+
+          // Validation
+          let isValid = true;
+
+          if (!email || !email.includes("@")) {
+            showError("email-error", "Please enter a valid email address");
+            isValid = false;
+          }
+
+          if (!password) {
+            showError("password-error", "Please enter your password");
+            isValid = false;
+          }
+
+          if (!isValid) return;
+
+          // Show loading
+          const originalText = signinBtn.innerHTML;
+          const originalBg = signinBtn.style.background;
+          signinBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+          signinBtn.disabled = true;
+          signinBtn.style.animation = "buttonGlow 1.5s ease-in-out infinite";
+
+          try {
+            // API Login
+            const response = await window.apiService.login(email, password);
+
+            if (response.status === "success") {
+              // Store session
+              sessionStorage.setItem(
+                "currentAdmin",
+                JSON.stringify({
+                  name: response.user.name,
+                  email: response.user.email,
+                  role: response.user.type,
+                  loginTime: new Date().toISOString(),
+                  userId: response.user.id,
+                })
+              );
+
+              // Success animation
+              signinBtn.innerHTML =
+                '<i class="fas fa-check"></i> Login Successful!';
+              signinBtn.style.background =
+                "linear-gradient(135deg, #10b981, #34d399)";
+              signinBtn.style.animation = "none";
+
+              // Card animation
+              document.querySelector(".card").style.animation =
+                "successPop 0.8s ease";
+
+              // Redirect to dashboard
+              setTimeout(() => {
+                window.location.href = "dashboard.html";
+              }, 1000);
+            } else {
+              throw new Error(response.message || "Login failed");
+            }
+          } catch (error) {
+            // Show error
+            showError(
+              "password-error",
+              error.message || "Invalid email or password"
+            );
+            signinBtn.innerHTML = originalText;
+            signinBtn.disabled = false;
+            signinBtn.style.background = originalBg;
+            signinBtn.style.animation = "buttonGlow 4s ease-in-out infinite";
+
+            // Card shake animation
+            document.querySelector(".card").style.animation =
+              "errorShake 0.8s ease";
             setTimeout(() => {
-                emailInput.value = 'admin@hatchsocial.com';
-                passwordInput.value = 'admin123';
-                passwordInput.focus();
-                
-                // Animation effects
-                emailInput.style.animation = 'inputFocus 0.6s ease';
-                passwordInput.style.animation = 'inputFocus 0.6s ease 0.3s';
-                setTimeout(() => {
-                    emailInput.style.animation = '';
-                    passwordInput.style.animation = '';
-                }, 1200);
-            }, 500);
-            
-            // Password toggle
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.type === 'password' ? 'text' : 'password';
-                passwordInput.type = type;
-                this.innerHTML = type === 'password' ? 
-                    '<i class="fas fa-eye"></i>' : 
-                    '<i class="fas fa-eye-slash"></i>';
-                this.style.animation = 'iconSpin 0.6s ease';
-                setTimeout(() => this.style.animation = '', 600);
-            });
-            
-            // Error handling
-            function showError(elementId, message) {
-                const errorEl = document.getElementById(elementId);
-                errorEl.querySelector('span').textContent = message;
-                errorEl.style.display = 'flex';
-                errorEl.style.animation = 'errorShake 0.8s ease';
-            }
-            
-            function hideError(elementId) {
-                document.getElementById(elementId).style.display = 'none';
-            }
-            
-            // Login form submission
-            signinForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const email = emailInput.value.trim();
-                const password = passwordInput.value.trim();
-                
-                // Hide errors
-                hideError('email-error');
-                hideError('password-error');
-                
-                // Validation
-                let isValid = true;
-                
-                if (!email || !email.includes('@')) {
-                    showError('email-error', 'Please enter a valid email address');
-                    isValid = false;
-                }
-                
-                if (!password) {
-                    showError('password-error', 'Please enter your password');
-                    isValid = false;
-                }
-                
-                if (!isValid) return;
-                
-                // Show loading
-                const originalText = signinBtn.innerHTML;
-                const originalBg = signinBtn.style.background;
-                signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
-                signinBtn.disabled = true;
-                signinBtn.style.animation = 'buttonGlow 1.5s ease-in-out infinite';
-                
-                try {
-                    // API Login
-                    const response = await window.apiService.login(email, password);
-                    
-                    if (response.status === 'success') {
-                        // Store session
-                        sessionStorage.setItem('currentAdmin', JSON.stringify({
-                            name: response.user.name,
-                            email: response.user.email,
-                            role: response.user.type,
-                            loginTime: new Date().toISOString(),
-                            userId: response.user.id
-                        }));
-                        
-                        // Success animation
-                        signinBtn.innerHTML = '<i class="fas fa-check"></i> Login Successful!';
-                        signinBtn.style.background = 'linear-gradient(135deg, #10b981, #34d399)';
-                        signinBtn.style.animation = 'none';
-                        
-                        // Card animation
-                        document.querySelector('.card').style.animation = 'successPop 0.8s ease';
-                        
-                        // Redirect to dashboard
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1000);
-                    } else {
-                        throw new Error(response.message || 'Login failed');
-                    }
-                } catch (error) {
-                    // Show error
-                    showError('password-error', error.message || 'Invalid email or password');
-                    signinBtn.innerHTML = originalText;
-                    signinBtn.disabled = false;
-                    signinBtn.style.background = originalBg;
-                    signinBtn.style.animation = 'buttonGlow 4s ease-in-out infinite';
-                    
-                    // Card shake animation
-                    document.querySelector('.card').style.animation = 'errorShake 0.8s ease';
-                    setTimeout(() => {
-                        document.querySelector('.card').style.animation = '';
-                    }, 800);
-                }
-            });
-            
-            // Forgot password
-            forgotPasswordLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                openForgotModal();
-            });
-            
-            modalClose.addEventListener('click', closeForgotModal);
-            
-            function openForgotModal() {
-                forgotModal.style.display = 'flex';
-                forgotEmail.value = '';
-                forgotEmail.focus();
-                document.getElementById('forgotError').style.display = 'none';
-            }
-            
-            function closeForgotModal() {
-                forgotModal.style.display = 'none';
-            }
-            
-            sendResetBtn.addEventListener('click', async function() {
-                const email = forgotEmail.value.trim();
-                
-                if (!email || !email.includes('@')) {
-                    document.getElementById('forgotError').style.display = 'flex';
-                    forgotEmail.focus();
-                    return;
-                }
-                
-                // Show loading
-                const originalText = sendResetBtn.innerHTML;
-                sendResetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-                sendResetBtn.disabled = true;
-                
-                try {
-                    // API call
-                    const response = await window.apiService.forgotPassword(email);
-                    
-                    // Show success
-                    document.getElementById('modalBody').innerHTML = `
+              document.querySelector(".card").style.animation = "";
+            }, 800);
+          }
+        });
+
+        // Forgot password
+        forgotPasswordLink.addEventListener("click", function (e) {
+          e.preventDefault();
+          openForgotModal();
+        });
+
+        modalClose.addEventListener("click", closeForgotModal);
+
+        function openForgotModal() {
+          forgotModal.style.display = "flex";
+          forgotEmail.value = "";
+          forgotEmail.focus();
+          document.getElementById("forgotError").style.display = "none";
+        }
+
+        function closeForgotModal() {
+          forgotModal.style.display = "none";
+        }
+
+        sendResetBtn.addEventListener("click", async function () {
+          const email = forgotEmail.value.trim();
+
+          if (!email || !email.includes("@")) {
+            document.getElementById("forgotError").style.display = "flex";
+            forgotEmail.focus();
+            return;
+          }
+
+          // Show loading
+          const originalText = sendResetBtn.innerHTML;
+          sendResetBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          sendResetBtn.disabled = true;
+
+          try {
+            // API call
+            const response = await window.apiService.forgotPassword(email);
+
+            // Show success
+            document.getElementById("modalBody").innerHTML = `
                         <div class="success-message">
                             <i class="fas fa-check-circle"></i>
                             <h3>Reset Link Sent!</h3>
@@ -1323,12 +1559,12 @@
                             <p style="font-size: 16px; color: rgba(255, 255, 255, 0.7);">Please check your inbox and follow the instructions.</p>
                         </div>
                     `;
-                    
-                    // Auto close after 3 seconds
-                    setTimeout(() => {
-                        closeForgotModal();
-                        // Reset modal content
-                        document.getElementById('modalBody').innerHTML = `
+
+            // Auto close after 3 seconds
+            setTimeout(() => {
+              closeForgotModal();
+              // Reset modal content
+              document.getElementById("modalBody").innerHTML = `
                             <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; line-height: 1.6;">Enter your email to receive password reset instructions.</p>
                             <div class="form-group">
                                 <label for="forgotEmail">Email Address</label>
@@ -1341,69 +1577,70 @@
                                 </div>
                             </div>
                         `;
-                    }, 3000);
-                    
-                } catch (error) {
-                    document.getElementById('forgotError').textContent = error.message;
-                    document.getElementById('forgotError').style.display = 'flex';
-                } finally {
-                    sendResetBtn.innerHTML = originalText;
-                    sendResetBtn.disabled = false;
-                }
-            });
-            
-            // Close modal when clicking outside
-            forgotModal.addEventListener('click', function(e) {
-                if (e.target === forgotModal) {
-                    closeForgotModal();
-                }
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Ctrl+Enter to submit form
-                if (e.ctrlKey && e.key === 'Enter') {
-                    signinForm.requestSubmit();
-                }
-                
-                // Escape to close modal
-                if (e.key === 'Escape' && forgotModal.style.display === 'flex') {
-                    closeForgotModal();
-                }
-                
-                // F1 for help
-                if (e.key === 'F1') {
-                    e.preventDefault();
-                    alert('Hatch Social Admin Login\n\nDemo Credentials:\nEmail: admin@hatchsocial.com\nPassword: admin123\n\nShortcuts:\nCtrl+Enter: Submit form\nEscape: Close modal\nF1: This help message');
-                }
-            });
-            
-            // Handle resize
-            function handleResize() {
-                if (window.innerHeight < 500) {
-                    document.body.style.alignItems = 'flex-start';
-                    document.querySelector('.container').style.marginTop = '20px';
-                } else {
-                    document.body.style.alignItems = 'center';
-                    document.querySelector('.container').style.marginTop = '0';
-                }
-            }
-            
-            handleResize();
-            window.addEventListener('resize', handleResize);
-            
-            // Touch device optimizations
-            if ('ontouchstart' in window) {
-                document.querySelectorAll('.btn, .password-toggle').forEach(el => {
-                    el.addEventListener('touchstart', function() {
-                        this.style.transform = 'scale(0.98)';
-                    });
-                    el.addEventListener('touchend', function() {
-                        this.style.transform = '';
-                    });
-                });
-            }
+            }, 3000);
+          } catch (error) {
+            document.getElementById("forgotError").textContent = error.message;
+            document.getElementById("forgotError").style.display = "flex";
+          } finally {
+            sendResetBtn.innerHTML = originalText;
+            sendResetBtn.disabled = false;
+          }
         });
+
+        // Close modal when clicking outside
+        forgotModal.addEventListener("click", function (e) {
+          if (e.target === forgotModal) {
+            closeForgotModal();
+          }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", function (e) {
+          // Ctrl+Enter to submit form
+          if (e.ctrlKey && e.key === "Enter") {
+            signinForm.requestSubmit();
+          }
+
+          // Escape to close modal
+          if (e.key === "Escape" && forgotModal.style.display === "flex") {
+            closeForgotModal();
+          }
+
+          // F1 for help
+          if (e.key === "F1") {
+            e.preventDefault();
+            alert(
+              "Hatch Social Admin Login\n\nDemo Credentials:\nEmail: admin@hatchsocial.com\nPassword: admin123\n\nShortcuts:\nCtrl+Enter: Submit form\nEscape: Close modal\nF1: This help message"
+            );
+          }
+        });
+
+        // Handle resize
+        function handleResize() {
+          if (window.innerHeight < 500) {
+            document.body.style.alignItems = "flex-start";
+            document.querySelector(".container").style.marginTop = "20px";
+          } else {
+            document.body.style.alignItems = "center";
+            document.querySelector(".container").style.marginTop = "0";
+          }
+        }
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+
+        // Touch device optimizations
+        if ("ontouchstart" in window) {
+          document.querySelectorAll(".btn, .password-toggle").forEach((el) => {
+            el.addEventListener("touchstart", function () {
+              this.style.transform = "scale(0.98)";
+            });
+            el.addEventListener("touchend", function () {
+              this.style.transform = "";
+            });
+          });
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

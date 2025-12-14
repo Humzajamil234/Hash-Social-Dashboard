@@ -2,9 +2,9 @@
 const CONFIG = {
     // API Configuration
     API: {
-        BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:8000/api'
-            : '/api',
+        BASE_URL: window.location.hostname === '' || window.location.hostname === '127.0.0.1'
+            ? 'http://:8000/api'
+            : 'https://hatch-social.cstmpanel.com/api',
         TIMEOUT: 30000,
         RETRY_ATTEMPTS: 3,
         RETRY_DELAY: 1000,
