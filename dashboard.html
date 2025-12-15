@@ -2673,29 +2673,29 @@
             });
         }
         
-        // ==================== USERS MANAGEMENT ====================
         async function loadUsersData() {
-            try {
-                const response = await fetchHatchAPI('/auth/member', 'GET');
-                if (response.success) {
-                    users = response.data || [];
-                    
-                    const tbody = document.getElementById('usersTableBody');
-                    tbody.innerHTML = '';
-                    
-                    users.forEach(user => {
-                        const row = createUserRow(user);
-                        tbody.appendChild(row);
-                    });
-                    
-                    document.getElementById('usersCount').textContent = users.length;
-                    updateSelectedUsersCount();
-                }
-            } catch (error) {
-                console.log('Using local users data');
-                loadLocalUsersData();
-            }
-        }
+  try {
+    const response = await fetchHatchAPI("/auth/member", "GET");
+
+    if (response.success) {
+      users = response.profile_info || [];
+
+      const tbody = document.getElementById("usersTableBody");
+      tbody.innerHTML = "";
+
+      users.forEach((user) => {
+        const row = createUserRow(user);
+        tbody.appendChild(row);
+      });
+
+      document.getElementById("usersCount").textContent = users.length;
+      updateSelectedUsersCount();
+    }
+  } catch (error) {
+    console.log("Using local users data");
+    loadLocalUsersData();
+  }
+}
         
         function createUserRow(user) {
             const row = document.createElement('tr');
