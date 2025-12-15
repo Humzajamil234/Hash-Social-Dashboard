@@ -513,14 +513,14 @@ class MockAPIService {
     async login(email, password) {
         await this.delayResponse();
         
-        if (email === 'admin@hatchsocial.com' && password === 'admin123') {
+        if (email === 'admin@gmail.com' && password === '12345678') {
             return {
                 status: 'success',
                 token: 'mock_jwt_token_' + Date.now(),
                 user: {
                     id: 1,
                     name: 'Admin User',
-                    email: 'admin@hatchsocial.com',
+                    email: 'admin@gmail.com',
                     type: 'admin',
                     status: 'active'
                 },
@@ -543,7 +543,7 @@ class MockAPIService {
             data: {
                 id: 1,
                 name: 'Admin User',
-                email: 'admin@hatchsocial.com',
+                email: 'admin@gmail.com',
                 type: 'admin',
                 status: 'active'
             }

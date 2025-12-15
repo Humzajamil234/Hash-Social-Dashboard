@@ -7,7 +7,7 @@ class MockAPIService {
         this.user = {
             id: 1,
             name: "Admin User",
-            email: "admin@hatchsocial.com",
+            email: "admin@gmail.com",
             type: "admin",
             status: "active",
             created_at: "2024-01-01T00:00:00Z"
@@ -816,7 +816,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     // Auto-login for demo
     setTimeout(() => {
         if (!localStorage.getItem('hatch_admin_token')) {
-            mockService.login('admin@hatchsocial.com', 'admin123').then(response => {
+            mockService.login('admin@gmail.com', '12345678').then(response => {
                 if (response.status === 'success') {
                     localStorage.setItem('hatch_admin_token', response.data.token);
                     localStorage.setItem('hatch_admin_user', JSON.stringify(response.data.user));
