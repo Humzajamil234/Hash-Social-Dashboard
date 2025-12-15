@@ -5177,42 +5177,43 @@
     const HATCH_API_BASE_URL = 'https://hatch-social.cstmpanel.com/api';
     
     async function fetchHatchAPI(endpoint, method = 'GET', body = null) {
-        try {
-            const url = `${HATCH_API_BASE_URL}${endpoint}`;
-            const headers = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            };
-            
-            const token = sessionStorage.getItem('hatchToken');
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-            
-            const options = {
-                method,
-                headers,
-                credentials: 'include'
-            };
-            
-            if (body) {
-                options.body = JSON.stringify(body);
-            }
-            
-            const response = await fetch(url, options);
-            const data = await response.json();
-            
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || `API Error: ${response.status}`);
-            }
-            
-            return data;
-        } catch (error) {
-            console.error('API Error:', error);
-            showToast('error', `API Error: ${error.message}`);
-            throw error;
+    try {
+        const url = `${HATCH_API_BASE_URL}${endpoint}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
+        
+        const token = sessionStorage.getItem('hatchToken');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
         }
+        
+        // CHANGE THIS LINE - Remove credentials
+        const options = {
+            method,
+            headers
+            // credentials: 'include'  // REMOVE THIS LINE
+        };
+        
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+        
+        const response = await fetch(url, options);
+        const data = await response.json();
+        
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || `API Error: ${response.status}`);
+        }
+        
+        return data;
+    } catch (error) {
+        console.error('API Error:', error);
+        showToast('error', `API Error: ${error.message}`);
+        throw error;
     }
+}
     
     // Update dashboard stats with real API
     async function fetchDashboardData() {
