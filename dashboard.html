@@ -4,40 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hatch Social | Admin Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- PDF Download ke liye library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-      :root {
-        /* Logo ke colors ke hisaab se theme */
-        --primary: #3a57e8;
-        --primary-light: #e6ebff;
-        --primary-dark: #2a47d8;
-        --secondary: #7c4dff;
-        --accent: #ff4081;
-        --white: #ffffff;
-        --dark: #1a1a2e;
-        --gray: #6c757d;
-        --light-gray: #e8eaf6;
-        --sidebar-bg: #1a1a2e;
-        --sidebar-hover: #2a2a4a;
-        --success: #2ed573;
-        --warning: #ffa502;
-        --danger: #ff4757;
-        --info: #2d8cf0;
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        --radius: 16px;
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
+        :root {
+            /* Logo ke colors ke hisaab se theme */
+            --primary: #3A57E8;
+            --primary-light: #E6EBFF;
+            --primary-dark: #2A47D8;
+            --secondary: #7C4DFF;
+            --accent: #FF4081;
+            --white: #ffffff;
+            --dark: #1A1A2E;
+            --gray: #6C757D;
+            --light-gray: #E8EAF6;
+            --sidebar-bg: #1A1A2E;
+            --sidebar-hover: #2A2A4A;
+            --success: #2ED573;
+            --warning: #FFA502;
+            --danger: #FF4757;
+            --info: #2D8CF0;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
       * {
         margin: 0;
@@ -1152,79 +1146,654 @@
       /* ==================== RESPONSIVE STYLES ==================== */
       @media (min-width: 768px) {
         body {
-          font-size: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #E8EAF6 100%);
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 14px;
         }
+
+        /* ==================== ANIMATION BACKGROUND ==================== */
+        .animation-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(58, 87, 232, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(124, 77, 255, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 30% 90%, rgba(255, 64, 129, 0.04) 0%, transparent 50%);
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(58, 87, 232, 0.05);
+            border-radius: 50%;
+            animation: floatElement 25s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 5%;
+            animation-duration: 30s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            bottom: 15%;
+            right: 8%;
+            animation-duration: 25s;
+            animation-delay: 5s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 30%;
+            right: 15%;
+            animation-duration: 35s;
+            animation-delay: 10s;
+        }
+
+        @keyframes floatElement {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -10px) rotate(90deg); }
+            50% { transform: translate(0, -20px) rotate(180deg); }
+            75% { transform: translate(-20px, -10px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        /* ==================== SIDEBAR ==================== */
         .sidebar {
-          transform: translateX(0);
-          width: 250px;
+            width: 280px;
+            background: var(--sidebar-bg);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 1000;
+            transform: translateX(-100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* LOGO STYLING - Login page ki tarah */
+        .logo-wrapper {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0;
+            background: transparent;
+            filter: drop-shadow(0 3px 10px rgba(58, 87, 232, 0.4));
+            border-radius: 12px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-title {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(90deg, rgba(58, 87, 232, 0.15), transparent);
+            color: white;
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notification-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+            min-width: 18px;
+            text-align: center;
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-info p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .version {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
         .main-content {
-          margin-left: 250px;
-          padding: 25px;
+            flex: 1;
+            padding: 15px;
+            transition: var(--transition);
+            min-height: 100vh;
+            width: 100%;
         }
-        .mobile-menu-btn {
-          display: none;
-        }
+
+        /* Top Bar */
         .top-bar {
-          flex-direction: row;
-          align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
+
         .page-title h1 {
-          font-size: 26px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            animation: badgePulse 2s infinite;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 6px;
+            transition: var(--transition);
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
         }
         .action-buttons {
-          flex-direction: row;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
         }
         .action-btn {
-          width: auto;
+            padding: 14px 20px;
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(58, 87, 232, 0.1);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
         }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(58, 87, 232, 0.2);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Stats Cards */
         .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 25px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
         }
         .stat-card {
-          padding: 25px;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
         }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(58, 87, 232, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-users { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .icon-explorers { background: linear-gradient(135deg, var(--success), #0f9d58); }
+        .icon-creators { background: linear-gradient(135deg, var(--warning), #f29900); }
+        .icon-growth { background: linear-gradient(135deg, var(--danger), #d93025); }
+
         .stat-value {
-          font-size: 32px;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 5px;
         }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .trend.up { color: var(--success); }
+        .trend.down { color: var(--danger); }
+
+        /* Charts Section */
         .charts-grid {
-          flex-direction: row;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
         }
         .chart-card {
-          flex: 1;
-          min-width: 300px;
-          padding: 25px;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+        }
+
+        .chart-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
         .chart-header {
-          flex-direction: row;
-          justify-content: space-between;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
         }
+
+        .chart-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
         .period-select {
-          width: auto;
+            padding: 10px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            background: white;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            width: 100%;
         }
+
+        .period-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 87, 232, 0.1);
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        /* Data Tables */
+        .data-table-container {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .data-table-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
         .table-header {
-          flex-direction: row;
-          justify-content: space-between;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
         }
+
+        .table-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .table-search {
-          width: 300px;
+            position: relative;
+            width: 100%;
         }
+
+        .table-search input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .table-search input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 87, 232, 0.1);
+        }
+
+        .table-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
         .data-table {
-          display: table;
+            width: 100%;
+            border-collapse: collapse;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
       }
 
-      @media (min-width: 1024px) {
-        .sidebar {
-          width: 280px;
+        .data-table th {
+            background: var(--light-gray);
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            font-size: 13px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
         }
-        .main-content {
-          margin-left: 280px;
-          padding: 30px;
+
+        .data-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            color: var(--gray);
+            font-size: 13px;
+            white-space: nowrap;
         }
-        .stats-grid {
-          grid-template-columns: repeat(4, 1fr);
+
+        .data-table tr:hover {
+            background: var(--primary-light);
         }
         .chart-card {
           min-width: 450px;
@@ -1270,11 +1839,26 @@
           height: 200px;
         }
         .table-actions {
-          flex-direction: column;
+            display: flex;
+            gap: 8px;
         }
         .table-btn {
-          width: 100%;
-          justify-content: center;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .table-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
       }
 
@@ -1288,76 +1872,445 @@
         .stats-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        .chart-container {
-          height: 200px;
+
+        .table-btn.delete:hover {
+            background: var(--danger);
+            color: white;
         }
-      }
+
+        .table-btn.view {
+            background: rgba(46, 213, 115, 0.1);
+            color: var(--success);
+        }
+
+        .table-btn.view:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .status-active { background: rgba(46, 213, 115, 0.1); color: var(--success); }
+        .status-inactive { background: rgba(255, 71, 87, 0.1); color: var(--danger); }
+        .status-pending { background: rgba(255, 165, 2, 0.1); color: var(--warning); }
+        .status-resolved { background: rgba(45, 140, 240, 0.1); color: var(--info); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; backdrop-filter: blur(0); }
+            to { opacity: 1; backdrop-filter: blur(5px); }
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 87, 232, 0.1);
+        }
+
+        .modal-footer {
+            padding: 20px;
+            background: var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 3000;
+            max-width: calc(100% - 30px);
+        }
+
+        .toast {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: toastSlideIn 0.3s;
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .toast:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes toastSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: var(--info); }
+
+        .toast.success .toast-icon { background: var(--success); }
+        .toast.error .toast-icon { background: var(--danger); }
+        .toast.warning .toast-icon { background: var(--warning); }
+        .toast.info .toast-icon { background: var(--info); }
+
+        /* Dashboard Footer */
+        .dashboard-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .dashboard-footer p {
+            margin-bottom: 6px;
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+            animation: pageFadeIn 0.3s ease;
+        }
+
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            max-width: 500px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        /* ==================== RESPONSIVE STYLES ==================== */
+        @media (min-width: 768px) {
+            body { font-size: 15px; }
+            .sidebar { transform: translateX(0); width: 250px; }
+            .main-content { margin-left: 250px; padding: 25px; }
+            .mobile-menu-btn { display: none; }
+            .top-bar { flex-direction: row; align-items: center; }
+            .page-title h1 { font-size: 26px; }
+            .action-buttons { flex-direction: row; }
+            .action-btn { width: auto; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 25px; }
+            .stat-card { padding: 25px; }
+            .stat-value { font-size: 32px; }
+            .charts-grid { flex-direction: row; }
+            .chart-card { flex: 1; min-width: 300px; padding: 25px; }
+            .chart-header { flex-direction: row; justify-content: space-between; }
+            .period-select { width: auto; }
+            .table-header { flex-direction: row; justify-content: space-between; }
+            .table-search { width: 300px; }
+            .data-table { display: table; }
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar { width: 280px; }
+            .main-content { margin-left: 280px; padding: 30px; }
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
+            .chart-card { min-width: 450px; }
+            .chart-container { height: 300px; }
+        }
+
+        @media (min-width: 1200px) {
+            body { font-size: 16px; }
+            .page-title h1 { font-size: 32px; }
+            .stat-value { font-size: 36px; }
+            .charts-grid { flex-wrap: nowrap; }
+        }
+
+        @media (max-width: 360px) {
+            .sidebar { width: 100%; }
+            .sidebar-header { padding: 15px; }
+            .menu-item { padding: 12px 15px; font-size: 13px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 24px; }
+            .chart-container { height: 200px; }
+            .table-actions { flex-direction: column; }
+            .table-btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            .sidebar { overflow-y: auto; }
+            .main-content { padding: 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-container { height: 200px; }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <!-- Animation Background -->
     <div class="animation-bg">
-      <div class="gradient-overlay"></div>
-      <div class="floating-element"></div>
-      <div class="floating-element"></div>
-      <div class="floating-element"></div>
+        <div class="gradient-overlay"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
     </div>
 
     <!-- ==================== SIDEBAR ==================== -->
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-wrapper">
-          <img
-            src="./images/logo hash.jpg"
-            alt="Hatch Social"
-            class="logo-img"
-            onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/1006/1006363.png'"
-          />
+        <div class="sidebar-header">
+            <div class="logo-wrapper">
+                <img src="./images/logo hash.jpg" alt="Hatch Social" class="logo-img" 
+                     onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/1006/1006363.png'">
+            </div>
+            <div class="logo-text">Hatch Social</div>
         </div>
         <div class="logo-text">Hatch Social</div>
       </div>
 
-      <div class="sidebar-menu">
-        <div class="menu-title">MAIN NAVIGATION</div>
-        <a href="#" class="menu-item active" data-page="dashboard">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="#" class="menu-item" data-page="users">
-          <i class="fas fa-users"></i>
-          <span>Users</span>
-          <span class="notification-badge" id="usersNotification">0</span>
-        </a>
-        <a href="#" class="menu-item" data-page="interests">
-          <i class="fas fa-heart"></i>
-          <span>Interests</span>
-        </a>
-        <a href="#" class="menu-item" data-page="reports">
-          <i class="fas fa-flag"></i>
-          <span>Reports</span>
-          <span class="notification-badge" id="reportsNotification">5</span>
-        </a>
-        <a href="#" class="menu-item" data-page="memberships">
-          <i class="fas fa-crown"></i>
-          <span>Memberships</span>
-        </a>
-        <a href="#" class="menu-item" data-page="revenue">
-          <i class="fas fa-chart-line"></i>
-          <span>Revenue</span>
-        </a>
-        <a href="#" class="menu-item" data-page="moderation">
-          <i class="fas fa-shield-alt"></i>
-          <span>Moderation</span>
-        </a>
-      </div>
+        <div class="sidebar-menu">
+            <div class="menu-title">MAIN NAVIGATION</div>
+            <a href="#" class="menu-item active" data-page="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item" data-page="users">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+                <span class="notification-badge" id="usersNotification">0</span>
+            </a>
+            <a href="#" class="menu-item" data-page="interests">
+                <i class="fas fa-heart"></i>
+                <span>Interests</span>
+            </a>
+            <a href="#" class="menu-item" data-page="reports">
+                <i class="fas fa-flag"></i>
+                <span>Reports</span>
+                <span class="notification-badge" id="reportsNotification">5</span>
+            </a>
+            <a href="#" class="menu-item" data-page="memberships">
+                <i class="fas fa-crown"></i>
+                <span>Memberships</span>
+            </a>
+            <a href="#" class="menu-item" data-page="revenue">
+                <i class="fas fa-chart-line"></i>
+                <span>Revenue</span>
+            </a>
+            <a href="#" class="menu-item" data-page="moderation">
+                <i class="fas fa-shield-alt"></i>
+                <span>Moderation</span>
+            </a>
+        </div>
 
-      <div class="sidebar-footer">
-        <div class="user-profile">
-          <div class="user-avatar" id="userAvatar">A</div>
-          <div class="user-info">
-            <h4 id="userName">Admin User</h4>
-            <p id="userEmail">admin@hatchsocial.com</p>
-          </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-info">
+                    <h4 id="userName">Admin User</h4>
+                    <p id="userEmail">admin@hatchsocial.com</p>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+            <div class="version">v1.2.0 • Admin Dashboard</div>
         </div>
         <button class="logout-btn" id="logoutBtn">
           <i class="fas fa-sign-out-alt"></i>
@@ -1369,72 +2322,166 @@
 
     <!-- ==================== MAIN CONTENT ==================== -->
     <div class="main-content">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="page-title">
-          <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
-          <p>Welcome back! Here's what's happening with your platform today.</p>
-        </div>
-        <div class="top-bar-actions">
-          <button class="notification-btn" id="notificationBtn">
-            <i class="fas fa-bell"></i>
-            <span class="notification-count">5</span>
-          </button>
-          <button class="mobile-menu-btn" id="mobileMenuBtn">
-            <i class="fas fa-bars"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- ==================== DASHBOARD PAGE ==================== -->
-      <div class="page-content active" id="dashboard-page">
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button class="action-btn" onclick="quickAction()">
-            <i class="fas fa-bolt"></i> Quick Action
-          </button>
-          <button class="action-btn" onclick="exportData()">
-            <i class="fas fa-download"></i> Export Data
-          </button>
-          <button class="action-btn" onclick="refreshDashboard()">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-          <button class="action-btn" onclick="showNotifications()">
-            <i class="fas fa-bell"></i> Notifications
-          </button>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-          <div class="stat-card" onclick="viewUsers()">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalUsers">0</div>
-                <div class="stat-label">Total Users</div>
-              </div>
-              <div class="stat-icon icon-users">
-                <i class="fas fa-users"></i>
-              </div>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-title">
+                <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                <p>Welcome back! Here's what's happening with your platform today.</p>
             </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
+            <div class="top-bar-actions">
+                <button class="notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">5</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== DASHBOARD PAGE ==================== -->
+        <div class="page-content active" id="dashboard-page">
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="quickAction()">
+                    <i class="fas fa-bolt"></i> Quick Action
+                </button>
+                <button class="action-btn" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <button class="action-btn" onclick="refreshDashboard()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="action-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i> Notifications
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card" onclick="viewUsers()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" onclick="viewExplorers()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalExplorers">0</div>
+                            <div class="stat-label">Explorers</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" onclick="viewCreators()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalCreators">0</div>
+                            <div class="stat-label">Creators</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" onclick="viewAnalytics()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="growthRate">0%</div>
+                            <div class="stat-label">User Growth Rate</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Calculating...</span>
+                    </div>
+                </div>
             </div>
           </div>
 
-          <div class="stat-card" onclick="viewExplorers()">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalExplorers">0</div>
-                <div class="stat-label">Explorers</div>
-              </div>
-              <div class="stat-icon icon-explorers">
-                <i class="fas fa-compass"></i>
-              </div>
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>User Growth Rate</h3>
+                        <select class="period-select" id="growthPeriod" onchange="updateGrowthChart()">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option selected>Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Revenue Overview</h3>
+                        <select class="period-select" id="revenuePeriod" onchange="updateRevenueChart()">
+                            <option>Monthly</option>
+                            <option selected>Quarterly</option>
+                            <option>Yearly</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
             </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
+
+            <!-- Recent Activity -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search activities..." id="activitySearch" oninput="searchActivities()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="activityTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Activity</th>
+                                <th>Type</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTableBody">
+                            <!-- Activities will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
           </div>
 
@@ -1491,21 +2538,50 @@
             </div>
           </div>
 
-          <div class="chart-card">
-            <div class="chart-header">
-              <h3>Revenue Overview</h3>
-              <select
-                class="period-select"
-                id="revenuePeriod"
-                onchange="updateRevenueChart()"
-              >
-                <option>Monthly</option>
-                <option selected>Quarterly</option>
-                <option>Yearly</option>
-              </select>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddUserModal()">
+                    <i class="fas fa-user-plus"></i> Add New User
+                </button>
+                <button class="action-btn" onclick="exportUsers()">
+                    <i class="fas fa-file-export"></i> Export Users
+                </button>
+                <button class="action-btn" onclick="bulkActions()">
+                    <i class="fas fa-cog"></i> Bulk Actions
+                </button>
             </div>
-            <div class="chart-container">
-              <canvas id="revenueChart"></canvas>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Users (<span id="usersCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search users..." id="userSearch" oninput="searchUsers()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllUsers" onchange="toggleSelectAllUsers()"></th>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedCount">0 users selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedUsers()" style="display: none;" id="deleteSelectedBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
             </div>
           </div>
         </div>
@@ -1544,40 +2620,253 @@
         </div>
       </div>
 
-      <!-- ==================== USERS PAGE ==================== -->
-      <div class="page-content" id="users-page">
-        <div class="page-title">
-          <h1><i class="fas fa-users"></i> Users Management</h1>
-          <p>Manage all users, explorers, and creators on your platform</p>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddInterestModal()">
+                    <i class="fas fa-plus"></i> Add New Interest
+                </button>
+                <button class="action-btn" onclick="exportInterests()">
+                    <i class="fas fa-file-export"></i> Export Interests
+                </button>
+                <button class="action-btn" onclick="refreshInterests()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalInterests">0</div>
+                            <div class="stat-label">Total Interests</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalInterestUsers">0</div>
+                            <div class="stat-label">Users with Interests</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="popularInterest">Loading...</div>
+                            <div class="stat-label">Most Popular Interest</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Calculating...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgInterests">0</div>
+                            <div class="stat-label">Avg per User</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Interests (<span id="interestsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search interests..." id="interestSearch" oninput="searchInterests()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="interestsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllInterests" onchange="toggleSelectAllInterests()"></th>
+                                <th>Interest Name</th>
+                                <th>Category</th>
+                                <th>Users Count</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interestsTableBody">
+                            <!-- Interests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedInterestsCount">0 interests selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedInterests()" style="display: none;" id="deleteSelectedInterestsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="action-buttons">
-          <button class="action-btn" onclick="openAddUserModal()">
-            <i class="fas fa-user-plus"></i> Add New User
-          </button>
-          <button class="action-btn" onclick="exportUsers()">
-            <i class="fas fa-file-export"></i> Export Users
-          </button>
-          <button class="action-btn" onclick="bulkActions()">
-            <i class="fas fa-cog"></i> Bulk Actions
-          </button>
+        <!-- ==================== REPORTS PAGE ==================== -->
+        <div class="page-content" id="reports-page">
+            <div class="page-title">
+                <h1><i class="fas fa-flag"></i> Content Reports</h1>
+                <p>Review and take action on reported content</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddReportModal()">
+                    <i class="fas fa-plus"></i> Add New Report
+                </button>
+                <button class="action-btn" onclick="downloadReportsPDF()">
+                    <i class="fas fa-file-pdf"></i> Download PDF Report
+                </button>
+                <button class="action-btn" onclick="exportReportsCSV()">
+                    <i class="fas fa-file-csv"></i> Export CSV
+                </button>
+                <button class="action-btn" onclick="refreshReports()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalReports">0</div>
+                            <div class="stat-label">Total Reports</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pendingReports">0</div>
+                            <div class="stat-label">Pending Review</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="resolvedReports">0</div>
+                            <div class="stat-label">Resolved</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgResolution">0</div>
+                            <div class="stat-label">Avg Resolution Days</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Reports (<span id="reportsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search reports..." id="reportSearch" oninput="searchReports()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="reportsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllReports" onchange="toggleSelectAllReports()"></th>
+                                <th>Report ID</th>
+                                <th>Reported By</th>
+                                <th>Content Type</th>
+                                <th>Reason</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <!-- Reports will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedReportsCount">0 reports selected</div>
+                    <div>
+                        <button class="table-btn view" onclick="markSelectedResolved()" style="display: none;" id="markResolvedBtn">
+                            <i class="fas fa-check"></i> Mark as Resolved
+                        </button>
+                        <button class="table-btn delete" onclick="deleteSelectedReports()" style="display: none; margin-left: 10px;" id="deleteSelectedReportsBtn">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="data-table-container">
-          <div class="table-header">
-            <h3>
-              <i class="fas fa-list"></i> All Users (<span id="usersCount"
-                >0</span
-              >)
-            </h3>
-            <div class="table-search">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Search users..."
-                id="userSearch"
-                oninput="searchUsers()"
-              />
+        <!-- ==================== MEMBERSHIPS PAGE ==================== -->
+        <div class="page-content" id="memberships-page">
+            <div class="page-title">
+                <h1><i class="fas fa-crown"></i> Memberships</h1>
+                <p>Manage subscription plans and user memberships</p>
             </div>
           </div>
           <div style="overflow-x: auto">
@@ -1625,568 +2914,271 @@
         </div>
       </div>
 
-      <!-- ==================== INTERESTS PAGE ==================== -->
-      <div class="page-content" id="interests-page">
-        <div class="page-title">
-          <h1><i class="fas fa-heart"></i> Interests Management</h1>
-          <p>Manage user interests and track engagement analytics</p>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddMembershipModal()">
+                    <i class="fas fa-plus"></i> Add New Plan
+                </button>
+                <button class="action-btn" onclick="exportMemberships()">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button class="action-btn" onclick="refreshMemberships()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalMemberships">0</div>
+                            <div class="stat-label">Active Memberships</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="monthlyRevenue">$0</div>
+                            <div class="stat-label">Monthly Revenue</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="popularPlan">Loading...</div>
+                            <div class="stat-label">Most Popular Plan</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="renewalRate">0%</div>
+                            <div class="stat-label">Renewal Rate</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> Membership Plans (<span id="membershipsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search plans..." id="membershipSearch" oninput="searchMemberships()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="membershipsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllMemberships" onchange="toggleSelectAllMemberships()"></th>
+                                <th>Plan Name</th>
+                                <th>Price</th>
+                                <th>Duration</th>
+                                <th>Subscribers</th>
+                                <th>Status</th>
+                                <th>Features</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membershipsTableBody">
+                            <!-- Memberships will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedMembershipsCount">0 plans selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedMemberships()" style="display: none;" id="deleteSelectedMembershipsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="action-buttons">
-          <button class="action-btn" onclick="openAddInterestModal()">
-            <i class="fas fa-plus"></i> Add New Interest
-          </button>
-          <button class="action-btn" onclick="exportInterests()">
-            <i class="fas fa-file-export"></i> Export Interests
-          </button>
-          <button class="action-btn" onclick="refreshInterests()">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-        </div>
+        <!-- ==================== REVENUE PAGE ==================== -->
+        <div class="page-content" id="revenue-page">
+            <div class="page-title">
+                <h1><i class="fas fa-chart-line"></i> Revenue Analytics</h1>
+                <p>Track income, expenses, and financial growth</p>
+            </div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalInterests">0</div>
-                <div class="stat-label">Total Interests</div>
-              </div>
-              <div class="stat-icon icon-users">
-                <i class="fas fa-heart"></i>
-              </div>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddRevenueModal()">
+                    <i class="fas fa-plus"></i> Add Transaction
+                </button>
+                <button class="action-btn" onclick="exportRevenue()">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button class="action-btn" onclick="refreshRevenue()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="action-btn" onclick="generateFinancialReport()">
+                    <i class="fas fa-file-pdf"></i> Financial Report
+                </button>
             </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
 
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalInterestUsers">0</div>
-                <div class="stat-label">Users with Interests</div>
-              </div>
-              <div class="stat-icon icon-explorers">
-                <i class="fas fa-users"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalRevenue">$0</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
 
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="popularInterest">Loading...</div>
-                <div class="stat-label">Most Popular Interest</div>
-              </div>
-              <div class="stat-icon icon-creators">
-                <i class="fas fa-fire"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Calculating...</span>
-            </div>
-          </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="thisMonthRevenue">$0</div>
+                            <div class="stat-label">This Month</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
 
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="avgInterests">0</div>
-                <div class="stat-label">Avg per User</div>
-              </div>
-              <div class="stat-icon icon-growth">
-                <i class="fas fa-chart-pie"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-        </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="expenses">$0</div>
+                            <div class="stat-label">Expenses</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
 
-        <div class="data-table-container">
-          <div class="table-header">
-            <h3>
-              <i class="fas fa-list"></i> All Interests (<span
-                id="interestsCount"
-                >0</span
-              >)
-            </h3>
-            <div class="table-search">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Search interests..."
-                id="interestSearch"
-                oninput="searchInterests()"
-              />
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="netProfit">$0</div>
+                            <div class="stat-label">Net Profit</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div style="overflow-x: auto">
-            <table class="data-table" id="interestsTable">
-              <thead>
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      id="selectAllInterests"
-                      onchange="toggleSelectAllInterests()"
-                    />
-                  </th>
-                  <th>Interest Name</th>
-                  <th>Category</th>
-                  <th>Users Count</th>
-                  <th>Status</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="interestsTableBody">
-                <!-- Interests will be loaded here -->
-              </tbody>
-            </table>
-          </div>
-          <div
-            style="
-              margin-top: 20px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            "
-          >
-            <div id="selectedInterestsCount">0 interests selected</div>
-            <button
-              class="table-btn delete"
-              onclick="deleteSelectedInterests()"
-              style="display: none"
-              id="deleteSelectedInterestsBtn"
-            >
-              <i class="fas fa-trash"></i> Delete Selected
-            </button>
-          </div>
-        </div>
-      </div>
 
-      <!-- ==================== REPORTS PAGE ==================== -->
-      <div class="page-content" id="reports-page">
-        <div class="page-title">
-          <h1><i class="fas fa-flag"></i> Content Reports</h1>
-          <p>Review and take action on reported content</p>
-        </div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Revenue Trend</h3>
+                        <select class="period-select" id="revenueTrendPeriod" onchange="updateRevenueTrendChart()">
+                            <option>Last 30 days</option>
+                            <option selected>Last 90 days</option>
+                            <option>Last 12 months</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueTrendChart"></canvas>
+                    </div>
+                </div>
 
-        <div class="action-buttons">
-          <button class="action-btn" onclick="openAddReportModal()">
-            <i class="fas fa-plus"></i> Add New Report
-          </button>
-          <button class="action-btn" onclick="downloadReportsPDF()">
-            <i class="fas fa-file-pdf"></i> Download PDF Report
-          </button>
-          <button class="action-btn" onclick="exportReportsCSV()">
-            <i class="fas fa-file-csv"></i> Export CSV
-          </button>
-          <button class="action-btn" onclick="refreshReports()">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-        </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Revenue by Source</h3>
+                        <select class="period-select" id="revenueSourcePeriod" onchange="updateRevenueSourceChart()">
+                            <option>This Month</option>
+                            <option selected>This Quarter</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueSourceChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalReports">0</div>
-                <div class="stat-label">Total Reports</div>
-              </div>
-              <div class="stat-icon icon-users">
-                <i class="fas fa-flag"></i>
-              </div>
-            </div>
-            <div class="trend down">
-              <i class="fas fa-arrow-down"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="pendingReports">0</div>
-                <div class="stat-label">Pending Review</div>
-              </div>
-              <div class="stat-icon icon-explorers">
-                <i class="fas fa-clock"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="resolvedReports">0</div>
-                <div class="stat-label">Resolved</div>
-              </div>
-              <div class="stat-icon icon-creators">
-                <i class="fas fa-check-circle"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="avgResolution">0</div>
-                <div class="stat-label">Avg Resolution Days</div>
-              </div>
-              <div class="stat-icon icon-growth">
-                <i class="fas fa-calendar-alt"></i>
-              </div>
-            </div>
-            <div class="trend down">
-              <i class="fas fa-arrow-down"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="data-table-container">
-          <div class="table-header">
-            <h3>
-              <i class="fas fa-list"></i> All Reports (<span id="reportsCount"
-                >0</span
-              >)
-            </h3>
-            <div class="table-search">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Search reports..."
-                id="reportSearch"
-                oninput="searchReports()"
-              />
-            </div>
-          </div>
-          <div style="overflow-x: auto">
-            <table class="data-table" id="reportsTable">
-              <thead>
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      id="selectAllReports"
-                      onchange="toggleSelectAllReports()"
-                    />
-                  </th>
-                  <th>Report ID</th>
-                  <th>Reported By</th>
-                  <th>Content Type</th>
-                  <th>Reason</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="reportsTableBody">
-                <!-- Reports will be loaded here -->
-              </tbody>
-            </table>
-          </div>
-          <div
-            style="
-              margin-top: 20px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            "
-          >
-            <div id="selectedReportsCount">0 reports selected</div>
-            <div>
-              <button
-                class="table-btn view"
-                onclick="markSelectedResolved()"
-                style="display: none"
-                id="markResolvedBtn"
-              >
-                <i class="fas fa-check"></i> Mark as Resolved
-              </button>
-              <button
-                class="table-btn delete"
-                onclick="deleteSelectedReports()"
-                style="display: none; margin-left: 10px"
-                id="deleteSelectedReportsBtn"
-              >
-                <i class="fas fa-trash"></i> Delete Selected
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================== MEMBERSHIPS PAGE ==================== -->
-      <div class="page-content" id="memberships-page">
-        <div class="page-title">
-          <h1><i class="fas fa-crown"></i> Memberships</h1>
-          <p>Manage subscription plans and user memberships</p>
-        </div>
-
-        <div class="action-buttons">
-          <button class="action-btn" onclick="openAddMembershipModal()">
-            <i class="fas fa-plus"></i> Add New Plan
-          </button>
-          <button class="action-btn" onclick="exportMemberships()">
-            <i class="fas fa-file-export"></i> Export Data
-          </button>
-          <button class="action-btn" onclick="refreshMemberships()">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalMemberships">0</div>
-                <div class="stat-label">Active Memberships</div>
-              </div>
-              <div class="stat-icon icon-users">
-                <i class="fas fa-crown"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="monthlyRevenue">$0</div>
-                <div class="stat-label">Monthly Revenue</div>
-              </div>
-              <div class="stat-icon icon-explorers">
-                <i class="fas fa-dollar-sign"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="popularPlan">Loading...</div>
-                <div class="stat-label">Most Popular Plan</div>
-              </div>
-              <div class="stat-icon icon-creators">
-                <i class="fas fa-star"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="renewalRate">0%</div>
-                <div class="stat-label">Renewal Rate</div>
-              </div>
-              <div class="stat-icon icon-growth">
-                <i class="fas fa-chart-line"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="data-table-container">
-          <div class="table-header">
-            <h3>
-              <i class="fas fa-list"></i> Membership Plans (<span
-                id="membershipsCount"
-                >0</span
-              >)
-            </h3>
-            <div class="table-search">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Search plans..."
-                id="membershipSearch"
-                oninput="searchMemberships()"
-              />
-            </div>
-          </div>
-          <div style="overflow-x: auto">
-            <table class="data-table" id="membershipsTable">
-              <thead>
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      id="selectAllMemberships"
-                      onchange="toggleSelectAllMemberships()"
-                    />
-                  </th>
-                  <th>Plan Name</th>
-                  <th>Price</th>
-                  <th>Duration</th>
-                  <th>Subscribers</th>
-                  <th>Status</th>
-                  <th>Features</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="membershipsTableBody">
-                <!-- Memberships will be loaded here -->
-              </tbody>
-            </table>
-          </div>
-          <div
-            style="
-              margin-top: 20px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            "
-          >
-            <div id="selectedMembershipsCount">0 plans selected</div>
-            <button
-              class="table-btn delete"
-              onclick="deleteSelectedMemberships()"
-              style="display: none"
-              id="deleteSelectedMembershipsBtn"
-            >
-              <i class="fas fa-trash"></i> Delete Selected
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================== REVENUE PAGE ==================== -->
-      <div class="page-content" id="revenue-page">
-        <div class="page-title">
-          <h1><i class="fas fa-chart-line"></i> Revenue Analytics</h1>
-          <p>Track income, expenses, and financial growth</p>
-        </div>
-
-        <div class="action-buttons">
-          <button class="action-btn" onclick="openAddRevenueModal()">
-            <i class="fas fa-plus"></i> Add Transaction
-          </button>
-          <button class="action-btn" onclick="exportRevenue()">
-            <i class="fas fa-file-export"></i> Export Data
-          </button>
-          <button class="action-btn" onclick="refreshRevenue()">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-          <button class="action-btn" onclick="generateFinancialReport()">
-            <i class="fas fa-file-pdf"></i> Financial Report
-          </button>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="totalRevenue">$0</div>
-                <div class="stat-label">Total Revenue</div>
-              </div>
-              <div class="stat-icon icon-users">
-                <i class="fas fa-dollar-sign"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="thisMonthRevenue">$0</div>
-                <div class="stat-label">This Month</div>
-              </div>
-              <div class="stat-icon icon-explorers">
-                <i class="fas fa-calendar"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="expenses">$0</div>
-                <div class="stat-label">Expenses</div>
-              </div>
-              <div class="stat-icon icon-creators">
-                <i class="fas fa-receipt"></i>
-              </div>
-            </div>
-            <div class="trend down">
-              <i class="fas fa-arrow-down"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-header">
-              <div>
-                <div class="stat-value" id="netProfit">$0</div>
-                <div class="stat-label">Net Profit</div>
-              </div>
-              <div class="stat-icon icon-growth">
-                <i class="fas fa-chart-line"></i>
-              </div>
-            </div>
-            <div class="trend up">
-              <i class="fas fa-arrow-up"></i>
-              <span>Loading...</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="charts-grid">
-          <div class="chart-card">
-            <div class="chart-header">
-              <h3>Revenue Trend</h3>
-              <select
-                class="period-select"
-                id="revenueTrendPeriod"
-                onchange="updateRevenueTrendChart()"
-              >
-                <option>Last 30 days</option>
-                <option selected>Last 90 days</option>
-                <option>Last 12 months</option>
-              </select>
-            </div>
-            <div class="chart-container">
-              <canvas id="revenueTrendChart"></canvas>
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> Recent Transactions (<span id="transactionsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search transactions..." id="transactionSearch" oninput="searchTransactions()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllTransactions" onchange="toggleSelectAllTransactions()"></th>
+                                <th>Transaction ID</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <!-- Transactions will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedTransactionsCount">0 transactions selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedTransactions()" style="display: none;" id="deleteSelectedTransactionsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
             </div>
           </div>
 
@@ -2209,22 +3201,135 @@
           </div>
         </div>
 
-        <div class="data-table-container">
-          <div class="table-header">
-            <h3>
-              <i class="fas fa-list"></i> Recent Transactions (<span
-                id="transactionsCount"
-                >0</span
-              >)
-            </h3>
-            <div class="table-search">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Search transactions..."
-                id="transactionSearch"
-                oninput="searchTransactions()"
-              />
+        <!-- ==================== MODERATION PAGE ==================== -->
+        <div class="page-content" id="moderation-page">
+            <div class="page-title">
+                <h1><i class="fas fa-shield-alt"></i> Content Moderation</h1>
+                <p>Monitor and moderate platform content</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddModerationModal()">
+                    <i class="fas fa-plus"></i> Add Moderation Rule
+                </button>
+                <button class="action-btn" onclick="exportModeration()">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button class="action-btn" onclick="refreshModeration()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="action-btn" onclick="runAutoModeration()">
+                    <i class="fas fa-robot"></i> Run Auto-Moderation
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="moderationQueue">0</div>
+                            <div class="stat-label">Pending Review</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="moderatedToday">0</div>
+                            <div class="stat-label">Moderated Today</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="flaggedContent">0</div>
+                            <div class="stat-label">Flagged Content</div>
+                        </div>
+                        <div class="stat-icon icon-creators">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgModerationTime">0</div>
+                            <div class="stat-label">Avg Time (hours)</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-stopwatch"></i>
+                        </div>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> Moderation Queue (<span id="moderationCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search content..." id="moderationSearch" oninput="searchModeration()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="moderationTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllModeration" onchange="toggleSelectAllModeration()"></th>
+                                <th>Content ID</th>
+                                <th>User</th>
+                                <th>Content Type</th>
+                                <th>Reason</th>
+                                <th>Submitted</th>
+                                <th>Priority</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="moderationTableBody">
+                            <!-- Moderation items will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedModerationCount">0 items selected</div>
+                    <div>
+                        <button class="table-btn view" onclick="approveSelectedContent()" style="display: none;" id="approveSelectedBtn">
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                        <button class="table-btn delete" onclick="rejectSelectedContent()" style="display: none; margin-left: 10px;" id="rejectSelectedBtn">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                        <button class="table-btn delete" onclick="deleteSelectedModeration()" style="display: none; margin-left: 10px;" id="deleteSelectedModerationBtn">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
             </div>
           </div>
           <div style="overflow-x: auto">
@@ -2280,19 +3385,10 @@
           <p>Monitor and moderate platform content</p>
         </div>
 
-        <div class="action-buttons">
-          <button class="action-btn" onclick="openAddModerationModal()">
-            <i class="fas fa-plus"></i> Add Moderation Rule
-          </button>
-          <button class="action-btn" onclick="exportModeration()">
-            <i class="fas fa-file-export"></i> Export Data
-          </button>
-          <button class="action-btn" onclick="refreshModeration()">
-            <i class="fas fa-sync-alt"></i> Refresh
-          </button>
-          <button class="action-btn" onclick="runAutoModeration()">
-            <i class="fas fa-robot"></i> Run Auto-Moderation
-          </button>
+        <!-- Footer -->
+        <div class="dashboard-footer">
+            <p>© 2025 Hatch Social. All rights reserved.</p>
+            <p>Secure Admin Portal • Encrypted Connection</p>
         </div>
 
         <div class="stats-grid">
@@ -2453,15 +3549,53 @@
     <!-- ==================== MODALS ==================== -->
     <!-- Add/Edit User Modal -->
     <div class="modal-overlay" id="userModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>
-            <i class="fas fa-user-edit"></i>
-            <span id="modalTitle">Add New User</span>
-          </h3>
-          <button class="modal-close" onclick="closeModal('userModal')">
-            &times;
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> <span id="modalTitle">Add New User</span></h3>
+                <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="userNameInput" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="userEmailInput" placeholder="Enter email address">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-tag"></i> User Type</label>
+                    <select id="userTypeSelect">
+                        <option value="explorer">Explorer</option>
+                        <option value="creator">Creator</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="userStatusSelect">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Join Date</label>
+                    <input type="date" id="userJoinDate">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Additional Notes</label>
+                    <textarea id="userNotes" placeholder="Add any additional notes..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('userModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveUser()" id="saveUserBtn">
+                    <i class="fas fa-save"></i> Save User
+                </button>
+            </div>
         </div>
         <div class="modal-body">
           <div class="form-group">
@@ -2526,15 +3660,47 @@
 
     <!-- Add/Edit Interest Modal -->
     <div class="modal-overlay" id="interestModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>
-            <i class="fas fa-heart"></i>
-            <span id="interestModalTitle">Add New Interest</span>
-          </h3>
-          <button class="modal-close" onclick="closeModal('interestModal')">
-            &times;
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-heart"></i> <span id="interestModalTitle">Add New Interest</span></h3>
+                <button class="modal-close" onclick="closeModal('interestModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Interest Name</label>
+                    <input type="text" id="interestNameInput" placeholder="Enter interest name">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Category</label>
+                    <select id="interestCategorySelect">
+                        <option value="technology">Technology</option>
+                        <option value="sports">Sports</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="lifestyle">Lifestyle</option>
+                        <option value="education">Education</option>
+                        <option value="business">Business</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="interestStatusSelect">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Description</label>
+                    <textarea id="interestDescription" placeholder="Enter interest description..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('interestModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveInterest()" id="saveInterestBtn">
+                    <i class="fas fa-save"></i> Save Interest
+                </button>
+            </div>
         </div>
         <div class="modal-body">
           <div class="form-group">
@@ -2592,15 +3758,217 @@
 
     <!-- Add/Edit Report Modal -->
     <div class="modal-overlay" id="reportModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>
-            <i class="fas fa-flag"></i>
-            <span id="reportModalTitle">Add New Report</span>
-          </h3>
-          <button class="modal-close" onclick="closeModal('reportModal')">
-            &times;
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-flag"></i> <span id="reportModalTitle">Add New Report</span></h3>
+                <button class="modal-close" onclick="closeModal('reportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Reported By</label>
+                    <select id="reportUserSelect">
+                        <!-- Users will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-file-alt"></i> Content Type</label>
+                    <select id="reportContentTypeSelect">
+                        <option value="post">Post</option>
+                        <option value="comment">Comment</option>
+                        <option value="profile">Profile</option>
+                        <option value="message">Message</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-exclamation-triangle"></i> Reason</label>
+                    <select id="reportReasonSelect">
+                        <option value="spam">Spam</option>
+                        <option value="harassment">Harassment</option>
+                        <option value="inappropriate">Inappropriate Content</option>
+                        <option value="copyright">Copyright Violation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="reportStatusSelect">
+                        <option value="pending">Pending</option>
+                        <option value="investigating">Investigating</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="dismissed">Dismissed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Description</label>
+                    <textarea id="reportDescription" placeholder="Enter report details..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('reportModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveReport()" id="saveReportBtn">
+                    <i class="fas fa-save"></i> Save Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Membership Modal -->
+    <div class="modal-overlay" id="membershipModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-crown"></i> <span id="membershipModalTitle">Add New Membership Plan</span></h3>
+                <button class="modal-close" onclick="closeModal('membershipModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Plan Name</label>
+                    <input type="text" id="membershipNameInput" placeholder="Enter plan name">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-dollar-sign"></i> Price (Monthly)</label>
+                    <input type="number" id="membershipPriceInput" placeholder="Enter monthly price" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Duration</label>
+                    <select id="membershipDurationSelect">
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="lifetime">Lifetime</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="membershipStatusSelect">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-star"></i> Features (one per line)</label>
+                    <textarea id="membershipFeatures" placeholder="Enter features (one per line)..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('membershipModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveMembership()" id="saveMembershipBtn">
+                    <i class="fas fa-save"></i> Save Plan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Revenue Modal -->
+    <div class="modal-overlay" id="revenueModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-dollar-sign"></i> <span id="revenueModalTitle">Add New Transaction</span></h3>
+                <button class="modal-close" onclick="closeModal('revenueModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> User</label>
+                    <select id="revenueUserSelect">
+                        <!-- Users will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-exchange-alt"></i> Transaction Type</label>
+                    <select id="revenueTypeSelect">
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                        <option value="refund">Refund</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-dollar-sign"></i> Amount</label>
+                    <input type="number" id="revenueAmountInput" placeholder="Enter amount" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Category</label>
+                    <select id="revenueCategorySelect">
+                        <option value="subscription">Subscription</option>
+                        <option value="advertising">Advertising</option>
+                        <option value="partnership">Partnership</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Date</label>
+                    <input type="date" id="revenueDateInput">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Description</label>
+                    <textarea id="revenueDescription" placeholder="Enter transaction description..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('revenueModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveRevenue()" id="saveRevenueBtn">
+                    <i class="fas fa-save"></i> Save Transaction
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Moderation Modal -->
+    <div class="modal-overlay" id="moderationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-shield-alt"></i> <span id="moderationModalTitle">Add Moderation Rule</span></h3>
+                <button class="modal-close" onclick="closeModal('moderationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Rule Name</label>
+                    <input type="text" id="moderationRuleName" placeholder="Enter rule name">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-filter"></i> Content Type</label>
+                    <select id="moderationContentType">
+                        <option value="all">All Content</option>
+                        <option value="post">Posts</option>
+                        <option value="comment">Comments</option>
+                        <option value="profile">Profiles</option>
+                        <option value="message">Messages</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-exclamation-triangle"></i> Action</label>
+                    <select id="moderationAction">
+                        <option value="flag">Flag for Review</option>
+                        <option value="auto-remove">Auto-Remove</option>
+                        <option value="warn">Send Warning</option>
+                        <option value="restrict">Restrict User</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-keywords"></i> Keywords (comma separated)</label>
+                    <textarea id="moderationKeywords" placeholder="Enter keywords to watch for..." rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="moderationRuleStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('moderationModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveModerationRule()" id="saveModerationBtn">
+                    <i class="fas fa-save"></i> Save Rule
+                </button>
+            </div>
         </div>
         <div class="modal-body">
           <div class="form-group">
@@ -2665,17 +4033,24 @@
       </div>
     </div>
 
-    <!-- Add/Edit Membership Modal -->
-    <div class="modal-overlay" id="membershipModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>
-            <i class="fas fa-crown"></i>
-            <span id="membershipModalTitle">Add New Membership Plan</span>
-          </h3>
-          <button class="modal-close" onclick="closeModal('membershipModal')">
-            &times;
-          </button>
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Action</h3>
+                <button class="modal-close" onclick="closeModal('confirmModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('confirmModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="confirmAction()" id="confirmBtn">
+                    <i class="fas fa-check"></i> Confirm
+                </button>
+            </div>
         </div>
         <div class="modal-body">
           <div class="form-group">
@@ -4450,398 +5825,385 @@
                     <i class="fas fa-times"></i>
                 </button>
             `;
-
-        container.appendChild(toast);
-
-        // Remove toast after 5 seconds
-        setTimeout(() => {
-          if (toast.parentElement) {
-            toast.style.opacity = "0";
-            toast.style.transform = "translateX(100%)";
-            setTimeout(() => toast.remove(), 300);
-          }
-        }, 5000);
-      }
-
-      function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-      }
-
-      function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
+            
+            container.appendChild(toast);
+            
+            // Remove toast after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
+        
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+        
+        function updatePageTitle(page) {
+            const titles = {
+                dashboard: 'Dashboard',
+                users: 'Users Management',
+                interests: 'Interests',
+                reports: 'Content Reports',
+                memberships: 'Memberships',
+                revenue: 'Revenue Analytics',
+                moderation: 'Content Moderation'
+            };
+            
+            const title = titles[page] || 'Dashboard';
+            document.querySelector('.page-title h1').innerHTML = `<i class="fas fa-${getPageIcon(page)}"></i> ${title}`;
+        }
+        
+        function getPageIcon(page) {
+            const icons = {
+                dashboard: 'tachometer-alt',
+                users: 'users',
+                interests: 'heart',
+                reports: 'flag',
+                memberships: 'crown',
+                revenue: 'chart-line',
+                moderation: 'shield-alt'
+            };
+            return icons[page] || 'tachometer-alt';
+        }
+        
+        function loadPageData(page) {
+            switch(page) {
+                case 'dashboard':
+                    fetchDashboardData();
+                    loadActivitiesData();
+                    break;
+                case 'users':
+                    loadUsersData();
+                    break;
+                case 'interests':
+                    loadInterestsData();
+                    break;
+                case 'reports':
+                    loadReportsData();
+                    break;
+                case 'memberships':
+                    loadMembershipsData();
+                    break;
+                case 'revenue':
+                    loadRevenueData();
+                    break;
+                case 'moderation':
+                    loadModerationData();
+                    break;
+            }
+        }
+        
+        // ==================== CHART FUNCTIONS ====================
+        function initializeCharts() {
+            // Growth Chart
+            const growthCtx = document.getElementById('growthChart')?.getContext('2d');
+            if (growthCtx) {
+                window.growthChart = new Chart(growthCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'User Growth',
+                            data: [1200, 1500, 1800, 2100, 2400, 2847],
+                            borderColor: 'var(--primary)',
+                            backgroundColor: 'rgba(58, 87, 232, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: 'var(--primary)',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'var(--primary)',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+            }
+            
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
+            if (revenueCtx) {
+                window.revenueChart = new Chart(revenueCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: [4200, 5200, 6100, 7300, 8200, 9450],
+                            backgroundColor: [
+                                'rgba(58, 87, 232, 0.7)',
+                                'rgba(58, 87, 232, 0.8)',
+                                'rgba(58, 87, 232, 0.9)',
+                                'rgba(124, 77, 255, 0.7)',
+                                'rgba(124, 77, 255, 0.8)',
+                                'rgba(124, 77, 255, 0.9)'
+                            ],
+                            borderColor: 'var(--primary)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'var(--primary)',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Revenue: $${context.raw.toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { 
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    borderDash: [5, 5]
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        function updateGrowthChart() {
+            const period = document.getElementById('growthPeriod').value;
+            showToast('info', `Growth chart updated for: ${period}`);
+        }
+        
+        function updateRevenueChart() {
+            const period = document.getElementById('revenuePeriod').value;
+            showToast('info', `Revenue chart updated for: ${period}`);
+        }
+        
+        // ==================== ACTION FUNCTIONS ====================
+        function quickAction() {
+            showToast('success', 'Quick action executed successfully!');
+        }
+        
+        function exportData() {
+            showToast('info', 'Exporting dashboard data...');
+            setTimeout(() => {
+                showToast('success', 'Data exported successfully!');
+            }, 2000);
+        }
+        
+        function refreshDashboard() {
+            showToast('info', 'Refreshing dashboard...');
+            setTimeout(() => {
+                fetchDashboardData();
+                loadActivitiesData();
+                showToast('success', 'Dashboard refreshed!');
+            }, 1000);
+        }
+        
+        function exportUsers() {
+            showToast('info', 'Exporting users list...');
+            setTimeout(() => {
+                showToast('success', 'Users exported successfully!');
+            }, 2000);
+        }
+        
+        function bulkActions() {
+            showToast('info', 'Opening bulk actions menu...');
+        }
+        
+        function viewUsers() {
+            document.querySelector('[data-page="users"]').click();
+        }
+        
+        function viewExplorers() {
+            document.getElementById('userSearch').value = 'explorer';
+            document.querySelector('[data-page="users"]').click();
+            setTimeout(() => searchUsers(), 100);
+        }
+        
+        function viewCreators() {
+            document.getElementById('userSearch').value = 'creator';
+            document.querySelector('[data-page="users"]').click();
+            setTimeout(() => searchUsers(), 100);
+        }
+        
+        function viewAnalytics() {
+            showToast('info', 'Opening analytics dashboard...');
+        }
+        
+        function viewActivity(activityId) {
+            const activity = activities.find(a => a.id === activityId);
+            if (activity) {
+                showToast('info', `Activity: ${activity.activity} by ${activity.userName}`);
+            }
+        }
+        
+        function showNotifications() {
+            showToast('info', 'You have 5 new notifications');
+        }
+        
+        // ==================== LOGOUT ====================
+        async function logout() {
+            try {
+                // API logout call karo
+                await fetchHatchAPI('/auth/logout', 'POST');
+            } catch (error) {
+                console.log('Local logout only');
+            } finally {
+                // Local storage clear karo
+                localStorage.removeItem('hatch_admin_token');
+                sessionStorage.removeItem('currentAdmin');
+                
+                // Redirect to login page
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // ==================== MODAL FUNCTIONS ====================
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+            if (modalId === 'confirmModal') {
+                confirmCallback = null;
+            }
+        }
+        
+        function confirmAction() {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+        }
+        
+        // ==================== FALLBACK FUNCTIONS ====================
+        function loadLocalDashboardData() {
+            document.getElementById('totalUsers').textContent = '2,847';
+            document.getElementById('totalExplorers').textContent = '1,243';
+            document.getElementById('totalCreators').textContent = '856';
+            document.getElementById('reportsNotification').textContent = '5';
+        }
+        
+        function loadLocalMembershipsData() {
+            showToast('info', 'Loading memberships data...');
+            setTimeout(() => {
+                showToast('success', 'Memberships data loaded!');
+            }, 1000);
+        }
+        
+        function loadLocalRevenueData() {
+            showToast('info', 'Loading revenue data...');
+            setTimeout(() => {
+                showToast('success', 'Revenue data loaded!');
+            }, 1000);
+        }
+        
+        function loadLocalModerationData() {
+            showToast('info', 'Loading moderation data...');
+            setTimeout(() => {
+                showToast('success', 'Moderation data loaded!');
+            }, 1000);
+        }
+        
+        // Assign fallback functions
+        window.loadMembershipsData = loadLocalMembershipsData;
+        window.loadRevenueData = loadLocalRevenueData;
+        window.loadModerationData = loadLocalModerationData;
+        
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal('userModal');
+                closeModal('interestModal');
+                closeModal('reportModal');
+                closeModal('membershipModal');
+                closeModal('revenueModal');
+                closeModal('moderationModal');
+                closeModal('confirmModal');
+                if (window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
         });
-      }
-
-      function updatePageTitle(page) {
-        const titles = {
-          dashboard: "Dashboard",
-          users: "Users Management",
-          interests: "Interests",
-          reports: "Content Reports",
-          memberships: "Memberships",
-          revenue: "Revenue Analytics",
-          moderation: "Content Moderation",
-        };
-
-        const title = titles[page] || "Dashboard";
-        document.querySelector(
-          ".page-title h1"
-        ).innerHTML = `<i class="fas fa-${getPageIcon(page)}"></i> ${title}`;
-      }
-
-      function getPageIcon(page) {
-        const icons = {
-          dashboard: "tachometer-alt",
-          users: "users",
-          interests: "heart",
-          reports: "flag",
-          memberships: "crown",
-          revenue: "chart-line",
-          moderation: "shield-alt",
-        };
-        return icons[page] || "tachometer-alt";
-      }
-
-      function loadPageData(page) {
-        switch (page) {
-          case "dashboard":
-            fetchDashboardData();
-            loadActivitiesData();
-            break;
-          case "users":
-            loadUsersData();
-            break;
-          case "interests":
-            loadInterestsData();
-            break;
-          case "reports":
-            loadReportsData();
-            break;
-          case "memberships":
-            loadMembershipsData();
-            break;
-          case "revenue":
-            loadRevenueData();
-            break;
-          case "moderation":
-            loadModerationData();
-            break;
-        }
-      }
-
-      // ==================== CHART FUNCTIONS ====================
-      function initializeCharts() {
-        // Growth Chart
-        const growthCtx = document
-          .getElementById("growthChart")
-          ?.getContext("2d");
-        if (growthCtx) {
-          window.growthChart = new Chart(growthCtx, {
-            type: "line",
-            data: {
-              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-              datasets: [
-                {
-                  label: "User Growth",
-                  data: [1200, 1500, 1800, 2100, 2400, 2847],
-                  borderColor: "var(--primary)",
-                  backgroundColor: "rgba(58, 87, 232, 0.1)",
-                  borderWidth: 2,
-                  fill: true,
-                  tension: 0.4,
-                  pointBackgroundColor: "var(--primary)",
-                  pointBorderColor: "white",
-                  pointBorderWidth: 2,
-                  pointRadius: 5,
-                  pointHoverRadius: 8,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                  titleColor: "white",
-                  bodyColor: "white",
-                  borderColor: "var(--primary)",
-                  borderWidth: 1,
-                },
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  grid: {
-                    color: "rgba(0, 0, 0, 0.05)",
-                    borderDash: [5, 5],
-                  },
-                  ticks: {
-                    callback: function (value) {
-                      return value.toLocaleString();
-                    },
-                  },
-                },
-                x: {
-                  grid: {
-                    color: "rgba(0, 0, 0, 0.05)",
-                    borderDash: [5, 5],
-                  },
-                },
-              },
-              interaction: {
-                intersect: false,
-                mode: "index",
-              },
-            },
-          });
-        }
-
-        // Revenue Chart
-        const revenueCtx = document
-          .getElementById("revenueChart")
-          ?.getContext("2d");
-        if (revenueCtx) {
-          window.revenueChart = new Chart(revenueCtx, {
-            type: "bar",
-            data: {
-              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-              datasets: [
-                {
-                  label: "Revenue ($)",
-                  data: [4200, 5200, 6100, 7300, 8200, 9450],
-                  backgroundColor: [
-                    "rgba(58, 87, 232, 0.7)",
-                    "rgba(58, 87, 232, 0.8)",
-                    "rgba(58, 87, 232, 0.9)",
-                    "rgba(124, 77, 255, 0.7)",
-                    "rgba(124, 77, 255, 0.8)",
-                    "rgba(124, 77, 255, 0.9)",
-                  ],
-                  borderColor: "var(--primary)",
-                  borderWidth: 1,
-                  borderRadius: 6,
-                  borderSkipped: false,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                  titleColor: "white",
-                  bodyColor: "white",
-                  borderColor: "var(--primary)",
-                  borderWidth: 1,
-                  callbacks: {
-                    label: function (context) {
-                      return `Revenue: $${context.raw.toLocaleString()}`;
-                    },
-                  },
-                },
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  grid: {
-                    color: "rgba(0, 0, 0, 0.05)",
-                    borderDash: [5, 5],
-                  },
-                  ticks: {
-                    callback: function (value) {
-                      return "$" + value.toLocaleString();
-                    },
-                  },
-                },
-                x: {
-                  grid: {
-                    color: "rgba(0, 0, 0, 0.05)",
-                    borderDash: [5, 5],
-                  },
-                },
-              },
-            },
-          });
-        }
-      }
-
-      function updateGrowthChart() {
-        const period = document.getElementById("growthPeriod").value;
-        showToast("info", `Growth chart updated for: ${period}`);
-      }
-
-      function updateRevenueChart() {
-        const period = document.getElementById("revenuePeriod").value;
-        showToast("info", `Revenue chart updated for: ${period}`);
-      }
-
-      // ==================== ACTION FUNCTIONS ====================
-      function quickAction() {
-        showToast("success", "Quick action executed successfully!");
-      }
-
-      function exportData() {
-        showToast("info", "Exporting dashboard data...");
-        setTimeout(() => {
-          showToast("success", "Data exported successfully!");
-        }, 2000);
-      }
-
-      function refreshDashboard() {
-        showToast("info", "Refreshing dashboard...");
-        setTimeout(() => {
-          fetchDashboardData();
-          loadActivitiesData();
-          showToast("success", "Dashboard refreshed!");
-        }, 1000);
-      }
-
-      function exportUsers() {
-        showToast("info", "Exporting users list...");
-        setTimeout(() => {
-          showToast("success", "Users exported successfully!");
-        }, 2000);
-      }
-
-      function bulkActions() {
-        showToast("info", "Opening bulk actions menu...");
-      }
-
-      function viewUsers() {
-        document.querySelector('[data-page="users"]').click();
-      }
-
-      function viewExplorers() {
-        document.getElementById("userSearch").value = "explorer";
-        document.querySelector('[data-page="users"]').click();
-        setTimeout(() => searchUsers(), 100);
-      }
-
-      function viewCreators() {
-        document.getElementById("userSearch").value = "creator";
-        document.querySelector('[data-page="users"]').click();
-        setTimeout(() => searchUsers(), 100);
-      }
-
-      function viewAnalytics() {
-        showToast("info", "Opening analytics dashboard...");
-      }
-
-      function viewActivity(activityId) {
-        const activity = activities.find((a) => a.id === activityId);
-        if (activity) {
-          showToast(
-            "info",
-            `Activity: ${activity.activity} by ${activity.userName}`
-          );
-        }
-      }
-
-      function showNotifications() {
-        showToast("info", "You have 5 new notifications");
-      }
-
-      // ==================== LOGOUT ====================
-      async function logout() {
-        try {
-          // API logout call karo
-          await fetchHatchAPI("/auth/logout", "POST");
-        } catch (error) {
-          console.log("Local logout only");
-        } finally {
-          // Local storage clear karo
-          localStorage.removeItem("hatch_admin_token");
-          sessionStorage.removeItem("currentAdmin");
-
-          // Redirect to login page
-          window.location.href = "index.html";
-        }
-      }
-
-      // ==================== MODAL FUNCTIONS ====================
-      function closeModal(modalId) {
-        document.getElementById(modalId).style.display = "none";
-        document.body.style.overflow = "auto";
-        if (modalId === "confirmModal") {
-          confirmCallback = null;
-        }
-      }
-
-      function confirmAction() {
-        if (confirmCallback) {
-          confirmCallback();
-        }
-      }
-
-      // ==================== FALLBACK FUNCTIONS ====================
-      function loadLocalDashboardData() {
-        document.getElementById("totalUsers").textContent = "2,847";
-        document.getElementById("totalExplorers").textContent = "1,243";
-        document.getElementById("totalCreators").textContent = "856";
-        document.getElementById("reportsNotification").textContent = "5";
-      }
-
-      function loadLocalMembershipsData() {
-        showToast("info", "Loading memberships data...");
-        setTimeout(() => {
-          showToast("success", "Memberships data loaded!");
-        }, 1000);
-      }
-
-      function loadLocalRevenueData() {
-        showToast("info", "Loading revenue data...");
-        setTimeout(() => {
-          showToast("success", "Revenue data loaded!");
-        }, 1000);
-      }
-
-      function loadLocalModerationData() {
-        showToast("info", "Loading moderation data...");
-        setTimeout(() => {
-          showToast("success", "Moderation data loaded!");
-        }, 1000);
-      }
-
-      // Assign fallback functions
-      window.loadMembershipsData = loadLocalMembershipsData;
-      window.loadRevenueData = loadLocalRevenueData;
-      window.loadModerationData = loadLocalModerationData;
-
-      // Close modals with Escape key
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-          closeModal("userModal");
-          closeModal("interestModal");
-          closeModal("reportModal");
-          closeModal("membershipModal");
-          closeModal("revenueModal");
-          closeModal("moderationModal");
-          closeModal("confirmModal");
-          if (window.innerWidth < 768) {
-            document.getElementById("sidebar").classList.remove("active");
-            document.body.style.overflow = "auto";
-          }
-        }
-      });
-
-      // Close modals when clicking outside
-      document.querySelectorAll(".modal-overlay").forEach((modal) => {
-        modal.addEventListener("click", function (e) {
-          if (e.target === this) {
-            this.style.display = "none";
-            document.body.style.overflow = "auto";
-          }
+        
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
         });
-      });
     </script>
   </body>
 </html>
