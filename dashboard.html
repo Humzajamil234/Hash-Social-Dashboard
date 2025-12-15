@@ -5216,24 +5216,32 @@
 }
     
     // Update dashboard stats with real API
-    async function fetchDashboardData() {
-        try {
-            const response = await fetchHatchAPI('/auth/dashboard/stats', 'GET');
-            if (response.success) {
-                document.getElementById('totalUsers').textContent = response.data.total_users?.toLocaleString() || '0';
-                document.getElementById('totalExplorers').textContent = response.data.total_explorers?.toLocaleString() || '0';
-                document.getElementById('totalCreators').textContent = response.data.total_creators?.toLocaleString() || '0';
-                
-                // Update notification badges
-                const pendingUsers = users.filter(u => u.status === 'pending').length;
-                const pendingReports = reports.filter(r => r.status === 'pending').length;
-                document.getElementById('usersNotification').textContent = pendingUsers;
-                document.getElementById('reportsNotification').textContent = pendingReports;
-            }
-        } catch (error) {
-            console.log('Using local dashboard data');
-        }
+async function fetchDashboardData() {
+    try {
+        // Users count ke liye member API use karein
+        const usersResponse = await fetchHatchAPI('/auth/member', 'GET');
+        const totalUsers = usersResponse.data?.length || 0;
+        
+        // Explorers aur creators count calculate karein
+        const explorers = usersResponse.data?.filter(u => u.type === 'explorer').length || 0;
+        const creators = usersResponse.data?.filter(u => u.type === 'creator').length || 0;
+        
+        // Pending reports ke liye (aapki APIs mein reports API hai)
+        const reportsResponse = await fetchHatchAPI('/auth/report', 'GET');
+        const pendingReports = reportsResponse.data?.filter(r => r.status === 'pending').length || 0;
+        
+        // Update UI
+        document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+        document.getElementById('totalExplorers').textContent = explorers.toLocaleString();
+        document.getElementById('totalCreators').textContent = creators.toLocaleString();
+        document.getElementById('reportsNotification').textContent = pendingReports;
+        
+    } catch (error) {
+        console.log('Using local dashboard data');
+        // Fallback to local data
+        loadLocalDashboardData();
     }
+}
     
     // Load users from real API
     async function loadUsersData() {
