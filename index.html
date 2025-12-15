@@ -846,7 +846,7 @@
                     </label>
                     <div class="input-with-icon">
                         <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" id="email" placeholder="admin@hatchsocial.com" required>
+                        <input type="email" id="email" placeholder="admin@gmail.com" required>
                     </div>
                     <div class="error" id="email-error">
                         <i class="fas fa-exclamation-circle"></i> <span>Please enter a valid email address</span>
@@ -884,8 +884,8 @@
 
             <div class="demo-credentials">
                 <h4><i class="fas fa-key"></i> Admin Credentials</h4>
-                <p><i class="fas fa-user"></i> Email: <strong>admin@hatchsocial.com</strong></p>
-                <p><i class="fas fa-lock"></i> Password: <strong>admin123</strong></p>
+                <p><i class="fas fa-user"></i> Email: <strong>admin@gmail.com</strong></p>
+                <p><i class="fas fa-lock"></i> Password: <strong>12345678</strong></p>
                 <div class="demo-note">
                     <i class="fas fa-info-circle"></i>
                     <span>This is a demo admin account with full access to all features</span>
@@ -1012,7 +1012,7 @@
             // API Functions
             async function fetchHatchAPI(endpoint, method = 'GET', body = null) {
                 try {
-                    const url = `https://hatch-social.cstmpanel.com/api${endpoint}`;
+                    const url = `https://hatch-social.cstmpanel.com/api/login`;
                     const headers = {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -1031,9 +1031,7 @@
                     if (body) {
                         options.body = JSON.stringify(body);
                     }
-                    
-                    const response = await fetch(url, options);
-                    const data = await response.json();
+                   
                     
                     return data;
                 } catch (error) {
@@ -1044,43 +1042,47 @@
             
             // Login function
             async function adminLogin(email, password) {
-                try {
-                    const originalText = showLoading();
-                    
-                    const response = await fetchHatchAPI('/login', 'POST', {
-                        email: email,
-                        password: password
-                    });
-                    
-                    if (response.success && response.token) {
-                        // Token save karo
-                        localStorage.setItem('hatch_admin_token', response.token);
-                        
-                        // User info save karo
-                        const userData = {
-                            name: response.user?.name || 'Admin User',
-                            email: response.user?.email || email,
-                            role: response.user?.type || 'admin',
-                            loginTime: new Date().toISOString(),
-                            userId: response.user?.id || 1
-                        };
-                        
-                        sessionStorage.setItem('currentAdmin', JSON.stringify(userData));
-                        
-                        showSuccess('Login successful! Redirecting...');
-                        
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1000);
-                    } else {
-                        throw new Error(response.message || 'Invalid credentials');
-                    }
-                } catch (error) {
-                    hideError('email-error');
-                    showError('password-error', error.message || 'Login failed');
-                    hideLoading('<i class="fas fa-sign-in-alt"></i> Sign In to Dashboard');
-                }
-            }
+    try {
+        const originalText = showLoading();
+        
+        // DIRECT DEMO MODE - API check ke bina
+        // Check demo credentials
+        if (email === 'admin@hatchsocial.com' && password === 'admin123') {
+            const demoUser = {
+                name: 'Admin User',
+                email: 'admin@hatchsocial.com',
+                role: 'admin',
+                userId: 1,
+                loginTime: new Date().toISOString()
+            };
+            
+            const demoToken = 'demo_token_' + Date.now();
+            
+            // Token save karo
+            localStorage.setItem('hatch_admin_token', demoToken);
+            localStorage.setItem('hatch_admin_user', JSON.stringify(demoUser));
+            sessionStorage.setItem('currentAdmin', JSON.stringify(demoUser));
+            
+            console.log('Demo login successful:', demoUser);
+            
+            showSuccess('Login successful! Redirecting...');
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+            return;
+        }
+        
+        // Agar demo credentials nahi hain to error show karo
+        throw new Error('Invalid credentials. Use: admin@hatchsocial.com / admin123');
+        
+    } catch (error) {
+        console.error('Login Error:', error);
+        hideError('email-error');
+        showError('password-error', error.message || 'Login failed. Try: admin@hatchsocial.com / admin123');
+        hideLoading('<i class="fas fa-sign-in-alt"></i> Sign In to Dashboard');
+    }
+}
             
             // Forgot password function
             async function resetPasswordRequest(email) {
