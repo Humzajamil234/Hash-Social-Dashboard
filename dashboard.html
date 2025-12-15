@@ -2828,19 +2828,22 @@
 
         // ==================== DASHBOARD FUNCTIONS ====================
         function loadDashboardData() {
-            // Update stats
-            const totalUsers = users.length;
-            const explorers = users.filter(u => u.type === 'explorer').length;
-            const creators = users.filter(u => u.type === 'creator').length;
-            
-            document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
-            document.getElementById('totalExplorers').textContent = explorers.toLocaleString();
-            document.getElementById('totalCreators').textContent = creators.toLocaleString();
-            
-            // Update notification badges
-            document.getElementById('usersNotification').textContent = users.filter(u => u.status === 'pending').length;
-            document.getElementById('reportsNotification').textContent = reports.filter(r => r.status === 'pending').length;
-        }
+    // Update stats
+    const totalUsers = users ? users.length : 0;
+    const explorers = users ? users.filter(u => u.type === 'explorer').length : 0;
+    const creators = users ? users.filter(u => u.type === 'creator').length : 0;
+    
+    document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+    document.getElementById('totalExplorers').textContent = explorers.toLocaleString();
+    document.getElementById('totalCreators').textContent = creators.toLocaleString();
+    
+    // Update notification badges - SAFE VERSION
+    const pendingUsers = users ? users.filter(u => u.status === 'pending').length : 0;
+    const pendingReports = reports ? reports.filter(r => r && r.status === 'pending').length : 0;
+    
+    document.getElementById('usersNotification').textContent = pendingUsers;
+    document.getElementById('reportsNotification').textContent = pendingReports;
+}
 
         function loadActivitiesData() {
             const tbody = document.getElementById('activityTableBody');
@@ -3441,54 +3444,54 @@
 
         // ==================== REPORTS MANAGEMENT ====================
         function loadReportsData() {
-            const tbody = document.getElementById('reportsTableBody');
-            tbody.innerHTML = '';
-            
-            // Update stats
-            const totalReports = reports.length;
-            const pendingReports = reports.filter(r => r.status === 'pending').length;
-            const resolvedReports = reports.filter(r => r.status === 'resolved').length;
-            
-            document.getElementById('totalReports').textContent = totalReports;
-            document.getElementById('pendingReports').textContent = pendingReports;
-            document.getElementById('resolvedReports').textContent = resolvedReports;
-            document.getElementById('avgResolution').textContent = '2.4';
-            
-            // Load table data
-            reports.forEach(report => {
-                const row = document.createElement('tr');
-                row.dataset.reportId = report.id;
-                row.innerHTML = `
-                    <td><input type="checkbox" class="report-checkbox" value="${report.id}" onchange="toggleReportSelection(${report.id})"></td>
-                    <td><strong>${report.reportId}</strong></td>
-                    <td>${report.reportedBy}</td>
-                    <td><span class="status-badge">${report.contentType.charAt(0).toUpperCase() + report.contentType.slice(1)}</span></td>
-                    <td><span class="status-badge">${report.reason.charAt(0).toUpperCase() + report.reason.slice(1)}</span></td>
-                    <td>${formatDate(report.date)}</td>
-                    <td><span class="status-badge ${report.status === 'resolved' ? 'status-resolved' : report.status === 'pending' ? 'status-pending' : report.status === 'investigating' ? 'status-active' : 'status-inactive'}">${report.status.charAt(0).toUpperCase() + report.status.slice(1)}</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="table-btn edit" onclick="editReport(${report.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="table-btn delete" onclick="deleteReport(${report.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                            <button class="table-btn view" onclick="viewReport(${report.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            document.getElementById('reportsCount').textContent = reports.length;
-            updateSelectedReportsCount();
-            
-            // Populate user select for report modal
-            populateReportUserSelect();
-        }
+    const tbody = document.getElementById('reportsTableBody');
+    tbody.innerHTML = '';
+    
+    // Update stats
+    const totalReports = reports.length;
+    const pendingReports = reports.filter(r => r.status === 'pending').length;
+    const resolvedReports = reports.filter(r => r.status === 'resolved').length;
+    
+    document.getElementById('totalReports').textContent = totalReports;
+    document.getElementById('pendingReports').textContent = pendingReports;
+    document.getElementById('resolvedReports').textContent = resolvedReports;
+    document.getElementById('avgResolution').textContent = '2.4';
+    
+    // Load table data
+    reports.forEach(report => {
+        const row = document.createElement('tr');
+        row.dataset.reportId = report.id;
+        row.innerHTML = `
+            <td><input type="checkbox" class="report-checkbox" value="${report.id}" onchange="toggleReportSelection(${report.id})"></td>
+            <td><strong>${report.report_id || report.reportId || 'N/A'}</strong></td>
+            <td>${report.reported_by || report.reportedBy || 'Unknown'}</td>
+            <td><span class="status-badge">${(report.content_type || report.contentType || 'post').charAt(0).toUpperCase() + (report.content_type || report.contentType || 'post').slice(1)}</span></td>
+            <td><span class="status-badge">${(report.reason || 'other').charAt(0).toUpperCase() + (report.reason || 'other').slice(1)}</span></td>
+            <td>${formatDate(report.created_at || report.date || new Date().toISOString())}</td>
+            <td><span class="status-badge ${(report.status || 'pending') === 'resolved' ? 'status-resolved' : (report.status || 'pending') === 'pending' ? 'status-pending' : (report.status || 'pending') === 'investigating' ? 'status-active' : 'status-inactive'}">${(report.status || 'pending').charAt(0).toUpperCase() + (report.status || 'pending').slice(1)}</span></td>
+            <td>
+                <div class="table-actions">
+                    <button class="table-btn edit" onclick="editReport(${report.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="table-btn delete" onclick="deleteReport(${report.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button class="table-btn view" onclick="viewReport(${report.id})">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('reportsCount').textContent = reports.length;
+    updateSelectedReportsCount();
+    
+    // Populate user select for report modal
+    populateReportUserSelect();
+}
 
         function searchReports() {
             const searchTerm = document.getElementById('reportSearch').value.toLowerCase();
@@ -3850,45 +3853,45 @@
 
         // ==================== MEMBERSHIPS MANAGEMENT ====================
         function loadMembershipsData() {
-            const tbody = document.getElementById('membershipsTableBody');
-            tbody.innerHTML = '';
-            
-            // Update stats
-            const totalMemberships = memberships.reduce((sum, m) => sum + m.subscribers, 0);
-            document.getElementById('totalMemberships').textContent = totalMemberships;
-            
-            // Load table data
-            memberships.forEach(membership => {
-                const row = document.createElement('tr');
-                row.dataset.membershipId = membership.id;
-                row.innerHTML = `
-                    <td><input type="checkbox" class="membership-checkbox" value="${membership.id}" onchange="toggleMembershipSelection(${membership.id})"></td>
-                    <td><strong>${membership.name}</strong></td>
-                    <td>$${membership.price.toFixed(2)}</td>
-                    <td><span class="status-badge">${membership.duration.charAt(0).toUpperCase() + membership.duration.slice(1)}</span></td>
-                    <td>${membership.subscribers}</td>
-                    <td><span class="status-badge ${membership.status === 'active' ? 'status-active' : 'status-inactive'}">${membership.status.charAt(0).toUpperCase() + membership.status.slice(1)}</span></td>
-                    <td>${membership.features.slice(0, 2).join(', ')}${membership.features.length > 2 ? '...' : ''}</td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="table-btn edit" onclick="editMembership(${membership.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="table-btn delete" onclick="deleteMembership(${membership.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                            <button class="table-btn view" onclick="viewMembership(${membership.id})">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            document.getElementById('membershipsCount').textContent = memberships.length;
-            updateSelectedMembershipsCount();
-        }
+    const tbody = document.getElementById('membershipsTableBody');
+    tbody.innerHTML = '';
+    
+    // Update stats
+    const totalMemberships = memberships.reduce((sum, m) => sum + (m.subscribers || 0), 0);
+    document.getElementById('totalMemberships').textContent = totalMemberships;
+    
+    // Load table data
+    memberships.forEach(membership => {
+        const row = document.createElement('tr');
+        row.dataset.membershipId = membership.id;
+        row.innerHTML = `
+            <td><input type="checkbox" class="membership-checkbox" value="${membership.id}" onchange="toggleMembershipSelection(${membership.id})"></td>
+            <td><strong>${membership.name || 'Unknown'}</strong></td>
+            <td>$${parseFloat(membership.price || 0).toFixed(2)}</td>
+            <td><span class="status-badge">${(membership.duration || 'monthly').charAt(0).toUpperCase() + (membership.duration || 'monthly').slice(1)}</span></td>
+            <td>${membership.subscribers || 0}</td>
+            <td><span class="status-badge ${(membership.status || 'active') === 'active' ? 'status-active' : 'status-inactive'}">${(membership.status || 'active').charAt(0).toUpperCase() + (membership.status || 'active').slice(1)}</span></td>
+            <td>${(membership.features || []).slice(0, 2).join(', ')}${(membership.features || []).length > 2 ? '...' : ''}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="table-btn edit" onclick="editMembership(${membership.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="table-btn delete" onclick="deleteMembership(${membership.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button class="table-btn view" onclick="viewMembership(${membership.id})">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('membershipsCount').textContent = memberships.length;
+    updateSelectedMembershipsCount();
+}
 
         function searchMemberships() {
             const searchTerm = document.getElementById('membershipSearch').value.toLowerCase();
@@ -5167,6 +5170,275 @@
                 }
             });
         });
+
+          // ==================== HATCH SOCIAL REAL APIS ====================
+    // Add this code RIGHT BEFORE the "saveData()" function
+    
+    const HATCH_API_BASE_URL = 'https://hatch-social.cstmpanel.com/api';
+    
+    async function fetchHatchAPI(endpoint, method = 'GET', body = null) {
+        try {
+            const url = `${HATCH_API_BASE_URL}${endpoint}`;
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            
+            const token = sessionStorage.getItem('hatchToken');
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const options = {
+                method,
+                headers,
+                credentials: 'include'
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            
+            const response = await fetch(url, options);
+            const data = await response.json();
+            
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || `API Error: ${response.status}`);
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            showToast('error', `API Error: ${error.message}`);
+            throw error;
+        }
+    }
+    
+    // Update dashboard stats with real API
+    async function fetchDashboardData() {
+        try {
+            const response = await fetchHatchAPI('/auth/dashboard/stats', 'GET');
+            if (response.success) {
+                document.getElementById('totalUsers').textContent = response.data.total_users?.toLocaleString() || '0';
+                document.getElementById('totalExplorers').textContent = response.data.total_explorers?.toLocaleString() || '0';
+                document.getElementById('totalCreators').textContent = response.data.total_creators?.toLocaleString() || '0';
+                
+                // Update notification badges
+                const pendingUsers = users.filter(u => u.status === 'pending').length;
+                const pendingReports = reports.filter(r => r.status === 'pending').length;
+                document.getElementById('usersNotification').textContent = pendingUsers;
+                document.getElementById('reportsNotification').textContent = pendingReports;
+            }
+        } catch (error) {
+            console.log('Using local dashboard data');
+        }
+    }
+    
+    // Load users from real API
+    async function loadUsersData() {
+        try {
+            const response = await fetchHatchAPI('/auth/member', 'GET');
+            if (response.success) {
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '';
+                
+                const apiUsers = response.data || [];
+                apiUsers.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.dataset.userId = user.id;
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="user-checkbox" value="${user.id}" onchange="toggleUserSelection(${user.id})"></td>
+                        <td><strong>${user.name || 'N/A'}</strong></td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td><span class="status-badge">${user.type || 'explorer'}</span></td>
+                        <td><span class="status-badge ${(user.status || 'active') === 'active' ? 'status-active' : user.status === 'pending' ? 'status-pending' : 'status-inactive'}">
+                            ${user.status || 'active'}
+                        </span></td>
+                        <td>${user.created_at ? formatDate(user.created_at) : 'N/A'}</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="table-btn edit" onclick="editUser(${user.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="table-btn delete" onclick="deleteUser(${user.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('usersCount').textContent = response.pagination?.total || apiUsers.length;
+            }
+        } catch (error) {
+            showToast('error', 'Users load nahi ho paye. Using local data.');
+            // Fallback to local users
+            loadLocalUsersData();
+        }
+    }
+    
+    // Load interests from real API
+    async function loadInterestsData() {
+        try {
+            const response = await fetchHatchAPI('/auth/interest_list', 'GET');
+            if (response.success) {
+                const tbody = document.getElementById('interestsTableBody');
+                tbody.innerHTML = '';
+                
+                const apiInterests = response.data || [];
+                apiInterests.forEach(interest => {
+                    const row = document.createElement('tr');
+                    row.dataset.interestId = interest.id;
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="interest-checkbox" value="${interest.id}" onchange="toggleInterestSelection(${interest.id})"></td>
+                        <td><strong>${interest.name || 'N/A'}</strong></td>
+                        <td><span class="status-badge">${interest.category || 'general'}</span></td>
+                        <td>${interest.users_count || '0'}</td>
+                        <td><span class="status-badge ${(interest.status || 'active') === 'active' ? 'status-active' : 'status-inactive'}">
+                            ${interest.status || 'active'}
+                        </span></td>
+                        <td>${interest.created_at ? formatDate(interest.created_at) : 'N/A'}</td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="table-btn edit" onclick="editInterest(${interest.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="table-btn delete" onclick="deleteInterest(${interest.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('interestsCount').textContent = response.stats?.total || apiInterests.length;
+                document.getElementById('totalInterests').textContent = response.stats?.total || apiInterests.length;
+                
+                if (apiInterests.length > 0) {
+                    const popular = apiInterests.reduce((prev, current) => 
+                        (prev.users_count || 0) > (current.users_count || 0) ? prev : current
+                    );
+                    document.getElementById('popularInterest').textContent = popular.name || 'N/A';
+                }
+            }
+        } catch (error) {
+            showToast('error', 'Interests load nahi hue. Using local data.');
+            // Fallback to local interests
+            loadLocalInterestsData();
+        }
+    }
+    
+    // Fallback functions for local data
+    function loadLocalUsersData() {
+        // Original local users loading code here
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '';
+        
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.dataset.userId = user.id;
+            row.innerHTML = `
+                <td><input type="checkbox" class="user-checkbox" value="${user.id}" onchange="toggleUserSelection(${user.id})"></td>
+                <td><strong>${user.name}</strong></td>
+                <td>${user.email}</td>
+                <td><span class="status-badge">${user.type.charAt(0).toUpperCase() + user.type.slice(1)}</span></td>
+                <td><span class="status-badge ${user.status === 'active' ? 'status-active' : user.status === 'pending' ? 'status-pending' : 'status-inactive'}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
+                <td>${formatDate(user.joinDate)}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="editUser(${user.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="table-btn delete" onclick="deleteUser(${user.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        document.getElementById('usersCount').textContent = users.length;
+    }
+    
+    function loadLocalInterestsData() {
+        // Original local interests loading code here
+        const tbody = document.getElementById('interestsTableBody');
+        tbody.innerHTML = '';
+        
+        interests.forEach(interest => {
+            const row = document.createElement('tr');
+            row.dataset.interestId = interest.id;
+            row.innerHTML = `
+                <td><input type="checkbox" class="interest-checkbox" value="${interest.id}" onchange="toggleInterestSelection(${interest.id})"></td>
+                <td><strong>${interest.name}</strong></td>
+                <td><span class="status-badge">${interest.category.charAt(0).toUpperCase() + interest.category.slice(1)}</span></td>
+                <td>${interest.usersCount}</td>
+                <td><span class="status-badge ${interest.status === 'active' ? 'status-active' : 'status-inactive'}">${interest.status.charAt(0).toUpperCase() + interest.status.slice(1)}</span></td>
+                <td>${formatDate(interest.created)}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="editInterest(${interest.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="table-btn delete" onclick="deleteInterest(${interest.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        document.getElementById('interestsCount').textContent = interests.length;
+    }
+    
+    // Override existing functions to use real APIs
+    window.fetchDashboardData = fetchDashboardData;
+    window.loadUsersData = loadUsersData;
+    window.loadInterestsData = loadInterestsData;
+    
+    // Update the initialization to use real APIs
+    const originalInit = window.onload;
+    window.onload = function() {
+        if (originalInit) originalInit();
+        
+        // Now load real data
+        fetchDashboardData();
+        loadUsersData();
+        
+        // Show API connected message
+        setTimeout(() => {
+            showToast('success', 'Hatch Social APIs connected successfully!');
+        }, 1500);
+    };
+    
+    // Add login function for index.html
+    window.adminLogin = async function(email, password) {
+        try {
+            const response = await fetch(`${HATCH_API_BASE_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const data = await response.json();
+            if (data.success && data.token) {
+                sessionStorage.setItem('hatchToken', data.token);
+                sessionStorage.setItem('currentAdmin', JSON.stringify(data.user));
+                window.location.href = 'dashboard.html';
+            } else {
+                throw new Error(data.message || 'Login failed');
+            }
+        } catch (error) {
+            showToast('error', error.message);
+        }
+    };
+    
 
         // Initial data save
         saveData();
