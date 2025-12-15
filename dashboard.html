@@ -2595,8 +2595,8 @@
                 const explorers = usersResponse.data?.filter(u => u.type === 'explorer').length || 0;
                 const creators = usersResponse.data?.filter(u => u.type === 'creator').length || 0;
                 
-                // Pending reports ke liye
-                const reportsResponse = await fetchHatchAPI('/auth/report', 'GET');
+                // Pending reports ke liye - POST method use karo (FIXED)
+                const reportsResponse = await fetchHatchAPI('/auth/report', 'POST'); // FIX: Changed GET to POST
                 const pendingReports = reportsResponse.data?.filter(r => r.status === 'pending').length || 0;
                 
                 // Update UI
@@ -3225,7 +3225,8 @@
         // ==================== REPORTS MANAGEMENT ====================
         async function loadReportsData() {
             try {
-                const response = await fetchHatchAPI('/auth/report', 'GET');
+                // FIXED: POST method use karo GET ki jagah
+                const response = await fetchHatchAPI('/auth/report', 'POST'); // Changed GET to POST
                 if (response.success) {
                     reports = response.data || [];
                     
@@ -3441,18 +3442,6 @@
             
             document.getElementById('confirmModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
-        }
-        
-        function populateReportUserSelect() {
-            const userSelect = document.getElementById('reportUserSelect');
-            userSelect.innerHTML = '<option value="">Select User</option>';
-            
-            users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.text = user.name;
-                userSelect.appendChild(option);
-            });
         }
         
         function toggleReportSelection(reportId) {
