@@ -3262,29 +3262,42 @@
           console.log("Using local users data");
           loadLocalUsersData();
         }
-      }
+        
+        async function loadUsersData() {
+  try {
+    const response = await fetchHatchAPI("/auth/member", "GET");
 
-      function createUserRow(user) {
-        const row = document.createElement("tr");
-        row.dataset.userId = user.id;
+    if (response.success) {
+      users = response.profile_info || [];
 
-        row.innerHTML = `
-                <td><input type="checkbox" class="user-checkbox" value="${
-                  user.id
-                }" onchange="toggleUserSelection(${user.id})"></td>
-                <td><strong>${user.name || "N/A"}</strong></td>
-                <td>${user.email || "N/A"}</td>
-                <td><span class="status-badge">${
-                  user.type || "explorer"
-                }</span></td>
-                <td><span class="status-badge ${
-                  (user.status || "active") === "active"
-                    ? "status-active"
-                    : (user.status || "active") === "pending"
-                    ? "status-pending"
-                    : "status-inactive"
-                }">
-                    ${user.status || "active"}
+      const tbody = document.getElementById("usersTableBody");
+      tbody.innerHTML = "";
+
+      users.forEach((user) => {
+        const row = createUserRow(user);
+        tbody.appendChild(row);
+      });
+
+      document.getElementById("usersCount").textContent = users.length;
+      updateSelectedUsersCount();
+    }
+  } catch (error) {
+    console.log("Using local users data");
+    loadLocalUsersData();
+  }
+}
+        
+        function createUserRow(user) {
+            const row = document.createElement('tr');
+            row.dataset.userId = user.id;
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="user-checkbox" value="${user.id}" onchange="toggleUserSelection(${user.id})"></td>
+                <td><strong>${user.name || 'N/A'}</strong></td>
+                <td>${user.email || 'N/A'}</td>
+                <td><span class="status-badge">${user.type || 'explorer'}</span></td>
+                <td><span class="status-badge ${(user.status || 'active') === 'active' ? 'status-active' : (user.status || 'active') === 'pending' ? 'status-pending' : 'status-inactive'}">
+                    ${user.status || 'active'}
                 </span></td>
                 <td>${
                   user.created_at ? formatDate(user.created_at) : "N/A"
