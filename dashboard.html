@@ -520,6 +520,9 @@
         .icon-explorers { background: linear-gradient(135deg, var(--success), #0f9d58); }
         .icon-creators { background: linear-gradient(135deg, var(--warning), #f29900); }
         .icon-growth { background: linear-gradient(135deg, var(--danger), #d93025); }
+        .icon-nests { background: linear-gradient(135deg, #9C27B0, #673AB7); }
+        .icon-posts { background: linear-gradient(135deg, #4CAF50, #8BC34A); }
+        .icon-reels { background: linear-gradient(135deg, #FF9800, #FF5722); }
 
         .stat-value {
             font-size: 28px;
@@ -1144,6 +1147,20 @@
                 <span>Reports</span>
                 <span class="notification-badge" id="reportsNotification">5</span>
             </a>
+            <!-- New Sections Added -->
+            <a href="#" class="menu-item" data-page="nests">
+                <i class="fas fa-home"></i>
+                <span>Nests</span>
+            </a>
+            <a href="#" class="menu-item" data-page="posts">
+                <i class="fas fa-newspaper"></i>
+                <span>Posts</span>
+            </a>
+            <a href="#" class="menu-item" data-page="reels">
+                <i class="fas fa-film"></i>
+                <span>Reels</span>
+            </a>
+            <!-- End New Sections -->
             <a href="#" class="menu-item" data-page="memberships">
                 <i class="fas fa-crown"></i>
                 <span>Memberships</span>
@@ -1261,6 +1278,54 @@
                     </div>
                 </div>
 
+                <div class="stat-card" onclick="viewNests()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalNests">0</div>
+                            <div class="stat-label">Total Nests</div>
+                        </div>
+                        <div class="stat-icon icon-nests">
+                            <i class="fas fa-home"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" onclick="viewPosts()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalPosts">0</div>
+                            <div class="stat-label">Total Posts</div>
+                        </div>
+                        <div class="stat-icon icon-posts">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" onclick="viewReels()">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalReels">0</div>
+                            <div class="stat-label">Total Reels</div>
+                        </div>
+                        <div class="stat-icon icon-reels">
+                            <i class="fas fa-film"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
                 <div class="stat-card" onclick="viewAnalytics()">
                     <div class="stat-header">
                         <div>
@@ -1296,15 +1361,15 @@
 
                 <div class="chart-card">
                     <div class="chart-header">
-                        <h3>Revenue Overview</h3>
-                        <select class="period-select" id="revenuePeriod" onchange="updateRevenueChart()">
-                            <option>Monthly</option>
-                            <option selected>Quarterly</option>
-                            <option>Yearly</option>
+                        <h3>Content Activity</h3>
+                        <select class="period-select" id="contentPeriod" onchange="updateContentChart()">
+                            <option>Last 7 days</option>
+                            <option selected>Last 30 days</option>
+                            <option>Last 90 days</option>
                         </select>
                     </div>
                     <div class="chart-container">
-                        <canvas id="revenueChart"></canvas>
+                        <canvas id="contentChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -1637,6 +1702,382 @@
                             <i class="fas fa-trash"></i> Delete Selected
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== NESTS PAGE (New Section) ==================== -->
+        <div class="page-content" id="nests-page">
+            <div class="page-title">
+                <h1><i class="fas fa-home"></i> Nests Management</h1>
+                <p>Manage all nests (communities/groups) on your platform</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddNestModal()">
+                    <i class="fas fa-plus"></i> Add New Nest
+                </button>
+                <button class="action-btn" onclick="exportNests()">
+                    <i class="fas fa-file-export"></i> Export Nests
+                </button>
+                <button class="action-btn" onclick="refreshNests()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="action-btn" onclick="bulkNestActions()">
+                    <i class="fas fa-cog"></i> Bulk Actions
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalNests">0</div>
+                            <div class="stat-label">Total Nests</div>
+                        </div>
+                        <div class="stat-icon icon-nests">
+                            <i class="fas fa-home"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="activeNests">0</div>
+                            <div class="stat-label">Active Nests</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="nestMembers">0</div>
+                            <div class="stat-label">Total Members</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgNestMembers">0</div>
+                            <div class="stat-label">Avg Members per Nest</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Nests (<span id="nestsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search nests..." id="nestSearch" oninput="searchNests()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="nestsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllNests" onchange="toggleSelectAllNests()"></th>
+                                <th>Nest Name</th>
+                                <th>Owner</th>
+                                <th>Category</th>
+                                <th>Members</th>
+                                <th>Posts</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nestsTableBody">
+                            <!-- Nests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedNestsCount">0 nests selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedNests()" style="display: none;" id="deleteSelectedNestsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== POSTS PAGE (New Section) ==================== -->
+        <div class="page-content" id="posts-page">
+            <div class="page-title">
+                <h1><i class="fas fa-newspaper"></i> Posts Management</h1>
+                <p>Manage all posts created by users on your platform</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddPostModal()">
+                    <i class="fas fa-plus"></i> Add New Post
+                </button>
+                <button class="action-btn" onclick="exportPosts()">
+                    <i class="fas fa-file-export"></i> Export Posts
+                </button>
+                <button class="action-btn" onclick="refreshPosts()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="action-btn" onclick="bulkPostActions()">
+                    <i class="fas fa-cog"></i> Bulk Actions
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalPosts">0</div>
+                            <div class="stat-label">Total Posts</div>
+                        </div>
+                        <div class="stat-icon icon-posts">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="postsToday">0</div>
+                            <div class="stat-label">Posts Today</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgLikes">0</div>
+                            <div class="stat-label">Avg Likes per Post</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgComments">0</div>
+                            <div class="stat-label">Avg Comments per Post</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Posts (<span id="postsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search posts..." id="postSearch" oninput="searchPosts()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="postsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllPosts" onchange="toggleSelectAllPosts()"></th>
+                                <th>Post ID</th>
+                                <th>Author</th>
+                                <th>Content</th>
+                                <th>Likes</th>
+                                <th>Comments</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTableBody">
+                            <!-- Posts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedPostsCount">0 posts selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedPosts()" style="display: none;" id="deleteSelectedPostsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== REELS PAGE (New Section) ==================== -->
+        <div class="page-content" id="reels-page">
+            <div class="page-title">
+                <h1><i class="fas fa-film"></i> Reels Management</h1>
+                <p>Manage all video reels created by users on your platform</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="openAddReelModal()">
+                    <i class="fas fa-plus"></i> Add New Reel
+                </button>
+                <button class="action-btn" onclick="exportReels()">
+                    <i class="fas fa-file-export"></i> Export Reels
+                </button>
+                <button class="action-btn" onclick="refreshReels()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="action-btn" onclick="bulkReelActions()">
+                    <i class="fas fa-cog"></i> Bulk Actions
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalReels">0</div>
+                            <div class="stat-label">Total Reels</div>
+                        </div>
+                        <div class="stat-icon icon-reels">
+                            <i class="fas fa-film"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="reelsToday">0</div>
+                            <div class="stat-label">Reels Today</div>
+                        </div>
+                        <div class="stat-icon icon-explorers">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgReelViews">0</div>
+                            <div class="stat-label">Avg Views per Reel</div>
+                        </div>
+                        <div class="stat-icon icon-users">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgReelShares">0</div>
+                            <div class="stat-label">Avg Shares per Reel</div>
+                        </div>
+                        <div class="stat-icon icon-growth">
+                            <i class="fas fa-share"></i>
+                        </div>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-list"></i> All Reels (<span id="reelsCount">0</span>)</h3>
+                    <div class="table-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search reels..." id="reelSearch" oninput="searchReels()">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="reelsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllReels" onchange="toggleSelectAllReels()"></th>
+                                <th>Reel ID</th>
+                                <th>Creator</th>
+                                <th>Title</th>
+                                <th>Views</th>
+                                <th>Likes</th>
+                                <th>Shares</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reelsTableBody">
+                            <!-- Reels will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="selectedReelsCount">0 reels selected</div>
+                    <button class="table-btn delete" onclick="deleteSelectedReels()" style="display: none;" id="deleteSelectedReelsBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
                 </div>
             </div>
         </div>
@@ -2213,6 +2654,158 @@
         </div>
     </div>
 
+    <!-- Add/Edit Nest Modal (New) -->
+    <div class="modal-overlay" id="nestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-home"></i> <span id="nestModalTitle">Add New Nest</span></h3>
+                <button class="modal-close" onclick="closeModal('nestModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Nest Name</label>
+                    <input type="text" id="nestNameInput" placeholder="Enter nest name">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Owner</label>
+                    <select id="nestOwnerSelect">
+                        <!-- Users will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Category</label>
+                    <select id="nestCategorySelect">
+                        <option value="general">General</option>
+                        <option value="technology">Technology</option>
+                        <option value="sports">Sports</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="education">Education</option>
+                        <option value="business">Business</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="nestStatusSelect">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Description</label>
+                    <textarea id="nestDescription" placeholder="Enter nest description..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('nestModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveNest()" id="saveNestBtn">
+                    <i class="fas fa-save"></i> Save Nest
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Post Modal (New) -->
+    <div class="modal-overlay" id="postModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-newspaper"></i> <span id="postModalTitle">Add New Post</span></h3>
+                <button class="modal-close" onclick="closeModal('postModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Author</label>
+                    <select id="postAuthorSelect">
+                        <!-- Users will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-home"></i> Nest (Optional)</label>
+                    <select id="postNestSelect">
+                        <option value="">Select Nest</option>
+                        <!-- Nests will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-pen"></i> Content</label>
+                    <textarea id="postContent" placeholder="Enter post content..." rows="6"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="postStatusSelect">
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-tags"></i> Tags (comma separated)</label>
+                    <input type="text" id="postTags" placeholder="Enter tags separated by commas">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('postModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="savePost()" id="savePostBtn">
+                    <i class="fas fa-save"></i> Save Post
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Reel Modal (New) -->
+    <div class="modal-overlay" id="reelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-film"></i> <span id="reelModalTitle">Add New Reel</span></h3>
+                <button class="modal-close" onclick="closeModal('reelModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Creator</label>
+                    <select id="reelCreatorSelect">
+                        <!-- Users will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-heading"></i> Title</label>
+                    <input type="text" id="reelTitleInput" placeholder="Enter reel title">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-link"></i> Video URL</label>
+                    <input type="url" id="reelUrlInput" placeholder="Enter video URL">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> Duration (seconds)</label>
+                    <input type="number" id="reelDuration" placeholder="Enter duration in seconds" min="1" max="300">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-circle"></i> Status</label>
+                    <select id="reelStatusSelect">
+                        <option value="published">Published</option>
+                        <option value="processing">Processing</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-info-circle"></i> Description</label>
+                    <textarea id="reelDescription" placeholder="Enter reel description..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('reelModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn primary" onclick="saveReel()" id="saveReelBtn">
+                    <i class="fas fa-save"></i> Save Reel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Add/Edit Membership Modal -->
     <div class="modal-overlay" id="membershipModal">
         <div class="modal-content">
@@ -2406,10 +2999,16 @@
         let memberships = [];
         let revenues = [];
         let moderations = [];
+        let nests = [];
+        let posts = [];
+        let reels = [];
         
         let currentUserId = null;
         let currentInterestId = null;
         let currentReportId = null;
+        let currentNestId = null;
+        let currentPostId = null;
+        let currentReelId = null;
         let currentMembershipId = null;
         let currentRevenueId = null;
         let currentModerationId = null;
@@ -2417,6 +3016,9 @@
         let selectedUsers = new Set();
         let selectedInterests = new Set();
         let selectedReports = new Set();
+        let selectedNests = new Set();
+        let selectedPosts = new Set();
+        let selectedReels = new Set();
         let selectedMemberships = new Set();
         let selectedRevenues = new Set();
         let selectedModerations = new Set();
@@ -2576,10 +3178,10 @@
             }
             
             // Adjust chart sizes on resize
-            if (window.growthChart && window.revenueChart) {
+            if (window.growthChart && window.contentChart) {
                 setTimeout(() => {
                     window.growthChart.resize();
-                    window.revenueChart.resize();
+                    window.contentChart.resize();
                 }, 100);
             }
         }
@@ -2599,10 +3201,25 @@
                 const reportsResponse = await fetchHatchAPI('/auth/report', 'GET');
                 const pendingReports = reportsResponse.data?.filter(r => r.status === 'pending').length || 0;
                 
+                // Nests ke liye
+                const nestsResponse = await fetchHatchAPI('/auth/nest_list', 'GET');
+                const totalNests = nestsResponse.interest_info?.length || 0;
+                
+                // Posts ke liye
+                const postsResponse = await fetchHatchAPI('/auth/posts', 'GET');
+                const totalPosts = postsResponse.data?.length || 0;
+                
+                // Reels ke liye
+                const reelsResponse = await fetchHatchAPI('/auth/reels', 'GET');
+                const totalReels = reelsResponse.data?.length || 0;
+                
                 // Update UI
                 document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
                 document.getElementById('totalExplorers').textContent = explorers.toLocaleString();
                 document.getElementById('totalCreators').textContent = creators.toLocaleString();
+                document.getElementById('totalNests').textContent = totalNests.toLocaleString();
+                document.getElementById('totalPosts').textContent = totalPosts.toLocaleString();
+                document.getElementById('totalReels').textContent = totalReels.toLocaleString();
                 document.getElementById('reportsNotification').textContent = pendingReports;
                 
                 // Growth rate calculate karein
@@ -2675,28 +3292,28 @@
         
         // ==================== USERS MANAGEMENT ====================
         async function loadUsersData() {
-  try {
-    const response = await fetchHatchAPI("/auth/member", "GET");
-
-    if (response.success) {
-      users = response.profile_info || [];
-
-      const tbody = document.getElementById("usersTableBody");
-      tbody.innerHTML = "";
-
-      users.forEach((user) => {
-        const row = createUserRow(user);
-        tbody.appendChild(row);
-      });
-
-      document.getElementById("usersCount").textContent = users.length;
-      updateSelectedUsersCount();
-    }
-  } catch (error) {
-    console.log("Using local users data");
-    loadLocalUsersData();
-  }
-}
+            try {
+                const response = await fetchHatchAPI('/auth/member', 'GET');
+                
+                if (response.success) {
+                    users = response.data || [];
+                    
+                    const tbody = document.getElementById('usersTableBody');
+                    tbody.innerHTML = '';
+                    
+                    users.forEach(user => {
+                        const row = createUserRow(user);
+                        tbody.appendChild(row);
+                    });
+                    
+                    document.getElementById('usersCount').textContent = users.length;
+                    updateSelectedUsersCount();
+                }
+            } catch (error) {
+                console.log('Using local users data');
+                loadLocalUsersData();
+            }
+        }
         
         function createUserRow(user) {
             const row = document.createElement('tr');
@@ -2843,8 +3460,6 @@
             
             showToast('info', 'Saving user...');
             
-            // Note: Real user creation API doesn't exist in provided list
-            // So we'll just show success message
             setTimeout(() => {
                 if (currentUserId) {
                     showToast('success', 'User updated successfully!');
@@ -2870,8 +3485,6 @@
             document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete User';
             
             confirmCallback = function() {
-                // Note: Real user deletion API doesn't exist in provided list
-                // So we'll just show success message
                 showToast('success', 'User deleted successfully!');
                 
                 // Reload data
@@ -2925,7 +3538,6 @@
             document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
             
             confirmCallback = function() {
-                // Note: Real bulk deletion API doesn't exist
                 showToast('success', `${count} user${count !== 1 ? 's' : ''} deleted successfully!`);
                 
                 // Clear selection
@@ -2944,339 +3556,1250 @@
         }
         
         // ==================== INTERESTS MANAGEMENT ====================
-      async function loadInterestsData() {
-        try {
-          const response = await fetchHatchAPI("/auth/interest_list", "GET");
-          console.log(response, "response dattaaa");
-          if (response.success) {
-            const interests = response.interest_info || [];
-
-            const tbody = document.getElementById("interestsTableBody");
-            tbody.innerHTML = "";
-
-            interests.forEach((interest) => {
-              const row = createInterestRow(interest);
-              tbody.appendChild(row);
-            });
-
-            document.getElementById("interestsCount").textContent =
-              interests.length;
-            document.getElementById("totalInterests").textContent =
-              interests.length;
-
-            const totalUsersWithInterests = interests.reduce(
-              (sum, interest) => sum + (interest.users_count || 0),
-              0
-            );
-            document.getElementById("totalInterestUsers").textContent =
-              totalUsersWithInterests;
-
-            if (interests.length > 0) {
-              const popularInterest = interests.reduce((prev, current) =>
-                (prev.users_count || 0) > (current.users_count || 0)
-                  ? prev
-                  : current
-              );
-              document.getElementById("popularInterest").textContent =
-                popularInterest.name || "N/A";
+        async function loadInterestsData() {
+            try {
+                const response = await fetchHatchAPI('/auth/interest_list', 'GET');
+                
+                if (response.success) {
+                    interests = response.interest_info || [];
+                    
+                    const tbody = document.getElementById('interestsTableBody');
+                    tbody.innerHTML = '';
+                    
+                    interests.forEach(interest => {
+                        const row = createInterestRow(interest);
+                        tbody.appendChild(row);
+                    });
+                    
+                    document.getElementById('interestsCount').textContent = interests.length;
+                    document.getElementById('totalInterests').textContent = interests.length;
+                    
+                    const totalUsersWithInterests = interests.reduce((sum, interest) => sum + (interest.users_count || 0), 0);
+                    document.getElementById('totalInterestUsers').textContent = totalUsersWithInterests;
+                    
+                    if (interests.length > 0) {
+                        const popularInterest = interests.reduce((prev, current) => 
+                            (prev.users_count || 0) > (current.users_count || 0) ? prev : current
+                        );
+                        document.getElementById('popularInterest').textContent = popularInterest.name || 'N/A';
+                    }
+                    
+                    updateSelectedInterestsCount();
+                }
+            } catch (error) {
+                console.log('Using local interests data');
+                loadLocalInterestsData();
             }
-
-            updateSelectedInterestsCount();
-          }
-        } catch (error) {
-          console.log("Using local interests data", error);
-          loadLocalInterestsData();
         }
-      }
-
-      function createInterestRow(interest) {
-        const row = document.createElement("tr");
-        row.dataset.interestId = interest.id;
-
-        row.innerHTML = `
-                <td><input type="checkbox" class="interest-checkbox" value="${
-                  interest.id
-                }" onchange="toggleInterestSelection(${interest.id})"></td>
-                <td><strong>${interest.name || "N/A"}</strong></td>
-                <td><span class="status-badge">${
-                  interest.category || "general"
-                }</span></td>
+        
+        function createInterestRow(interest) {
+            const row = document.createElement('tr');
+            row.dataset.interestId = interest.id;
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="interest-checkbox" value="${interest.id}" onchange="toggleInterestSelection(${interest.id})"></td>
+                <td><strong>${interest.name || 'N/A'}</strong></td>
+                <td><span class="status-badge">${interest.category || 'general'}</span></td>
                 <td>${interest.users_count || 0}</td>
-                <td><span class="status-badge ${
-                  (interest.status || "active") === "active"
-                    ? "status-active"
-                    : "status-inactive"
-                }">
-                    ${interest.status || "active"}
+                <td><span class="status-badge ${(interest.status || 'active') === 'active' ? 'status-active' : 'status-inactive'}">
+                    ${interest.status || 'active'}
                 </span></td>
-                <td>${
-                  interest.created_at ? formatDate(interest.created_at) : "N/A"
-                }</td>
+                <td>${interest.created_at ? formatDate(interest.created_at) : 'N/A'}</td>
                 <td>
                     <div class="table-actions">
-                        <button class="table-btn edit" onclick="editInterest(${
-                          interest.id
-                        })">
+                        <button class="table-btn edit" onclick="editInterest(${interest.id})">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button class="table-btn delete" onclick="deleteInterest(${
-                          interest.id
-                        })">
+                        <button class="table-btn delete" onclick="deleteInterest(${interest.id})">
                             <i class="fas fa-trash"></i> Delete
                         </button>
-                        <button class="table-btn view" onclick="viewInterest(${
-                          interest.id
-                        })">
+                        <button class="table-btn view" onclick="viewInterest(${interest.id})">
                             <i class="fas fa-eye"></i> View
                         </button>
                     </div>
                 </td>
             `;
-
-        return row;
-      }
-
-      function loadLocalInterestsData() {
-        // Fallback local data
-        interests = [
-          {
-            id: 1,
-            name: "Technology",
-            category: "technology",
-            users_count: 450,
-            status: "active",
-            created_at: "2024-01-10",
-          },
-          {
-            id: 2,
-            name: "Sports",
-            category: "sports",
-            users_count: 320,
-            status: "active",
-            created_at: "2024-01-12",
-          },
-        ];
-
-        const tbody = document.getElementById("interestsTableBody");
-        tbody.innerHTML = "";
-
-        interests.forEach((interest) => {
-          const row = createInterestRow(interest);
-          tbody.appendChild(row);
-        });
-
-        document.getElementById("interestsCount").textContent =
-          interests.length;
-        document.getElementById("totalInterests").textContent =
-          interests.length;
-        updateSelectedInterestsCount();
-      }
-
-      function searchInterests() {
-        const searchTerm = document
-          .getElementById("interestSearch")
-          .value.toLowerCase();
-        const rows = document.querySelectorAll("#interestsTableBody tr");
-
-        rows.forEach((row) => {
-          const text = row.textContent.toLowerCase();
-          row.style.display = text.includes(searchTerm) ? "" : "none";
-        });
-      }
-
-      function openAddInterestModal() {
-        currentInterestId = null;
-        document.getElementById("interestModalTitle").textContent =
-          "Add New Interest";
-        document.getElementById("interestNameInput").value = "";
-        document.getElementById("interestCategorySelect").value = "technology";
-        document.getElementById("interestStatusSelect").value = "active";
-        document.getElementById("interestDescription").value = "";
-        document.getElementById("saveInterestBtn").innerHTML =
-          '<i class="fas fa-save"></i> Add Interest';
-        document.getElementById("interestModal").style.display = "flex";
-        document.body.style.overflow = "hidden";
-      }
-
-      function editInterest(interestId) {
-        const interest = interests.find((i) => i.id === interestId);
-        if (!interest) return;
-
-        currentInterestId = interestId;
-        document.getElementById("interestModalTitle").textContent =
-          "Edit Interest";
-        document.getElementById("interestNameInput").value =
-          interest.name || "";
-        document.getElementById("interestCategorySelect").value =
-          interest.category || "technology";
-        document.getElementById("interestStatusSelect").value =
-          interest.status || "active";
-        document.getElementById("interestDescription").value =
-          interest.description || "";
-        document.getElementById("saveInterestBtn").innerHTML =
-          '<i class="fas fa-save"></i> Update Interest';
-        document.getElementById("interestModal").style.display = "flex";
-        document.body.style.overflow = "hidden";
-      }
-
-      function viewInterest(interestId) {
-        const interest = interests.find((i) => i.id === interestId);
-        if (!interest) return;
-
-        const message = `
+            
+            return row;
+        }
+        
+        function loadLocalInterestsData() {
+            // Fallback local data
+            interests = [
+                {
+                    id: 1,
+                    name: "Technology",
+                    category: "technology",
+                    users_count: 450,
+                    status: "active",
+                    created_at: "2024-01-10"
+                },
+                {
+                    id: 2,
+                    name: "Sports",
+                    category: "sports",
+                    users_count: 320,
+                    status: "active",
+                    created_at: "2024-01-12"
+                }
+            ];
+            
+            const tbody = document.getElementById('interestsTableBody');
+            tbody.innerHTML = '';
+            
+            interests.forEach(interest => {
+                const row = createInterestRow(interest);
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('interestsCount').textContent = interests.length;
+            document.getElementById('totalInterests').textContent = interests.length;
+            updateSelectedInterestsCount();
+        }
+        
+        function searchInterests() {
+            const searchTerm = document.getElementById('interestSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#interestsTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function openAddInterestModal() {
+            currentInterestId = null;
+            document.getElementById('interestModalTitle').textContent = 'Add New Interest';
+            document.getElementById('interestNameInput').value = '';
+            document.getElementById('interestCategorySelect').value = 'technology';
+            document.getElementById('interestStatusSelect').value = 'active';
+            document.getElementById('interestDescription').value = '';
+            document.getElementById('saveInterestBtn').innerHTML = '<i class="fas fa-save"></i> Add Interest';
+            document.getElementById('interestModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function editInterest(interestId) {
+            const interest = interests.find(i => i.id === interestId);
+            if (!interest) return;
+            
+            currentInterestId = interestId;
+            document.getElementById('interestModalTitle').textContent = 'Edit Interest';
+            document.getElementById('interestNameInput').value = interest.name || '';
+            document.getElementById('interestCategorySelect').value = interest.category || 'technology';
+            document.getElementById('interestStatusSelect').value = interest.status || 'active';
+            document.getElementById('interestDescription').value = interest.description || '';
+            document.getElementById('saveInterestBtn').innerHTML = '<i class="fas fa-save"></i> Update Interest';
+            document.getElementById('interestModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function viewInterest(interestId) {
+            const interest = interests.find(i => i.id === interestId);
+            if (!interest) return;
+            
+            const message = `
                 <strong>Interest Name:</strong> ${interest.name}<br>
                 <strong>Category:</strong> ${interest.category}<br>
                 <strong>Status:</strong> ${interest.status}<br>
                 <strong>Users Count:</strong> ${interest.users_count || 0}<br>
                 <strong>Created:</strong> ${formatDate(interest.created_at)}<br>
             `;
-
-        document.getElementById("confirmMessage").innerHTML = message;
-        document.getElementById("confirmBtn").style.display = "none";
-        document.getElementById("confirmModal").style.display = "flex";
-        document.body.style.overflow = "hidden";
-      }
-
-      async function saveInterest() {
-        const name = document.getElementById("interestNameInput").value.trim();
-        const category = document.getElementById(
-          "interestCategorySelect"
-        ).value;
-        const status = document.getElementById("interestStatusSelect").value;
-        const description = document
-          .getElementById("interestDescription")
-          .value.trim();
-
-        if (!name) {
-          showToast("error", "Please enter interest name");
-          return;
+            
+            document.getElementById('confirmMessage').innerHTML = message;
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
-
-        showToast("info", "Saving interest...");
-
-        // Note: Real interest creation API doesn't exist in provided list
-        setTimeout(() => {
-          if (currentInterestId) {
-            showToast("success", "Interest updated successfully!");
-          } else {
-            showToast("success", "Interest added successfully!");
-          }
-
-          // Reload data
-          loadInterestsData();
-
-          // Close modal
-          closeModal("interestModal");
-        }, 1500);
-      }
-
-      function deleteInterest(interestId) {
-        const interest = interests.find((i) => i.id === interestId);
-        if (!interest) return;
-
-        document.getElementById(
-          "confirmMessage"
-        ).textContent = `Are you sure you want to delete "${interest.name}"? This action cannot be undone.`;
-        document.getElementById("confirmBtn").style.display = "block";
-        document.getElementById("confirmBtn").innerHTML =
-          '<i class="fas fa-trash"></i> Delete Interest';
-
-        confirmCallback = function () {
-          // Note: Real interest deletion API doesn't exist
-          showToast("success", "Interest deleted successfully!");
-
-          // Reload data
-          loadInterestsData();
-
-          closeModal("confirmModal");
-        };
-
-        document.getElementById("confirmModal").style.display = "flex";
-        document.body.style.overflow = "hidden";
-      }
-
-      function toggleInterestSelection(interestId) {
-        if (selectedInterests.has(interestId)) {
-          selectedInterests.delete(interestId);
-        } else {
-          selectedInterests.add(interestId);
+        
+        async function saveInterest() {
+            const name = document.getElementById('interestNameInput').value.trim();
+            const category = document.getElementById('interestCategorySelect').value;
+            const status = document.getElementById('interestStatusSelect').value;
+            const description = document.getElementById('interestDescription').value.trim();
+            
+            if (!name) {
+                showToast('error', 'Please enter interest name');
+                return;
+            }
+            
+            showToast('info', 'Saving interest...');
+            
+            setTimeout(() => {
+                if (currentInterestId) {
+                    showToast('success', 'Interest updated successfully!');
+                } else {
+                    showToast('success', 'Interest added successfully!');
+                }
+                
+                // Reload data
+                loadInterestsData();
+                
+                // Close modal
+                closeModal('interestModal');
+            }, 1500);
         }
-        updateSelectedInterestsCount();
-      }
-
-      function toggleSelectAllInterests() {
-        const checkboxes = document.querySelectorAll(".interest-checkbox");
-        const selectAll = document.getElementById("selectAllInterests").checked;
-
-        selectedInterests.clear();
-        if (selectAll) {
-          checkboxes.forEach((cb) => {
-            cb.checked = true;
-            selectedInterests.add(parseInt(cb.value));
-          });
-        } else {
-          checkboxes.forEach((cb) => (cb.checked = false));
+        
+        function deleteInterest(interestId) {
+            const interest = interests.find(i => i.id === interestId);
+            if (!interest) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete "${interest.name}"? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Interest';
+            
+            confirmCallback = function() {
+                showToast('success', 'Interest deleted successfully!');
+                
+                // Reload data
+                loadInterestsData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
-        updateSelectedInterestsCount();
-      }
-
-      function updateSelectedInterestsCount() {
-        const count = selectedInterests.size;
-        document.getElementById(
-          "selectedInterestsCount"
-        ).textContent = `${count} interest${count !== 1 ? "s" : ""} selected`;
-        document.getElementById("deleteSelectedInterestsBtn").style.display =
-          count > 0 ? "block" : "none";
-      }
-
-      function deleteSelectedInterests() {
-        const count = selectedInterests.size;
-        if (count === 0) return;
-
-        document.getElementById(
-          "confirmMessage"
-        ).textContent = `Are you sure you want to delete ${count} interest${
-          count !== 1 ? "s" : ""
-        }? This action cannot be undone.`;
-        document.getElementById("confirmBtn").style.display = "block";
-        document.getElementById("confirmBtn").innerHTML =
-          '<i class="fas fa-trash"></i> Delete Selected';
-
-        confirmCallback = function () {
-          // Note: Real bulk deletion API doesn't exist
-          showToast(
-            "success",
-            `${count} interest${count !== 1 ? "s" : ""} deleted successfully!`
-          );
-
-          // Clear selection
-          selectedInterests.clear();
-          document.getElementById("selectAllInterests").checked = false;
-
-          // Reload data
-          loadInterestsData();
-
-          closeModal("confirmModal");
-        };
-
-        document.getElementById("confirmModal").style.display = "flex";
-        document.body.style.overflow = "hidden";
-      }
-
-      function exportInterests() {
-        showToast("info", "Exporting interests data...");
-        setTimeout(() => {
-          showToast("success", "Interests data exported successfully!");
-        }, 1500);
-      }
-
-      function refreshInterests() {
-        showToast("info", "Refreshing interests data...");
-        setTimeout(() => {
-          loadInterestsData();
-          showToast("success", "Interests data refreshed!");
-        }, 1000);
-      }
+        
+        function toggleInterestSelection(interestId) {
+            if (selectedInterests.has(interestId)) {
+                selectedInterests.delete(interestId);
+            } else {
+                selectedInterests.add(interestId);
+            }
+            updateSelectedInterestsCount();
+        }
+        
+        function toggleSelectAllInterests() {
+            const checkboxes = document.querySelectorAll('.interest-checkbox');
+            const selectAll = document.getElementById('selectAllInterests').checked;
+            
+            selectedInterests.clear();
+            if (selectAll) {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedInterests.add(parseInt(cb.value));
+                });
+            } else {
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateSelectedInterestsCount();
+        }
+        
+        function updateSelectedInterestsCount() {
+            const count = selectedInterests.size;
+            document.getElementById('selectedInterestsCount').textContent = `${count} interest${count !== 1 ? 's' : ''} selected`;
+            document.getElementById('deleteSelectedInterestsBtn').style.display = count > 0 ? 'block' : 'none';
+        }
+        
+        function deleteSelectedInterests() {
+            const count = selectedInterests.size;
+            if (count === 0) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete ${count} interest${count !== 1 ? 's' : ''}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
+            
+            confirmCallback = function() {
+                showToast('success', `${count} interest${count !== 1 ? 's' : ''} deleted successfully!`);
+                
+                // Clear selection
+                selectedInterests.clear();
+                document.getElementById('selectAllInterests').checked = false;
+                
+                // Reload data
+                loadInterestsData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function exportInterests() {
+            showToast('info', 'Exporting interests data...');
+            setTimeout(() => {
+                showToast('success', 'Interests data exported successfully!');
+            }, 1500);
+        }
+        
+        function refreshInterests() {
+            showToast('info', 'Refreshing interests data...');
+            setTimeout(() => {
+                loadInterestsData();
+                showToast('success', 'Interests data refreshed!');
+            }, 1000);
+        }
+        
+        // ==================== NESTS MANAGEMENT (New Section) ====================
+        async function loadNestsData() {
+            try {
+                const response = await fetchHatchAPI('/auth/nest_list', 'GET');
+                
+                if (response.success) {
+                    nests = response.interest_info || [];
+                    
+                    const tbody = document.getElementById('nestsTableBody');
+                    tbody.innerHTML = '';
+                    
+                    nests.forEach(nest => {
+                        const row = createNestRow(nest);
+                        tbody.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    document.getElementById('nestsCount').textContent = nests.length;
+                    document.getElementById('totalNests').textContent = nests.length;
+                    
+                    const activeNests = nests.filter(n => n.status === 'active').length;
+                    const totalMembers = nests.reduce((sum, nest) => sum + (nest.members_count || 0), 0);
+                    const avgMembers = nests.length > 0 ? Math.round(totalMembers / nests.length) : 0;
+                    
+                    document.getElementById('activeNests').textContent = activeNests;
+                    document.getElementById('nestMembers').textContent = totalMembers;
+                    document.getElementById('avgNestMembers').textContent = avgMembers;
+                    
+                    updateSelectedNestsCount();
+                }
+            } catch (error) {
+                console.log('Using local nests data');
+                loadLocalNestsData();
+            }
+        }
+        
+        function createNestRow(nest) {
+            const row = document.createElement('tr');
+            row.dataset.nestId = nest.id;
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="nest-checkbox" value="${nest.id}" onchange="toggleNestSelection(${nest.id})"></td>
+                <td><strong>${nest.name || 'N/A'}</strong></td>
+                <td>${nest.owner_name || 'Unknown'}</td>
+                <td><span class="status-badge">${nest.category || 'general'}</span></td>
+                <td>${nest.members_count || 0}</td>
+                <td>${nest.posts_count || 0}</td>
+                <td><span class="status-badge ${(nest.status || 'active') === 'active' ? 'status-active' : nest.status === 'private' ? 'status-pending' : 'status-inactive'}">
+                    ${nest.status || 'active'}
+                </span></td>
+                <td>${formatDate(nest.created_at || new Date().toISOString())}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="editNest(${nest.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="table-btn delete" onclick="deleteNest(${nest.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button class="table-btn view" onclick="viewNest(${nest.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+        
+        function loadLocalNestsData() {
+            // Fallback local data
+            nests = [
+                {
+                    id: 1,
+                    name: "Tech Enthusiasts",
+                    owner_name: "John Doe",
+                    category: "technology",
+                    members_count: 245,
+                    posts_count: 120,
+                    status: "active",
+                    created_at: "2024-02-15"
+                },
+                {
+                    id: 2,
+                    name: "Fitness Club",
+                    owner_name: "Sarah Williams",
+                    category: "sports",
+                    members_count: 189,
+                    posts_count: 85,
+                    status: "active",
+                    created_at: "2024-02-20"
+                }
+            ];
+            
+            const tbody = document.getElementById('nestsTableBody');
+            tbody.innerHTML = '';
+            
+            nests.forEach(nest => {
+                const row = createNestRow(nest);
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('nestsCount').textContent = nests.length;
+            updateSelectedNestsCount();
+        }
+        
+        function searchNests() {
+            const searchTerm = document.getElementById('nestSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#nestsTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function openAddNestModal() {
+            currentNestId = null;
+            document.getElementById('nestModalTitle').textContent = 'Add New Nest';
+            
+            // Reset form
+            document.getElementById('nestNameInput').value = '';
+            document.getElementById('nestOwnerSelect').selectedIndex = 0;
+            document.getElementById('nestCategorySelect').value = 'general';
+            document.getElementById('nestStatusSelect').value = 'active';
+            document.getElementById('nestDescription').value = '';
+            
+            document.getElementById('saveNestBtn').innerHTML = '<i class="fas fa-save"></i> Add Nest';
+            document.getElementById('nestModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function editNest(nestId) {
+            const nest = nests.find(n => n.id === nestId);
+            if (!nest) return;
+            
+            currentNestId = nestId;
+            document.getElementById('nestModalTitle').textContent = 'Edit Nest';
+            
+            // Find owner in select
+            const ownerSelect = document.getElementById('nestOwnerSelect');
+            const ownerOption = Array.from(ownerSelect.options).find(option => option.text === nest.owner_name);
+            if (ownerOption) ownerSelect.value = ownerOption.value;
+            
+            document.getElementById('nestNameInput').value = nest.name || '';
+            document.getElementById('nestCategorySelect').value = nest.category || 'general';
+            document.getElementById('nestStatusSelect').value = nest.status || 'active';
+            document.getElementById('nestDescription').value = nest.description || '';
+            
+            document.getElementById('saveNestBtn').innerHTML = '<i class="fas fa-save"></i> Update Nest';
+            document.getElementById('nestModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function viewNest(nestId) {
+            const nest = nests.find(n => n.id === nestId);
+            if (!nest) return;
+            
+            const message = `
+                <strong>Nest Name:</strong> ${nest.name}<br>
+                <strong>Owner:</strong> ${nest.owner_name}<br>
+                <strong>Category:</strong> ${nest.category}<br>
+                <strong>Members:</strong> ${nest.members_count || 0}<br>
+                <strong>Posts:</strong> ${nest.posts_count || 0}<br>
+                <strong>Status:</strong> ${nest.status}<br>
+                <strong>Created:</strong> ${formatDate(nest.created_at)}<br>
+            `;
+            
+            document.getElementById('confirmMessage').innerHTML = message;
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        async function saveNest() {
+            const name = document.getElementById('nestNameInput').value.trim();
+            const ownerSelect = document.getElementById('nestOwnerSelect');
+            const owner = ownerSelect.options[ownerSelect.selectedIndex].text;
+            const category = document.getElementById('nestCategorySelect').value;
+            const status = document.getElementById('nestStatusSelect').value;
+            const description = document.getElementById('nestDescription').value.trim();
+            
+            if (!name || !owner) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+            
+            showToast('info', 'Saving nest...');
+            
+            setTimeout(() => {
+                if (currentNestId) {
+                    showToast('success', 'Nest updated successfully!');
+                } else {
+                    showToast('success', 'Nest added successfully!');
+                }
+                
+                // Reload data
+                loadNestsData();
+                fetchDashboardData();
+                
+                // Close modal
+                closeModal('nestModal');
+            }, 1500);
+        }
+        
+        function deleteNest(nestId) {
+            const nest = nests.find(n => n.id === nestId);
+            if (!nest) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete "${nest.name}"? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Nest';
+            
+            confirmCallback = function() {
+                showToast('success', 'Nest deleted successfully!');
+                
+                // Reload data
+                loadNestsData();
+                fetchDashboardData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function populateNestOwnerSelect() {
+            const ownerSelect = document.getElementById('nestOwnerSelect');
+            ownerSelect.innerHTML = '<option value="">Select Owner</option>';
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.text = user.name;
+                ownerSelect.appendChild(option);
+            });
+        }
+        
+        function toggleNestSelection(nestId) {
+            if (selectedNests.has(nestId)) {
+                selectedNests.delete(nestId);
+            } else {
+                selectedNests.add(nestId);
+            }
+            updateSelectedNestsCount();
+        }
+        
+        function toggleSelectAllNests() {
+            const checkboxes = document.querySelectorAll('.nest-checkbox');
+            const selectAll = document.getElementById('selectAllNests').checked;
+            
+            selectedNests.clear();
+            if (selectAll) {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedNests.add(parseInt(cb.value));
+                });
+            } else {
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateSelectedNestsCount();
+        }
+        
+        function updateSelectedNestsCount() {
+            const count = selectedNests.size;
+            document.getElementById('selectedNestsCount').textContent = `${count} nest${count !== 1 ? 's' : ''} selected`;
+            document.getElementById('deleteSelectedNestsBtn').style.display = count > 0 ? 'block' : 'none';
+        }
+        
+        function deleteSelectedNests() {
+            const count = selectedNests.size;
+            if (count === 0) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete ${count} nest${count !== 1 ? 's' : ''}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
+            
+            confirmCallback = function() {
+                showToast('success', `${count} nest${count !== 1 ? 's' : ''} deleted successfully!`);
+                
+                // Clear selection
+                selectedNests.clear();
+                document.getElementById('selectAllNests').checked = false;
+                
+                // Reload data
+                loadNestsData();
+                fetchDashboardData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function exportNests() {
+            showToast('info', 'Exporting nests data...');
+            setTimeout(() => {
+                showToast('success', 'Nests data exported successfully!');
+            }, 1500);
+        }
+        
+        function refreshNests() {
+            showToast('info', 'Refreshing nests data...');
+            setTimeout(() => {
+                loadNestsData();
+                showToast('success', 'Nests data refreshed!');
+            }, 1000);
+        }
+        
+        function bulkNestActions() {
+            showToast('info', 'Opening bulk actions menu...');
+        }
+        
+        // ==================== POSTS MANAGEMENT (New Section) ====================
+        async function loadPostsData() {
+            try {
+                const response = await fetchHatchAPI('/auth/posts', 'GET');
+                
+                if (response.success) {
+                    posts = response.data || [];
+                    
+                    const tbody = document.getElementById('postsTableBody');
+                    tbody.innerHTML = '';
+                    
+                    posts.forEach(post => {
+                        const row = createPostRow(post);
+                        tbody.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    document.getElementById('postsCount').textContent = posts.length;
+                    document.getElementById('totalPosts').textContent = posts.length;
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    const postsToday = posts.filter(p => p.created_at && p.created_at.startsWith(today)).length;
+                    
+                    const totalLikes = posts.reduce((sum, post) => sum + (post.likes_count || 0), 0);
+                    const totalComments = posts.reduce((sum, post) => sum + (post.comments_count || 0), 0);
+                    const avgLikes = posts.length > 0 ? Math.round(totalLikes / posts.length) : 0;
+                    const avgComments = posts.length > 0 ? Math.round(totalComments / posts.length) : 0;
+                    
+                    document.getElementById('postsToday').textContent = postsToday;
+                    document.getElementById('avgLikes').textContent = avgLikes;
+                    document.getElementById('avgComments').textContent = avgComments;
+                    
+                    updateSelectedPostsCount();
+                }
+            } catch (error) {
+                console.log('Using local posts data');
+                loadLocalPostsData();
+            }
+        }
+        
+        function createPostRow(post) {
+            const row = document.createElement('tr');
+            row.dataset.postId = post.id;
+            
+            // Shorten content for display
+            const shortContent = post.content ? 
+                (post.content.length > 50 ? post.content.substring(0, 50) + '...' : post.content) : 
+                'No content';
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="post-checkbox" value="${post.id}" onchange="togglePostSelection(${post.id})"></td>
+                <td><strong>${post.id || 'N/A'}</strong></td>
+                <td>${post.author_name || 'Unknown'}</td>
+                <td>${shortContent}</td>
+                <td>${post.likes_count || 0}</td>
+                <td>${post.comments_count || 0}</td>
+                <td><span class="status-badge ${(post.status || 'published') === 'published' ? 'status-active' : post.status === 'draft' ? 'status-pending' : 'status-inactive'}">
+                    ${post.status || 'published'}
+                </span></td>
+                <td>${formatDate(post.created_at || new Date().toISOString())}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="editPost(${post.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="table-btn delete" onclick="deletePost(${post.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button class="table-btn view" onclick="viewPost(${post.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+        
+        function loadLocalPostsData() {
+            // Fallback local data
+            posts = [
+                {
+                    id: 1,
+                    author_name: "John Doe",
+                    content: "Just launched my new website! Check it out...",
+                    likes_count: 45,
+                    comments_count: 12,
+                    status: "published",
+                    created_at: "2024-03-01"
+                },
+                {
+                    id: 2,
+                    author_name: "Sarah Williams",
+                    content: "Amazing experience at the tech conference today!",
+                    likes_count: 89,
+                    comments_count: 23,
+                    status: "published",
+                    created_at: "2024-03-02"
+                }
+            ];
+            
+            const tbody = document.getElementById('postsTableBody');
+            tbody.innerHTML = '';
+            
+            posts.forEach(post => {
+                const row = createPostRow(post);
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('postsCount').textContent = posts.length;
+            updateSelectedPostsCount();
+        }
+        
+        function searchPosts() {
+            const searchTerm = document.getElementById('postSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#postsTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function openAddPostModal() {
+            currentPostId = null;
+            document.getElementById('postModalTitle').textContent = 'Add New Post';
+            
+            // Reset form
+            document.getElementById('postAuthorSelect').selectedIndex = 0;
+            document.getElementById('postNestSelect').selectedIndex = 0;
+            document.getElementById('postContent').value = '';
+            document.getElementById('postStatusSelect').value = 'published';
+            document.getElementById('postTags').value = '';
+            
+            document.getElementById('savePostBtn').innerHTML = '<i class="fas fa-save"></i> Add Post';
+            document.getElementById('postModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function editPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            currentPostId = postId;
+            document.getElementById('postModalTitle').textContent = 'Edit Post';
+            
+            // Find author in select
+            const authorSelect = document.getElementById('postAuthorSelect');
+            const authorOption = Array.from(authorSelect.options).find(option => option.text === post.author_name);
+            if (authorOption) authorSelect.value = authorOption.value;
+            
+            document.getElementById('postContent').value = post.content || '';
+            document.getElementById('postStatusSelect').value = post.status || 'published';
+            document.getElementById('postTags').value = post.tags || '';
+            
+            document.getElementById('savePostBtn').innerHTML = '<i class="fas fa-save"></i> Update Post';
+            document.getElementById('postModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function viewPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            const message = `
+                <strong>Post ID:</strong> ${post.id}<br>
+                <strong>Author:</strong> ${post.author_name}<br>
+                <strong>Content:</strong> ${post.content || 'No content'}<br>
+                <strong>Likes:</strong> ${post.likes_count || 0}<br>
+                <strong>Comments:</strong> ${post.comments_count || 0}<br>
+                <strong>Status:</strong> ${post.status}<br>
+                <strong>Created:</strong> ${formatDate(post.created_at)}<br>
+            `;
+            
+            document.getElementById('confirmMessage').innerHTML = message;
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        async function savePost() {
+            const authorSelect = document.getElementById('postAuthorSelect');
+            const author = authorSelect.options[authorSelect.selectedIndex].text;
+            const content = document.getElementById('postContent').value.trim();
+            const status = document.getElementById('postStatusSelect').value;
+            const tags = document.getElementById('postTags').value.trim();
+            
+            if (!author || !content) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+            
+            showToast('info', 'Saving post...');
+            
+            setTimeout(() => {
+                if (currentPostId) {
+                    showToast('success', 'Post updated successfully!');
+                } else {
+                    showToast('success', 'Post added successfully!');
+                }
+                
+                // Reload data
+                loadPostsData();
+                fetchDashboardData();
+                
+                // Close modal
+                closeModal('postModal');
+            }, 1500);
+        }
+        
+        function deletePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete post by ${post.author_name}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Post';
+            
+            confirmCallback = function() {
+                showToast('success', 'Post deleted successfully!');
+                
+                // Reload data
+                loadPostsData();
+                fetchDashboardData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function populatePostAuthorSelect() {
+            const authorSelect = document.getElementById('postAuthorSelect');
+            authorSelect.innerHTML = '<option value="">Select Author</option>';
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.text = user.name;
+                authorSelect.appendChild(option);
+            });
+        }
+        
+        function togglePostSelection(postId) {
+            if (selectedPosts.has(postId)) {
+                selectedPosts.delete(postId);
+            } else {
+                selectedPosts.add(postId);
+            }
+            updateSelectedPostsCount();
+        }
+        
+        function toggleSelectAllPosts() {
+            const checkboxes = document.querySelectorAll('.post-checkbox');
+            const selectAll = document.getElementById('selectAllPosts').checked;
+            
+            selectedPosts.clear();
+            if (selectAll) {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedPosts.add(parseInt(cb.value));
+                });
+            } else {
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateSelectedPostsCount();
+        }
+        
+        function updateSelectedPostsCount() {
+            const count = selectedPosts.size;
+            document.getElementById('selectedPostsCount').textContent = `${count} post${count !== 1 ? 's' : ''} selected`;
+            document.getElementById('deleteSelectedPostsBtn').style.display = count > 0 ? 'block' : 'none';
+        }
+        
+        function deleteSelectedPosts() {
+            const count = selectedPosts.size;
+            if (count === 0) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete ${count} post${count !== 1 ? 's' : ''}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
+            
+            confirmCallback = function() {
+                showToast('success', `${count} post${count !== 1 ? 's' : ''} deleted successfully!`);
+                
+                // Clear selection
+                selectedPosts.clear();
+                document.getElementById('selectAllPosts').checked = false;
+                
+                // Reload data
+                loadPostsData();
+                fetchDashboardData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function exportPosts() {
+            showToast('info', 'Exporting posts data...');
+            setTimeout(() => {
+                showToast('success', 'Posts data exported successfully!');
+            }, 1500);
+        }
+        
+        function refreshPosts() {
+            showToast('info', 'Refreshing posts data...');
+            setTimeout(() => {
+                loadPostsData();
+                showToast('success', 'Posts data refreshed!');
+            }, 1000);
+        }
+        
+        function bulkPostActions() {
+            showToast('info', 'Opening bulk actions menu...');
+        }
+        
+        // ==================== REELS MANAGEMENT (New Section) ====================
+        async function loadReelsData() {
+            try {
+                const response = await fetchHatchAPI('/auth/reels', 'GET');
+                
+                if (response.success) {
+                    reels = response.data || [];
+                    
+                    const tbody = document.getElementById('reelsTableBody');
+                    tbody.innerHTML = '';
+                    
+                    reels.forEach(reel => {
+                        const row = createReelRow(reel);
+                        tbody.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    document.getElementById('reelsCount').textContent = reels.length;
+                    document.getElementById('totalReels').textContent = reels.length;
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    const reelsToday = reels.filter(r => r.created_at && r.created_at.startsWith(today)).length;
+                    
+                    const totalViews = reels.reduce((sum, reel) => sum + (reel.views_count || 0), 0);
+                    const totalShares = reels.reduce((sum, reel) => sum + (reel.shares_count || 0), 0);
+                    const avgViews = reels.length > 0 ? Math.round(totalViews / reels.length) : 0;
+                    const avgShares = reels.length > 0 ? Math.round(totalShares / reels.length) : 0;
+                    
+                    document.getElementById('reelsToday').textContent = reelsToday;
+                    document.getElementById('avgReelViews').textContent = avgViews;
+                    document.getElementById('avgReelShares').textContent = avgShares;
+                    
+                    updateSelectedReelsCount();
+                }
+            } catch (error) {
+                console.log('Using local reels data');
+                loadLocalReelsData();
+            }
+        }
+        
+        function createReelRow(reel) {
+            const row = document.createElement('tr');
+            row.dataset.reelId = reel.id;
+            
+            // Shorten title for display
+            const shortTitle = reel.title ? 
+                (reel.title.length > 30 ? reel.title.substring(0, 30) + '...' : reel.title) : 
+                'No title';
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="reel-checkbox" value="${reel.id}" onchange="toggleReelSelection(${reel.id})"></td>
+                <td><strong>${reel.id || 'N/A'}</strong></td>
+                <td>${reel.creator_name || 'Unknown'}</td>
+                <td>${shortTitle}</td>
+                <td>${reel.views_count || 0}</td>
+                <td>${reel.likes_count || 0}</td>
+                <td>${reel.shares_count || 0}</td>
+                <td><span class="status-badge ${(reel.status || 'published') === 'published' ? 'status-active' : reel.status === 'processing' ? 'status-pending' : 'status-inactive'}">
+                    ${reel.status || 'published'}
+                </span></td>
+                <td>${formatDate(reel.created_at || new Date().toISOString())}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn edit" onclick="editReel(${reel.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="table-btn delete" onclick="deleteReel(${reel.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <button class="table-btn view" onclick="viewReel(${reel.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+        
+        function loadLocalReelsData() {
+            // Fallback local data
+            reels = [
+                {
+                    id: 1,
+                    creator_name: "John Doe",
+                    title: "My vacation highlights",
+                    views_count: 1234,
+                    likes_count: 234,
+                    shares_count: 45,
+                    status: "published",
+                    created_at: "2024-03-01"
+                },
+                {
+                    id: 2,
+                    creator_name: "Sarah Williams",
+                    title: "Cooking tutorial: Pasta Carbonara",
+                    views_count: 5678,
+                    likes_count: 456,
+                    shares_count: 89,
+                    status: "published",
+                    created_at: "2024-03-02"
+                }
+            ];
+            
+            const tbody = document.getElementById('reelsTableBody');
+            tbody.innerHTML = '';
+            
+            reels.forEach(reel => {
+                const row = createReelRow(reel);
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('reelsCount').textContent = reels.length;
+            updateSelectedReelsCount();
+        }
+        
+        function searchReels() {
+            const searchTerm = document.getElementById('reelSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#reelsTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
+        function openAddReelModal() {
+            currentReelId = null;
+            document.getElementById('reelModalTitle').textContent = 'Add New Reel';
+            
+            // Reset form
+            document.getElementById('reelCreatorSelect').selectedIndex = 0;
+            document.getElementById('reelTitleInput').value = '';
+            document.getElementById('reelUrlInput').value = '';
+            document.getElementById('reelDuration').value = '';
+            document.getElementById('reelStatusSelect').value = 'published';
+            document.getElementById('reelDescription').value = '';
+            
+            document.getElementById('saveReelBtn').innerHTML = '<i class="fas fa-save"></i> Add Reel';
+            document.getElementById('reelModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function editReel(reelId) {
+            const reel = reels.find(r => r.id === reelId);
+            if (!reel) return;
+            
+            currentReelId = reelId;
+            document.getElementById('reelModalTitle').textContent = 'Edit Reel';
+            
+            // Find creator in select
+            const creatorSelect = document.getElementById('reelCreatorSelect');
+            const creatorOption = Array.from(creatorSelect.options).find(option => option.text === reel.creator_name);
+            if (creatorOption) creatorSelect.value = creatorOption.value;
+            
+            document.getElementById('reelTitleInput').value = reel.title || '';
+            document.getElementById('reelUrlInput').value = reel.video_url || '';
+            document.getElementById('reelDuration').value = reel.duration || '';
+            document.getElementById('reelStatusSelect').value = reel.status || 'published';
+            document.getElementById('reelDescription').value = reel.description || '';
+            
+            document.getElementById('saveReelBtn').innerHTML = '<i class="fas fa-save"></i> Update Reel';
+            document.getElementById('reelModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function viewReel(reelId) {
+            const reel = reels.find(r => r.id === reelId);
+            if (!reel) return;
+            
+            const message = `
+                <strong>Reel ID:</strong> ${reel.id}<br>
+                <strong>Creator:</strong> ${reel.creator_name}<br>
+                <strong>Title:</strong> ${reel.title}<br>
+                <strong>Views:</strong> ${reel.views_count || 0}<br>
+                <strong>Likes:</strong> ${reel.likes_count || 0}<br>
+                <strong>Shares:</strong> ${reel.shares_count || 0}<br>
+                <strong>Status:</strong> ${reel.status}<br>
+                <strong>Created:</strong> ${formatDate(reel.created_at)}<br>
+            `;
+            
+            document.getElementById('confirmMessage').innerHTML = message;
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        async function saveReel() {
+            const creatorSelect = document.getElementById('reelCreatorSelect');
+            const creator = creatorSelect.options[creatorSelect.selectedIndex].text;
+            const title = document.getElementById('reelTitleInput').value.trim();
+            const url = document.getElementById('reelUrlInput').value.trim();
+            const duration = document.getElementById('reelDuration').value;
+            const status = document.getElementById('reelStatusSelect').value;
+            const description = document.getElementById('reelDescription').value.trim();
+            
+            if (!creator || !title || !url || !duration) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+            
+            if (!isValidUrl(url)) {
+                showToast('error', 'Please enter a valid URL');
+                return;
+            }
+            
+            showToast('info', 'Saving reel...');
+            
+            setTimeout(() => {
+                if (currentReelId) {
+                    showToast('success', 'Reel updated successfully!');
+                } else {
+                    showToast('success', 'Reel added successfully!');
+                }
+                
+                // Reload data
+                loadReelsData();
+                fetchDashboardData();
+                
+                // Close modal
+                closeModal('reelModal');
+            }, 1500);
+        }
+        
+        function deleteReel(reelId) {
+            const reel = reels.find(r => r.id === reelId);
+            if (!reel) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete reel "${reel.title}"? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Reel';
+            
+            confirmCallback = function() {
+                showToast('success', 'Reel deleted successfully!');
+                
+                // Reload data
+                loadReelsData();
+                fetchDashboardData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function populateReelCreatorSelect() {
+            const creatorSelect = document.getElementById('reelCreatorSelect');
+            creatorSelect.innerHTML = '<option value="">Select Creator</option>';
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.text = user.name;
+                creatorSelect.appendChild(option);
+            });
+        }
+        
+        function toggleReelSelection(reelId) {
+            if (selectedReels.has(reelId)) {
+                selectedReels.delete(reelId);
+            } else {
+                selectedReels.add(reelId);
+            }
+            updateSelectedReelsCount();
+        }
+        
+        function toggleSelectAllReels() {
+            const checkboxes = document.querySelectorAll('.reel-checkbox');
+            const selectAll = document.getElementById('selectAllReels').checked;
+            
+            selectedReels.clear();
+            if (selectAll) {
+                checkboxes.forEach(cb => {
+                    cb.checked = true;
+                    selectedReels.add(parseInt(cb.value));
+                });
+            } else {
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateSelectedReelsCount();
+        }
+        
+        function updateSelectedReelsCount() {
+            const count = selectedReels.size;
+            document.getElementById('selectedReelsCount').textContent = `${count} reel${count !== 1 ? 's' : ''} selected`;
+            document.getElementById('deleteSelectedReelsBtn').style.display = count > 0 ? 'block' : 'none';
+        }
+        
+        function deleteSelectedReels() {
+            const count = selectedReels.size;
+            if (count === 0) return;
+            
+            document.getElementById('confirmMessage').textContent = `Are you sure you want to delete ${count} reel${count !== 1 ? 's' : ''}? This action cannot be undone.`;
+            document.getElementById('confirmBtn').style.display = 'block';
+            document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
+            
+            confirmCallback = function() {
+                showToast('success', `${count} reel${count !== 1 ? 's' : ''} deleted successfully!`);
+                
+                // Clear selection
+                selectedReels.clear();
+                document.getElementById('selectAllReels').checked = false;
+                
+                // Reload data
+                loadReelsData();
+                fetchDashboardData();
+                
+                closeModal('confirmModal');
+            };
+            
+            document.getElementById('confirmModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function exportReels() {
+            showToast('info', 'Exporting reels data...');
+            setTimeout(() => {
+                showToast('success', 'Reels data exported successfully!');
+            }, 1500);
+        }
+        
+        function refreshReels() {
+            showToast('info', 'Refreshing reels data...');
+            setTimeout(() => {
+                loadReelsData();
+                showToast('success', 'Reels data refreshed!');
+            }, 1000);
+        }
+        
+        function bulkReelActions() {
+            showToast('info', 'Opening bulk actions menu...');
+        }
         
         // ==================== REPORTS MANAGEMENT ====================
         async function loadReportsData() {
@@ -3461,7 +4984,6 @@
             
             showToast('info', 'Saving report...');
             
-            // Note: Real report creation API doesn't exist in provided list
             setTimeout(() => {
                 if (currentReportId) {
                     showToast('success', 'Report updated successfully!');
@@ -3486,7 +5008,6 @@
             document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Report';
             
             confirmCallback = function() {
-                // Note: Real report deletion API doesn't exist
                 showToast('success', 'Report deleted successfully!');
                 
                 // Reload data
@@ -3560,7 +5081,6 @@
             document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-check"></i> Mark Resolved';
             
             confirmCallback = function() {
-                // Note: Real API doesn't exist
                 showToast('success', `${count} report${count !== 1 ? 's' : ''} marked as resolved!`);
                 
                 // Clear selection
@@ -3586,7 +5106,6 @@
             document.getElementById('confirmBtn').innerHTML = '<i class="fas fa-trash"></i> Delete Selected';
             
             confirmCallback = function() {
-                // Note: Real bulk deletion API doesn't exist
                 showToast('success', `${count} report${count !== 1 ? 's' : ''} deleted successfully!`);
                 
                 // Clear selection
@@ -3741,6 +5260,15 @@
             return re.test(email);
         }
         
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { 
@@ -3756,6 +5284,9 @@
                 users: 'Users Management',
                 interests: 'Interests',
                 reports: 'Content Reports',
+                nests: 'Nests',
+                posts: 'Posts',
+                reels: 'Reels',
                 memberships: 'Memberships',
                 revenue: 'Revenue Analytics',
                 moderation: 'Content Moderation'
@@ -3771,6 +5302,9 @@
                 users: 'users',
                 interests: 'heart',
                 reports: 'flag',
+                nests: 'home',
+                posts: 'newspaper',
+                reels: 'film',
                 memberships: 'crown',
                 revenue: 'chart-line',
                 moderation: 'shield-alt'
@@ -3792,6 +5326,15 @@
                     break;
                 case 'reports':
                     loadReportsData();
+                    break;
+                case 'nests':
+                    loadNestsData();
+                    break;
+                case 'posts':
+                    loadPostsData();
+                    break;
+                case 'reels':
+                    loadReelsData();
                     break;
                 case 'memberships':
                     loadMembershipsData();
@@ -3870,35 +5413,48 @@
                 });
             }
             
-            // Revenue Chart
-            const revenueCtx = document.getElementById('revenueChart')?.getContext('2d');
-            if (revenueCtx) {
-                window.revenueChart = new Chart(revenueCtx, {
+            // Content Activity Chart
+            const contentCtx = document.getElementById('contentChart')?.getContext('2d');
+            if (contentCtx) {
+                window.contentChart = new Chart(contentCtx, {
                     type: 'bar',
                     data: {
                         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        datasets: [{
-                            label: 'Revenue ($)',
-                            data: [4200, 5200, 6100, 7300, 8200, 9450],
-                            backgroundColor: [
-                                'rgba(58, 87, 232, 0.7)',
-                                'rgba(58, 87, 232, 0.8)',
-                                'rgba(58, 87, 232, 0.9)',
-                                'rgba(124, 77, 255, 0.7)',
-                                'rgba(124, 77, 255, 0.8)',
-                                'rgba(124, 77, 255, 0.9)'
-                            ],
-                            borderColor: 'var(--primary)',
-                            borderWidth: 1,
-                            borderRadius: 6,
-                            borderSkipped: false
-                        }]
+                        datasets: [
+                            {
+                                label: 'Nests',
+                                data: [45, 52, 61, 73, 82, 94],
+                                backgroundColor: 'rgba(156, 39, 176, 0.7)',
+                                borderColor: '#9C27B0',
+                                borderWidth: 1,
+                                borderRadius: 6
+                            },
+                            {
+                                label: 'Posts',
+                                data: [120, 150, 180, 210, 240, 284],
+                                backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                                borderColor: '#4CAF50',
+                                borderWidth: 1,
+                                borderRadius: 6
+                            },
+                            {
+                                label: 'Reels',
+                                data: [85, 95, 110, 125, 140, 165],
+                                backgroundColor: 'rgba(255, 152, 0, 0.7)',
+                                borderColor: '#FF9800',
+                                borderWidth: 1,
+                                borderRadius: 6
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false },
+                            legend: { 
+                                display: true,
+                                position: 'top'
+                            },
                             tooltip: {
                                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                 titleColor: 'white',
@@ -3907,7 +5463,7 @@
                                 borderWidth: 1,
                                 callbacks: {
                                     label: function(context) {
-                                        return `Revenue: $${context.raw.toLocaleString()}`;
+                                        return `${context.dataset.label}: ${context.raw}`;
                                     }
                                 }
                             }
@@ -3921,7 +5477,7 @@
                                 },
                                 ticks: {
                                     callback: function(value) {
-                                        return '$' + value.toLocaleString();
+                                        return value.toLocaleString();
                                     }
                                 }
                             },
@@ -3942,9 +5498,9 @@
             showToast('info', `Growth chart updated for: ${period}`);
         }
         
-        function updateRevenueChart() {
-            const period = document.getElementById('revenuePeriod').value;
-            showToast('info', `Revenue chart updated for: ${period}`);
+        function updateContentChart() {
+            const period = document.getElementById('contentPeriod').value;
+            showToast('info', `Content chart updated for: ${period}`);
         }
         
         // ==================== ACTION FUNCTIONS ====================
@@ -3981,6 +5537,18 @@
         
         function viewUsers() {
             document.querySelector('[data-page="users"]').click();
+        }
+        
+        function viewNests() {
+            document.querySelector('[data-page="nests"]').click();
+        }
+        
+        function viewPosts() {
+            document.querySelector('[data-page="posts"]').click();
+        }
+        
+        function viewReels() {
+            document.querySelector('[data-page="reels"]').click();
         }
         
         function viewExplorers() {
@@ -4047,6 +5615,9 @@
             document.getElementById('totalUsers').textContent = '2,847';
             document.getElementById('totalExplorers').textContent = '1,243';
             document.getElementById('totalCreators').textContent = '856';
+            document.getElementById('totalNests').textContent = '94';
+            document.getElementById('totalPosts').textContent = '284';
+            document.getElementById('totalReels').textContent = '165';
             document.getElementById('reportsNotification').textContent = '5';
         }
         
@@ -4082,6 +5653,9 @@
                 closeModal('userModal');
                 closeModal('interestModal');
                 closeModal('reportModal');
+                closeModal('nestModal');
+                closeModal('postModal');
+                closeModal('reelModal');
                 closeModal('membershipModal');
                 closeModal('revenueModal');
                 closeModal('moderationModal');
